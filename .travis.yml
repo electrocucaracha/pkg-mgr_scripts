@@ -1,0 +1,13 @@
+matrix:
+  include:
+    - language: python
+      install:
+        - pip install tox
+      script:
+        - tox
+      env:
+        - TOXENV=lint
+
+    - language: shell
+      script:
+        - bash -c 'shopt -s globstar; shellcheck -x *.sh'
