@@ -17,7 +17,13 @@ PKG_MGR_SUPPORTED="supported"
 
 declare -A pkg_mgr_supported
 
-pkg_mgr_supported[openjdk]="{\"Suse\": \"openjdk-8-jre\",\"Debian\": \"openjdk-8-jre\",\"RedHat\": \"java-1.8.0-openjdk\",\"ClearLinux\": \"java-basic\"}"
+pkg_mgr_supported[krb5-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"libkrb5-dev\",\"RedHat\": \"krb5-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
+pkg_mgr_supported[bind-utils]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"bind-utils\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
+pkg_mgr_supported[tito]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"tito\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
+pkg_mgr_supported[gpgme]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"gpgme\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
+pkg_mgr_supported[gpgme-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"gpgme-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
+pkg_mgr_supported[libassuan]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
+pkg_mgr_supported[libassuan-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
 pkg_mgr_supported[docker]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
 
 if ! sudo -n "true"; then
@@ -75,15 +81,19 @@ if [[ "${PKG_UDPATE:-false}" == "true" ]]; then
 fi
 
 if [[ -n ${PKG+x} ]]; then
-    json_pkg="${pkg_mgr_supported[$PKG]}"
-    if [[ -n "${json_pkg}" ]]; then
-        distro_pkg=$(echo "$json_pkg" | grep -oP "(?<=\"$PKG_OS_FAMILY\": \")[^\"]*")
-        if [[ "$distro_pkg" == "$PKG_MGR_SUPPORTED" ]]; then
-            curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr/master/${PKG}/main.sh" | bash
-        elif [[ "$distro_pkg" != "$PKG_MGR_UNSUPPORTED" ]]; then
-            $INSTALLER_CMD "$distro_pkg"
+    sanity_pkgs=""
+    for pkg in $PKG; do
+        json_pkg="${pkg_mgr_supported[$pkg]}"
+        if [[ -n "${json_pkg}" ]]; then
+            distro_pkg=$(echo "$json_pkg" | grep -oP "(?<=\"$PKG_OS_FAMILY\": \")[^\"]*")
+            if [[ "$distro_pkg" == "$PKG_MGR_SUPPORTED" ]]; then
+                curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr/master/${pkg}/main.sh" | bash
+            elif [[ "$distro_pkg" != "$PKG_MGR_UNSUPPORTED" ]]; then
+                sanity_pkgs+=" $distro_pkg"
+            fi
+        else
+            sanity_pkgs+=" $pkg"
         fi
-    else
-        $INSTALLER_CMD "$PKG"
-    fi
+    done
+    eval "$INSTALLER_CMD $sanity_pkgs"
 fi
