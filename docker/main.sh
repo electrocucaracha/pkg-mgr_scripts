@@ -66,7 +66,7 @@ function main {
     sudo mkdir -p /etc/docker
     sudo tee /etc/docker/daemon.json << EOF
 {
-  "insecure-registries" : ["0.0.0.0/0"]
+  "insecure-registries" : ["${PKG_DOCKER_INSECURE_REGISTRIES:-"0.0.0.0/0"}"]
 }
 EOF
     sudo systemctl daemon-reload
