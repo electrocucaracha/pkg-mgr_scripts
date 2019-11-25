@@ -24,6 +24,7 @@ function main {
             ;;
             *)
                 curl -fsSL https://get.docker.com/ | sh
+                sudo systemctl start docker
             ;;
         esac
     fi
@@ -34,6 +35,9 @@ function main {
     sudo usermod -aG docker "$USER"
     if [ -n "${SOCKS_PROXY:-}" ]; then
         socks_tmp="${SOCKS_PROXY#*//}"
+        if ! command -v wget; then
+            curl -fsSL http://bit.ly/pkgInstall | PKG=wget bash
+        fi
         curl -sSL https://raw.githubusercontent.com/crops/chameleonsocks/master/chameleonsocks.sh | sudo PROXY="${socks_tmp%:*}" PORT="${socks_tmp#*:}" bash -s -- --install
     else
         if [ -n "${HTTP_PROXY:-}" ]; then
