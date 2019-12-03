@@ -12,9 +12,13 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-PKG=vim ./install.sh
+if command -v docker-compose; then
+    echo "docker-compose package is alredy installed"
+fi
 
-if ! command -v vim; then
-    echo "vim package wasn't installed"
+PKG=docker-compose ./install.sh
+
+if ! command -v docker-compose; then
+    echo "docker-compose package wasn't installed"
     exit 1
 fi

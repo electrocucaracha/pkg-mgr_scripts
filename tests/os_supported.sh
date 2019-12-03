@@ -12,9 +12,24 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-PKG=docker ./install.sh
+if command -v wget; then
+    echo "wget is already installed"
+fi
 
-if ! command -v docker; then
-    echo "docker package wasn't installed"
+PKG=wget ./install.sh
+
+if ! command -v wget; then
+    echo "wget package wasn't installed"
+    exit 1
+fi
+
+if command -v mkpasswd; then
+    echo "vim is already installed"
+fi
+
+PKG="wget mkpasswd" ./install.sh
+
+if ! command -v mkpasswd; then
+    echo "vim package wasn't installed"
     exit 1
 fi

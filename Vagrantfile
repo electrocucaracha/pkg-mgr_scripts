@@ -53,12 +53,13 @@ Vagrant.configure("2") do |config|
   config.vm.provision 'shell', path: "./_requirements.sh"
   config.vm.provision 'shell', privileged: false do |sh|
     sh.inline = <<-SHELL
-      set -o xtrace
+      set -o errexit
       cd /vagrant
       for test_script in $(ls tests/*sh ); do
           test_case=${test_script%.sh}
           bash $test_script | tee ~/${test_case##*/}.log
       done
+      echo "Tests completed!!!"
     SHELL
   end
 

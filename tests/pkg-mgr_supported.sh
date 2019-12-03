@@ -12,9 +12,27 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-PKG_UDPATE=true PKG=openjdk ./install.sh
+if command -v docker; then
+    echo "docker package is already installed"
+    exit 1
+fi
 
-if ! command -v javac; then
-    echo "OpenJDK package wasn't installed"
+PKG=docker ./install.sh
+
+if ! command -v docker; then
+    echo "docker package wasn't installed"
+    exit 1
+fi
+
+if command -v go; then
+    echo "go-lang package is already installed"
+    exit 1
+fi
+
+PKG="docker golang" ./install.sh
+
+source /etc/profile.d/path.sh
+if ! command -v go; then
+    echo "go-lang package wasn't installed"
     exit 1
 fi
