@@ -14,6 +14,7 @@ set -o xtrace
 
 PKG_MGR_UNSUPPORTED="unsupported"
 PKG_MGR_SUPPORTED="supported"
+PKG_MGR_PIP_REQUIRED="pip_required"
 
 declare -A pkg_mgr_supported
 
@@ -24,9 +25,12 @@ pkg_mgr_supported[gpgme]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG
 pkg_mgr_supported[gpgme-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"gpgme-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
 pkg_mgr_supported[libassuan]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
 pkg_mgr_supported[libassuan-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
+pkg_mgr_supported[mkpasswd]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"mkpasswd\",\"RedHat\": \"expect\",\"ClearLinux\": \"sysadmin-basic\"}"
 
 pkg_mgr_supported[docker]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
 pkg_mgr_supported[golang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
+
+pkg_mgr_supported[docker-compose]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
 
 if ! sudo -n "true"; then
     echo ""
@@ -90,6 +94,12 @@ if [[ -n ${PKG+x} ]]; then
             distro_pkg=$(echo "$json_pkg" | grep -oP "(?<=\"$PKG_OS_FAMILY\": \")[^\"]*")
             if [[ "$distro_pkg" == "$PKG_MGR_SUPPORTED" ]]; then
                 curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr/master/${pkg}/main.sh" | bash
+            elif [[ "$distro_pkg" == "$PKG_MGR_PIP_REQUIRED" ]]; then
+                if ! command -v pip; then
+                    curl -sL https://bootstrap.pypa.io/get-pip.py | sudo -E python
+                fi
+                PIP_CMD="sudo -E $(command -v pip) install"
+                $PIP_CMD "$pkg"
             elif [[ "$distro_pkg" != "$PKG_MGR_UNSUPPORTED" ]]; then
                 sanity_pkgs+=" $distro_pkg"
             fi
@@ -97,5 +107,7 @@ if [[ -n ${PKG+x} ]]; then
             sanity_pkgs+=" $pkg"
         fi
     done
-    eval "$INSTALLER_CMD $sanity_pkgs"
+    if [[ -n "${sanity_pkgs}" ]]; then
+        eval "$INSTALLER_CMD $sanity_pkgs"
+    fi
 fi
