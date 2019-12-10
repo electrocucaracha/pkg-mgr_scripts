@@ -31,6 +31,7 @@ fi
 
 PKG="docker golang" ./install.sh
 
+# shellcheck disable=SC1091
 source /etc/profile.d/path.sh
 if ! command -v go; then
     echo "go-lang package wasn't installed"

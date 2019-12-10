@@ -36,12 +36,12 @@ fi
 docker_image="alpine"
 for image in "$mgmt_ip:5000/bash:test" "$docker_image"; do
     docker_id=$(sudo docker images "$image" -q)
-    if [[ "$docker_id" ]]; then
+    if [[ -n "$docker_id" ]]; then
         info "Removing previous docker image with id = $docker_id"
-        sudo docker rmi -f $docker_id
+        sudo docker rmi -f "$docker_id"
     fi
 done
-if [[ $(sudo docker ps -aqf "name=registry") ]]; then
+if [[ -n $(sudo docker ps -aqf "name=registry") ]]; then
     sudo docker rm -f registry
 fi
 

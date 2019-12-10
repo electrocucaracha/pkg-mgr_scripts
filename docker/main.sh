@@ -22,17 +22,28 @@ function main {
             clear-linux-os)
                 sudo -E swupd bundle-add containers-basic
             ;;
+            *suse*)
+                sudo -H -E zypper -q addrepo https://download.opensuse.org/repositories/Virtualization:containers/openSUSE_Tumbleweed/Virtualization:containers.repo
+                sudo zypper --gpg-auto-import-keys refresh
+                sudo -H -E zypper -q install -y --no-recommends docker
+            ;;
             *)
                 curl -fsSL https://get.docker.com/ | sh
-                sudo systemctl start docker
             ;;
         esac
     fi
+    if sudo systemctl list-unit-files | grep "docker.service.*masked"; then
+        sudo systemctl unmask docker
+    fi
+    sudo systemctl enable docker
+    sudo systemctl start docker
 
     sudo mkdir -p /etc/systemd/system/docker.service.d
     mkdir -p "$HOME/.docker/"
     sudo mkdir -p /root/.docker/
-    sudo usermod -aG docker "$USER"
+    if getent group docker; then
+        sudo usermod -aG docker "$USER"
+    fi
     if [ -n "${SOCKS_PROXY:-}" ]; then
         socks_tmp="${SOCKS_PROXY#*//}"
         if ! command -v wget; then
@@ -68,13 +79,16 @@ function main {
         sudo cp "$HOME/.docker/config.json" /root/.docker/config.json
     fi
     sudo mkdir -p /etc/docker
+    insecure_registries="\"0.0.0.0/0\", \"$(ip addr | awk "/$(ip route | grep "^default" | head -n1 | awk '{ print $5 }')\$/ { sub(/\/[0-9]*/, \"\","' $2); print $2}')\""
+    if [ -n "${PKG_DOCKER_INSECURE_REGISTRIES:-}" ]; then
+        insecure_registries+=", \"${PKG_DOCKER_INSECURE_REGISTRIES}\""
+    fi
     sudo tee /etc/docker/daemon.json << EOF
 {
-  "insecure-registries" : ["${PKG_DOCKER_INSECURE_REGISTRIES:-"0.0.0.0/0"}"]
+  "insecure-registries" : [$insecure_registries]
 }
 EOF
     sudo systemctl daemon-reload
-    sudo systemctl unmask docker.service
     sudo systemctl restart docker
 
     printf "Waiting for docker service..."

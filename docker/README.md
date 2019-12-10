@@ -15,6 +15,7 @@ virtual machines.
 | Ubuntu     | 16.04/18.04 |
 | CentOS     | 7           |
 | ClearLinux | 31130       |
+| openSUSE   | Tumbleweed  |
 
 ## License
 
