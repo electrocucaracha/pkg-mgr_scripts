@@ -31,6 +31,7 @@ pkg_mgr_supported[docker]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_
 pkg_mgr_supported[golang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
 
 pkg_mgr_supported[docker-compose]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
+pkg_mgr_supported[ansible]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
 
 if ! sudo -n "true"; then
     echo ""
