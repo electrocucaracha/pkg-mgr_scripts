@@ -7,16 +7,3 @@ own software, libraries and configuration files; they can communicate
 with each other through well-defined channels. All containers are run
 by a single operating-system kernel and are thus more lightweight than
 virtual machines.
-
-## Supported distributions
-
-| Name       | Version     |
-|:-----------|:-----------:|
-| Ubuntu     | 16.04/18.04 |
-| CentOS     | 7           |
-| ClearLinux | 31130       |
-| openSUSE   | Tumbleweed  |
-
-## License
-
-Apache-2.0

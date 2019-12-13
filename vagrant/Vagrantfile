@@ -16,58 +16,41 @@ end
 $no_proxy += ",10.0.2.15"
 $socks_proxy = ENV['socks_proxy'] || ENV['SOCKS_PROXY'] || ""
 
-File.exists?("/usr/share/qemu/OVMF.fd") ? loader = "/usr/share/qemu/OVMF.fd" : loader = File.join(File.dirname(__FILE__), "OVMF.fd")
+File.exists?("/usr/share/qemu/OVMF.fd") ? loader = "/usr/share/qemu/OVMF.fd" : loader = File.join(File.dirname(__FILE__), "/../OVMF.fd")
 if not File.exists?(loader)
-  system('curl -O https://download.clearlinux.org/image/OVMF.fd')
+  system('curl -o ../OVMF.fd https://download.clearlinux.org/image/OVMF.fd')
 end
+
+distros = YAML.load_file(File.dirname(__FILE__) + '/../distros_supported.yml')
 
 Vagrant.configure("2") do |config|
   config.vm.provider :libvirt
   config.vm.provider :virtualbox
 
-  config.vm.synced_folder './', '/vagrant', type: "rsync"
-  config.vm.define "ubuntu_xenial" do |ubuntu|
-    ubuntu.vm.box = 'elastic/ubuntu-16.04-x86_64'
-    ubuntu.vm.box_version = '20180210.0.0'
-  end
-  config.vm.define "ubuntu_bionic" do |ubuntu|
-    ubuntu.vm.box = 'peru/ubuntu-18.04-server-amd64'
-    ubuntu.vm.box_version = '20190905.01'
-  end
-  config.vm.define "centos7" do |centos|
-    centos.vm.box = 'centos/7'
-    centos.vm.box_version = '1905.01'
-  end
-  config.vm.define "centos8" do |centos|
-    centos.vm.box = 'generic/centos8'
-    centos.vm.box_version = '2.0.0'
-  end
-  config.vm.define "clearlinux" do |clearlinux|
-    clearlinux.vm.box = 'AntonioMeireles/ClearLinux'
-    clearlinux.vm.box_version = '31130'
-    clearlinux.vm.provider 'libvirt' do |v|
-      v.loader = loader
+  config.vm.synced_folder './', '/vagrant', type: "rsync",
+    rsync__args: ["--verbose", "--archive", "--delete", "-z"]
+  distros.each do |distro|
+    config.vm.define distro["name"] do |node|
+      node.vm.box = distro["box"]
+      node.vm.box_version = distro["version"]
+      node.vm.box_check_update = false
+      if distro["name"] == "clearlinux"
+        node.vm.provider 'libvirt' do |v|
+          v.loader = loader
+        end
+      end
     end
-  end
-  config.vm.define "opensuse" do |opensuse|
-    opensuse.vm.box = 'opensuse/Tumbleweed.x86_64'
-    opensuse.vm.box_version = '1.0.20191110'
   end
 
   $vagrant_root = File.dirname(__FILE__)
-  $vagrant_root.slice! "vagrant"
-  config.vm.provision 'shell', path: "#{$vagrant_root}/_requirements.sh"
+  config.vm.provision 'shell', path: "#{$vagrant_root}/../_requirements.sh"
   config.vm.provision 'shell', privileged: false do |sh|
     sh.inline = <<-SHELL
-      set -o xtrace
-      cd /vagrant/
-      ./main.sh | tee ~/vagrant_main.log
-    SHELL
-  end
-  config.vm.provision 'shell', privileged: false do |sh|
-    sh.inline = <<-SHELL
-      cd /vagrant/
+      set -o errexit
+      cd /vagrant
+      ./main.sh | tee ~/main.log
       ./validate.sh | tee ~/validate.log
+      echo "Tests completed!!!"
     SHELL
   end
 

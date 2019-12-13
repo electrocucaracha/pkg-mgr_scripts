@@ -21,39 +21,33 @@ if not File.exists?(loader)
   system('curl -O https://download.clearlinux.org/image/OVMF.fd')
 end
 
+distros = YAML.load_file(File.dirname(__FILE__) + '/distros_supported.yml')
+
 Vagrant.configure("2") do |config|
   config.vm.provider :libvirt
   config.vm.provider :virtualbox
 
-  config.vm.synced_folder './', '/vagrant'
-  config.vm.define "ubuntu_xenial" do |ubuntu|
-    ubuntu.vm.box = 'elastic/ubuntu-16.04-x86_64'
-    ubuntu.vm.box_version = '20180210.0.0'
-  end
-  config.vm.define "ubuntu_bionic" do |ubuntu|
-    ubuntu.vm.box = 'peru/ubuntu-18.04-server-amd64'
-    ubuntu.vm.box_version = '20190905.01'
-  end
-  config.vm.define "centos" do |centos|
-    centos.vm.box = 'centos/7'
-    centos.vm.box_version = '1905.01'
-  end
-  config.vm.define "clearlinux" do |clearlinux|
-    clearlinux.vm.box = 'AntonioMeireles/ClearLinux'
-    clearlinux.vm.box_version = '31130'
-    clearlinux.vm.provider 'libvirt' do |v|
-      v.loader = loader
+  config.vm.synced_folder './', '/vagrant', type: "rsync",
+    rsync__args: ["--verbose", "--archive", "--delete", "-z"]
+  distros.each do |distro|
+    config.vm.define distro["name"] do |node|
+      node.vm.box = distro["box"]
+      node.vm.box_version = distro["version"]
+      node.vm.box_check_update = false
+      if distro["name"] == "clearlinux"
+        node.vm.provider 'libvirt' do |v|
+          v.loader = loader
+        end
+      end
     end
   end
-  config.vm.define "opensuse" do |opensuse|
-    opensuse.vm.box = 'opensuse/openSUSE-Tumbleweed-Vagrant.x86_64'
-    opensuse.vm.box_version = '1.0.20191005'
-  end
- 
-  config.vm.provision 'shell', path: "./_requirements.sh"
+
+  $vagrant_root = File.dirname(__FILE__)
+  config.vm.provision 'shell', path: "#{$vagrant_root}/_requirements.sh"
   config.vm.provision 'shell', privileged: false do |sh|
     sh.inline = <<-SHELL
       set -o errexit
+      set -o xtrace
       cd /vagrant
       for test_script in $(ls tests/*sh ); do
           test_case=${test_script%.sh}

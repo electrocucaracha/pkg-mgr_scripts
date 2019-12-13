@@ -10,9 +10,9 @@ Distributions.
 | Name       | Version     |
 |:-----------|:-----------:|
 | Ubuntu     | 16.04/18.04 |
-| CentOS     | 7           |
+| CentOS     | 7/8         |
 | OpenSUSE   | Tumbleweed  |
-| ClearLinux | 31130       |
+| ClearLinux | 31830       |
 
 ## How to use this script?
 
@@ -21,13 +21,7 @@ the differences between different Linux distributions. For example, in
 order to install and configure Docker service the following
 instruction is needed:
 
-    curl -fsSL http://bit.ly/pkgInstall | PKG=docker bash
-
-## Supported packages
-
-The following packages has been supported by this project:
-
-* [Docker](docker/)
+    curl -fsSL http://bit.ly/pkgInstall | PKG="docker docker-compose" bash
 
 ## License
 

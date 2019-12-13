@@ -8,26 +8,14 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-set -o nounset
 set -o errexit
 set -o pipefail
 
-function info {
-    _print_msg "INFO" "$1"
-}
-
-function error {
-    _print_msg "ERROR" "$1"
-    exit 1
-}
-
-function _print_msg {
-    echo "$1: $2"
-}
-
-# shellcheck disable=SC1091
-source /etc/profile.d/path.sh
-info "Validating go installation..."
-if ! command -v go; then
-    error "Go command line wasn't installed"
-fi
+while IFS= read -r -d '' vagrantfile; do
+    pushd "$(dirname "$vagrantfile")" > /dev/null
+    for vm in $(vagrant status | grep running | awk '{ print $1 }'); do
+        echo "$vm - Validation log"
+        vagrant ssh "$vm" -- cat validate.log | grep "ERROR\|INFO"
+    done
+    popd > /dev/null
+done <   <(find . -mindepth 2 -type f -name Vagrantfile -print0)

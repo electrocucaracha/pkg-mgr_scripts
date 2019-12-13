@@ -1,4 +1,4 @@
-#!/bin/bash
+---
 # SPDX-license-identifier: Apache-2.0
 ##############################################################################
 # Copyright (c) 2019
@@ -8,26 +8,21 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-set -o nounset
-set -o errexit
-set -o pipefail
-
-function info {
-    _print_msg "INFO" "$1"
-}
-
-function error {
-    _print_msg "ERROR" "$1"
-    exit 1
-}
-
-function _print_msg {
-    echo "$1: $2"
-}
-
-# shellcheck disable=SC1091
-source /etc/profile.d/path.sh
-info "Validating go installation..."
-if ! command -v go; then
-    error "Go command line wasn't installed"
-fi
+- name: "clearlinux"
+  box: "AntonioMeireles/ClearLinux"
+  version: "31830"
+- name: "centos_7"
+  box: "centos/7"
+  version: "1905.01"
+- name: "ubuntu_xenial"
+  box: "elastic/ubuntu-16.04-x86_64"
+  version: "20180210.0.0"
+- name: "ubuntu_bionic"
+  box: "peru/ubuntu-18.04-server-amd64"
+  version: "20191202.01"
+- name: "centos_8"
+  box: "generic/centos8"
+  version: "2.0.0"
+- name: "opensuse"
+  box: "opensuse/Tumbleweed.x86_64"
+  version: "1.0.20191210"
