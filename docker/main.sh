@@ -28,6 +28,12 @@ function main {
                 sudo -H -E zypper -q install -y --no-recommends docker
             ;;
             *)
+                case ${ID,,} in
+                    rhel|centos|fedora)
+                        PKG_MANAGER=$(command -v dnf || command -v yum)
+                        sudo -H -E "${PKG_MANAGER}" -q -y install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+                    ;;
+                esac
                 curl -fsSL https://get.docker.com/ | sh
             ;;
         esac
