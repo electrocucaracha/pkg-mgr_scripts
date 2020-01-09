@@ -57,6 +57,9 @@ function _update_repos {
         ;;
         RedHat)
         PKG_MANAGER=$(command -v dnf || command -v yum)
+        if ! sudo "$PKG_MANAGER" repolist | grep "epel/"; then
+            sudo -H -E "$PKG_MANAGER" -q -y install epel-release
+        fi
         sudo "$PKG_MANAGER" updateinfo
         ;;
         ClearLinux)
