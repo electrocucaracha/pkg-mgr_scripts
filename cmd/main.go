@@ -31,7 +31,7 @@ func main() {
 	// defer datastore.Db.Close()
 
 	// Init DB
-	filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+	filepath.Walk("./scripts/", func(path string, info os.FileInfo, err error) error {
 		if strings.Contains(path, "main.sh") {
 			file, err := os.Open(path)
 			if err != nil {
@@ -44,7 +44,7 @@ func main() {
 			builder.Grow(len(b))
 			builder.Write(b)
 
-			datastore.CreateScript(filepath.Dir(path), builder.String())
+			datastore.CreateScript(filepath.Base(filepath.Dir(path)), builder.String())
 		}
 
 		return nil

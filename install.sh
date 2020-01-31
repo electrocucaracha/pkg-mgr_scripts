@@ -102,10 +102,10 @@ if [[ -n ${PKG+x} ]]; then
         if [[ -n "${json_pkg}" ]]; then
             distro_pkg=$(echo "$json_pkg" | grep -oP "(?<=\"$PKG_OS_FAMILY\": \")[^\"]*")
             if [[ "$distro_pkg" == "$PKG_MGR_SUPPORTED" ]]; then
-                curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr/master/${pkg}/main.sh" | bash
+                curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr/master/scripts/${pkg}/main.sh" | bash
             elif [[ "$distro_pkg" == "$PKG_MGR_PIP_REQUIRED" ]]; then
                 if ! command -v pip; then
-                    curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr/master/pip/main.sh" | bash
+                    curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr/master/scripts/pip/main.sh" | bash
                 fi
                 PIP_CMD="sudo -E $(command -v pip) install"
                 $PIP_CMD "$pkg"
