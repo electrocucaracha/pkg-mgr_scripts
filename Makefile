@@ -8,7 +8,6 @@
 ##############################################################################
 
 PWD := $(shell pwd)
-PLATFORM := linux
 BINARY := pkg_mgr
 
 export GO111MODULE=on
@@ -37,5 +36,10 @@ clean:
 	@rm -f $(BINARY)
 
 build: clean
-	CGO_ENABLED=0 GOOS=$(PLATFORM) GOARCH=amd64
-	@go build -v -o $(PWD)/$(BINARY) cmd/main.go
+	@go build -o $(PWD)/$(BINARY) cmd/main.go
+
+docker: clean
+	@docker build --pull -t electrocucaracha/pkg_mgr:local .
+
+docker_run:
+	@docker run -d -p 3000:3000 electrocucaracha/pkg_mgr
