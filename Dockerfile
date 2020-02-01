@@ -13,10 +13,17 @@ RUN go build -v -tags netgo -installsuffix netgo -o /bin/pkg_mgr cmd/main.go
 FROM debian:buster
 MAINTAINER Victor Morales <electrocucaracha@gmail.com>
 
+ENV PKG_DEBUG "false"
+ENV PKG_SQL_ENGINE "sqlite"
+ENV PKG_DB_USERNAME ""
+ENV PKG_DB_PASSWORD ""
+ENV PKG_DB_HOSTNAME ""
+ENV PKG_DB_DATABASE "pkg_db"
+
 LABEL io.k8s.display-name="cURL Package Manager"
 EXPOSE 3000
 
 COPY --from=builder /bin/pkg_mgr /pkg_mgr
 COPY scripts /scripts
 
-CMD ["/pkg_mgr", "--port", "3000", "--sql-engine", "sqlite3"]
+CMD ["/pkg_mgr"]

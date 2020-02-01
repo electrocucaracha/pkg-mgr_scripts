@@ -8,15 +8,15 @@ import (
 
 // NewGetBash handles a request for getting an bash script
 func NewGetBash(db models.Datastore) operations.GetScriptHandler {
-	return &getEntry{db: db}
+	return &bashStoreWrapper{db: db}
 }
 
-type getEntry struct {
+type bashStoreWrapper struct {
 	db models.Datastore
 }
 
 // Handle the get entry request
-func (e *getEntry) Handle(params operations.GetScriptParams) middleware.Responder {
+func (e *bashStoreWrapper) Handle(params operations.GetScriptParams) middleware.Responder {
 	bash, err := e.db.GetScript(params.Pkg)
 	if err != nil || bash == nil {
 		return operations.NewGetScriptNotFound()

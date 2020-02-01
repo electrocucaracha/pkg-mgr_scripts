@@ -1,0 +1,44 @@
+---
+# SPDX-license-identifier: Apache-2.0
+##############################################################################
+# Copyright (c) 2020
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Apache License, Version 2.0
+# which accompanies this distribution, and is available at
+# http://www.apache.org/licenses/LICENSE-2.0
+##############################################################################
+
+version: '3.7'
+
+services:
+  pkg:
+    restart: on-failure
+    image: electrocucaracha/pkg_mgr
+    build:
+      context: ../
+    environment:
+      PKG_DB_HOSTNAME: mariadb
+      PKG_SQL_ENGINE: mysql
+      PKG_DB_USERNAME: "${DB_USERNAME}"
+      PKG_DB_PASSWORD: "${DB_PASSWORD}"
+      PKG_DB_DATABASE: "${DB_NAME}"
+    depends_on:
+      - mariadb
+    ports:
+      - 3000:3000
+  mariadb:
+    image: mariadb:10.1.38
+    restart: always
+    healthcheck:
+      test: ["CMD", "/usr/bin/mysql", "-psecure", "-e'SHOW DATABASES;'"]
+      interval: 5s
+      timeout: 1s
+      start_period: 10s
+      retries: 10
+    environment:
+      MYSQL_ROOT_PASSWORD: "secure"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: "${DB_NAME}"
+    volumes:
+      - ./logs/:/var/log/mysql/

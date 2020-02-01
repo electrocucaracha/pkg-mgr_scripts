@@ -1,6 +1,8 @@
 package models
 
 import (
+	"log"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -8,11 +10,12 @@ import (
 type Bash struct {
 	gorm.Model
 	Pkg            string `gorm:"unique;not null"`
-	InstructionSet string `gorm:"type:varchar(200)"`
+	InstructionSet string `gorm:"type:varchar(65000)"`
 }
 
 // GetScript retrieves the first bash script stored in the database
-func (db *DB) GetScript(pkg string) (*Bash, error) {
+func (db *gormDatastore) GetScript(pkg string) (*Bash, error) {
+	log.Printf("Retriving script for %s package...", pkg)
 	var bash Bash
 	db.First(&bash, "pkg = ?", pkg)
 
@@ -20,7 +23,8 @@ func (db *DB) GetScript(pkg string) (*Bash, error) {
 }
 
 // CreateScript stores a bash script into database
-func (db *DB) CreateScript(pkg, instructionSet string) error {
+func (db *gormDatastore) CreateScript(pkg, instructionSet string) error {
+	log.Printf("Registering script for %s package...", pkg)
 	db.Create(&Bash{
 		Pkg:            pkg,
 		InstructionSet: instructionSet,

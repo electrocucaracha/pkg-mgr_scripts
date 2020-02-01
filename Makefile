@@ -20,7 +20,7 @@ swagger:
 	@swagger generate server -t gen -f ./api/openapi-spec/swagger.yaml --exclude-main -A pkg-mgr
 
 run: clean test cover
-	@go run ./cmd/main.go --port 3000 --sql-engine sqlite3
+	PKG_SQL_ENGINE=sqlite go run ./cmd/main.go
 
 test:
 	@go test -v ./...
@@ -31,7 +31,7 @@ cover:
 	@go tool cover -html=coverage.out -o coverage.html
 
 clean:
-	@rm -f test.db
+	@rm -f *.db
 	@rm -f coverage.*
 	@rm -f $(BINARY)
 
@@ -39,7 +39,10 @@ build: clean
 	@go build -o $(PWD)/$(BINARY) cmd/main.go
 
 docker: clean
-	@docker build --pull -t electrocucaracha/pkg_mgr:local .
+	@docker-compose --file deployments/docker-compose.yml build --compress --force-rm
+	@docker image prune --force
 
-docker_run:
-	@docker run -d -p 3000:3000 electrocucaracha/pkg_mgr
+deploy: undeploy
+	@docker-compose --file deployments/docker-compose.yml --env-file deployments/.env up --force-recreate --detach
+undeploy:
+	@docker-compose --file deployments/docker-compose.yml down --remove-orphans

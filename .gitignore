@@ -2,4 +2,4 @@
 .vagrant/
 OVMF.fd
 .vscode/
-test.db
+*.db
