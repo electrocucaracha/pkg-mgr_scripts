@@ -20,7 +20,7 @@ swagger:
 	@swagger generate server -t gen -f ./api/openapi-spec/swagger.yaml --exclude-main -A pkg-mgr
 
 run: clean test cover
-	PKG_SQL_ENGINE=sqlite go run ./cmd/main.go
+	PKG_SQL_ENGINE=sqlite PKG_SCRIPTS_PATH=$(PWD)/scripts go run ./cmd/main.go
 
 test:
 	@go test -v ./...
@@ -34,9 +34,6 @@ clean:
 	@rm -f *.db
 	@rm -f coverage.*
 	@rm -f $(BINARY)
-
-build: clean
-	@go build -o $(PWD)/$(BINARY) cmd/main.go
 
 docker: clean
 	@docker-compose --file deployments/docker-compose.yml build --compress --force-rm

@@ -3,3 +3,4 @@
 OVMF.fd
 .vscode/
 *.db
+coverage.*

@@ -22,6 +22,9 @@ services:
       PKG_DB_USERNAME: "${DB_USERNAME}"
       PKG_DB_PASSWORD: "${DB_PASSWORD}"
       PKG_DB_DATABASE: "${DB_NAME}"
+      PKG_SCRIPTS_PATH: /pkg/scripts
+    volumes:
+      - ../scripts:/pkg/scripts
     depends_on:
       - mariadb
     ports:

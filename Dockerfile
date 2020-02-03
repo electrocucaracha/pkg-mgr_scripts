@@ -19,11 +19,11 @@ ENV PKG_DB_USERNAME ""
 ENV PKG_DB_PASSWORD ""
 ENV PKG_DB_HOSTNAME ""
 ENV PKG_DB_DATABASE "pkg_db"
+ENV PKG_SCRIPTS_PATH "./scripts"
 
 LABEL io.k8s.display-name="cURL Package Manager"
 EXPOSE 3000
 
 COPY --from=builder /bin/pkg_mgr /pkg_mgr
-COPY scripts /scripts
 
 CMD ["/pkg_mgr"]

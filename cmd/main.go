@@ -17,13 +17,14 @@ import (
 )
 
 type Config struct {
-	Debug      bool   `env:"PKG_DEBUG" envDefault:false`
-	Port       int    `env:"PKG_PORT" envDefault:"3000"`
-	SqlEngine  string `env:"PKG_SQL_ENGINE"`
-	DbUsername string `env:"PKG_DB_USERNAME"`
-	DbPassword string `env:"PKG_DB_PASSWORD"`
-	DbHostname string `env:"PKG_DB_HOSTNAME"`
-	Database   string `env:"PKG_DB_DATABASE" envDefault:"pkg_db"`
+	Debug       bool   `env:"PKG_DEBUG" envDefault:false`
+	Port        int    `env:"PKG_PORT" envDefault:"3000"`
+	ScriptsPath string `env:"PKG_SCRIPTS_PATH"`
+	SqlEngine   string `env:"PKG_SQL_ENGINE"`
+	DbUsername  string `env:"PKG_DB_USERNAME"`
+	DbPassword  string `env:"PKG_DB_PASSWORD"`
+	DbHostname  string `env:"PKG_DB_HOSTNAME"`
+	Database    string `env:"PKG_DB_DATABASE" envDefault:"pkg_db"`
 }
 
 func initDatastore(cfg *Config) (err error) {
@@ -48,12 +49,10 @@ func init() {
 	if err := initDatastore(&cfg); err != nil {
 		log.Fatalln(err)
 	}
-}
 
-func main() {
 	// Init DB
 	log.Println("Database Init...")
-	filepath.Walk("./scripts/", func(path string, info os.FileInfo, err error) error {
+	filepath.Walk(cfg.ScriptsPath, func(path string, info os.FileInfo, err error) error {
 		if strings.Contains(path, "main.sh") {
 			file, err := os.Open(path)
 			if err != nil {
@@ -71,6 +70,9 @@ func main() {
 
 		return nil
 	})
+}
+
+func main() {
 
 	// load embedded swagger file
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
