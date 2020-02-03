@@ -51,7 +51,7 @@ function _vercmp {
 }
 
 function main {
-    local version=${PKG_VAGRANT_VERSION:-2.2.6}
+    local version=${PKG_VAGRANT_VERSION:-2.2.7}
 
     if command -v vagrant; then
         if _vercmp "$(vagrant version | awk 'NR==1{print $3}')" '>=' "$version"; then
