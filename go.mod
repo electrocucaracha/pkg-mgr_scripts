@@ -16,6 +16,7 @@ require (
 	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/jinzhu/gorm v1.9.12
+	github.com/sirupsen/logrus v1.4.2
 	go.mongodb.org/mongo-driver v1.2.1 // indirect
 	golang.org/x/net v0.0.0-20200114155413-6afb5195e5aa
 	google.golang.org/appengine v1.6.2 // indirect

@@ -2,13 +2,13 @@ package main
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/caarlos0/env"
 	loads "github.com/go-openapi/loads"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/electrocucaracha/pkg-mgr/api/handlers"
 	"github.com/electrocucaracha/pkg-mgr/gen/restapi"
@@ -45,9 +45,16 @@ var datastore models.Datastore
 
 func init() {
 	env.Parse(&cfg)
+	log.SetOutput(os.Stdout)
 
 	if err := initDatastore(&cfg); err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
+	}
+
+	if cfg.Debug {
+		log.SetLevel(log.DebugLevel)
+	} else {
+		log.SetLevel(log.WarnLevel)
 	}
 
 	// Init DB
@@ -77,7 +84,7 @@ func main() {
 	// load embedded swagger file
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
 	// create new service API
@@ -88,6 +95,6 @@ func main() {
 
 	server.Port = cfg.Port
 	if err := server.Serve(); err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 }

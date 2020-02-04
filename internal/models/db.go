@@ -2,8 +2,7 @@ package models
 
 import (
 	"fmt"
-	"log"
-	"os"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"  // MySQL/MariaDB dialect for gorm
@@ -22,12 +21,14 @@ type gormDatastore struct {
 
 // NewSqliteDatastore creates a database connection for a SQLite engine
 func NewSqliteDatastore(file string, debug bool) (Datastore, error) {
+	logger := log.WithFields(log.Fields{"file": file, "debug": debug})
 	db, err := gorm.Open("sqlite3", file)
 	if err != nil {
+		logger.Fatal("Failed to open a SQLite DB file")
 		return nil, err
 	}
 
-	db.SetLogger(log.New(os.Stdout, "\r\n", 0))
+	logger.Info("Configuring SQLite DB")
 	db.LogMode(debug)
 	db.AutoMigrate(&Bash{})
 

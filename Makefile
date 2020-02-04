@@ -20,7 +20,7 @@ swagger:
 	@swagger generate server -t gen -f ./api/openapi-spec/swagger.yaml --exclude-main -A pkg-mgr
 
 run: clean test cover
-	PKG_SQL_ENGINE=sqlite PKG_SCRIPTS_PATH=$(PWD)/scripts go run ./cmd/main.go
+	PKG_DEBUG=true PKG_SQL_ENGINE=sqlite PKG_SCRIPTS_PATH=$(PWD)/scripts go run ./cmd/main.go
 
 test:
 	@go test -v ./...
