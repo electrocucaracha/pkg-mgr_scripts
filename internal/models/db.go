@@ -12,7 +12,7 @@ import (
 // Datastore provides the methods supported by different databases
 type Datastore interface {
 	GetScript(pkg string) (*Bash, error)
-	CreateScript(pkg, instructionSet string) error
+	CreateScript(pkg, instructionSet string) (*Bash, []error)
 }
 
 type gormDatastore struct {
@@ -31,6 +31,7 @@ func NewSqliteDatastore(file string, debug bool) (Datastore, error) {
 	logger.Info("Configuring SQLite DB")
 	db.LogMode(debug)
 	db.AutoMigrate(&Bash{})
+	db.AutoMigrate(&Function{})
 
 	return &gormDatastore{db}, nil
 }
@@ -45,6 +46,7 @@ func NewMySqlDatastore(username, password, hostname, database string) (Datastore
 	}
 
 	db.AutoMigrate(&Bash{})
+	db.AutoMigrate(&Function{})
 
 	return &gormDatastore{db}, nil
 }

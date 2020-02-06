@@ -19,6 +19,7 @@ swagger:
 	@rm -rf gen/*
 	@swagger generate server -t gen -f ./api/openapi-spec/swagger.yaml --exclude-main -A pkg-mgr
 
+.PHONY: run
 run: clean test cover
 	PKG_DEBUG=true PKG_SQL_ENGINE=sqlite PKG_SCRIPTS_PATH=$(PWD)/scripts go run ./cmd/main.go
 
@@ -41,5 +42,7 @@ docker: clean
 
 deploy: undeploy
 	@docker-compose --file deployments/docker-compose.yml --env-file deployments/.env up --force-recreate --detach
+logs:
+	@docker-compose --file deployments/docker-compose.yml logs -f
 undeploy:
 	@docker-compose --file deployments/docker-compose.yml down --remove-orphans

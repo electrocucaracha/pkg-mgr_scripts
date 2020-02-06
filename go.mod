@@ -3,6 +3,7 @@ module github.com/electrocucaracha/pkg-mgr
 go 1.13
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.4.1
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/go-openapi/analysis v0.19.7 // indirect

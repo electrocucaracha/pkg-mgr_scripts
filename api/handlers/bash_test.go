@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -33,8 +34,8 @@ func (db *mockDB) GetScript(pkg string) (*models.Bash, error) {
 	return nil, nil
 }
 
-func (db *mockDB) CreateScript(pkg, instructionSet string) error {
-	return nil
+func (db *mockDB) CreateScript(pkg, instructionSet string) (*models.Bash, []error) {
+	return nil, nil
 }
 
 func TestGetScriptHandler(t *testing.T) {
@@ -57,8 +58,7 @@ func TestGetScriptHandler(t *testing.T) {
 			},
 			mockDatastore: &mockDB{
 				Item: &models.Bash{
-					Pkg:            "mock_pkg2",
-					InstructionSet: "echo test",
+					Pkg: "mock_pkg2",
 				},
 			},
 			expectedCode: http.StatusNotFound,
@@ -70,12 +70,15 @@ func TestGetScriptHandler(t *testing.T) {
 			},
 			mockDatastore: &mockDB{
 				Item: &models.Bash{
-					Pkg:            "mock_pkg",
-					InstructionSet: "echo test",
+					Pkg: "mock_pkg",
+					Functions: []models.Function{models.Function{
+						Name:    "main",
+						Content: "echo test",
+					}},
 				},
 			},
 			expectedCode:     http.StatusOK,
-			expectedResponse: []byte("echo test"),
+			expectedResponse: []byte(fmt.Sprintf("%s\n\n%s\n\nfunction main { \necho test\n}\n\nmain", header, setters)),
 		},
 	}
 
@@ -120,7 +123,7 @@ func TestGetScriptHandler(t *testing.T) {
 			body, _ := ioutil.ReadAll(recorder.Body)
 			t.Log(string(body))
 			if testCase.expectedResponse != nil && !reflect.DeepEqual(testCase.expectedResponse, body) {
-				t.Fatalf("Request method returned body: \n%v\n and it was expected: \n%v", body, testCase.expectedResponse)
+				t.Fatalf("Request method returned body: \n%s\n and it was expected: \n%s", body, testCase.expectedResponse)
 			}
 
 		})

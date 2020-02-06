@@ -72,7 +72,10 @@ func init() {
 			builder.Grow(len(b))
 			builder.Write(b)
 
-			datastore.CreateScript(filepath.Base(filepath.Dir(path)), builder.String())
+			_, errs := datastore.CreateScript(filepath.Base(filepath.Dir(path)), builder.String())
+			if len(errs) > 0 {
+				log.Fatalln(errs)
+			}
 		}
 
 		return nil
