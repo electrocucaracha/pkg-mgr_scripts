@@ -21,6 +21,7 @@ const header = `#!/bin/bash
 const setters = `set -o nounset
 set -o errexit
 set -o pipefail`
+const MainBashPackage = "install"
 
 // NewGetBash handles a request for getting an bash script
 func NewGetBash(db models.Datastore) operations.GetScriptHandler {
@@ -43,7 +44,22 @@ func (e *bashStoreWrapper) Handle(params operations.GetScriptParams) middleware.
 
 	output := []string{header, setters}
 	for _, function := range bash.Functions {
-		output = append(output, fmt.Sprintf("function %s { \n%s\n}", function.Name, function.Content))
+		output = append(output, fmt.Sprintf("function %s {\n%s\n}", function.Name, function.Content))
+	}
+	if params.PkgUpdate != nil && *params.PkgUpdate {
+		if params.Pkg != MainBashPackage {
+			bash, err := e.db.GetScript(MainBashPackage)
+			if err != nil {
+				return operations.NewGetScriptDefault(500)
+			}
+			for _, function := range bash.Functions {
+				if function.Name != "main" {
+					output = append(output, fmt.Sprintf("function %s {\n%s\n}", function.Name, function.Content))
+				}
+			}
+		}
+
+		output = append(output, "update_repos")
 	}
 	if len(bash.Functions) > 0 {
 		output = append(output, "main")

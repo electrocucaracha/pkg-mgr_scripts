@@ -20,6 +20,7 @@ type Config struct {
 	Debug       bool   `env:"PKG_DEBUG" envDefault:false`
 	Port        int    `env:"PKG_PORT" envDefault:"3000"`
 	ScriptsPath string `env:"PKG_SCRIPTS_PATH"`
+	MainFile    string `env:"PKG_MAIN_FILE"`
 	SqlEngine   string `env:"PKG_SQL_ENGINE"`
 	DbUsername  string `env:"PKG_DB_USERNAME"`
 	DbPassword  string `env:"PKG_DB_PASSWORD"`
@@ -38,6 +39,25 @@ func initDatastore(cfg *Config) (err error) {
 	}
 
 	return
+}
+
+func readBashFile(path string) (string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	b, err := ioutil.ReadAll(file)
+	if err != nil {
+		return "", err
+	}
+
+	var builder strings.Builder
+	builder.Grow(len(b))
+	builder.Write(b)
+
+	return builder.String(), nil
 }
 
 var cfg Config
@@ -59,31 +79,37 @@ func init() {
 
 	// Init DB
 	log.Println("Database Init...")
-	filepath.Walk(cfg.ScriptsPath, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(cfg.ScriptsPath, func(path string, info os.FileInfo, err error) error {
 		if strings.Contains(path, "main.sh") {
-			file, err := os.Open(path)
+			instructionSet, err := readBashFile(path)
 			if err != nil {
-				log.Fatalln(err)
+				return err
 			}
-			defer file.Close()
 
-			b, err := ioutil.ReadAll(file)
-			var builder strings.Builder
-			builder.Grow(len(b))
-			builder.Write(b)
-
-			_, errs := datastore.CreateScript(filepath.Base(filepath.Dir(path)), builder.String())
+			_, errs := datastore.CreateScript(filepath.Base(filepath.Dir(path)), instructionSet)
 			if len(errs) > 0 {
-				log.Fatalln(errs)
+				return errs[0]
 			}
 		}
 
 		return nil
 	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	instructionSet, err := readBashFile(cfg.MainFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, errs := datastore.CreateScript(handlers.MainBashPackage, instructionSet)
+	if len(errs) > 0 {
+		log.Fatal(errs[0])
+	}
 }
 
 func main() {
-
 	// load embedded swagger file
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {

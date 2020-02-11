@@ -16,6 +16,12 @@ parameters:
     type: string
     required: true
     minLength: 1
+  pkg_update:
+    name: pkg_update
+    description: Specifies whether the update action has been requested
+    in: query
+    type: boolean
+    required: false
 
 responses:
   errorNotFound:
@@ -30,6 +36,7 @@ paths:
         - text/plain
       parameters:
         - $ref: "#/parameters/pkg"
+        - $ref: "#/parameters/pkg_update"
       operationId: getScript
       responses:
         200:

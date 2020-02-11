@@ -10,6 +10,7 @@ This application provides bash scripts for the installation of packages on diffe
     Host: localhost
     BasePath: /
     Version: 1.0.0
+    License: Apache 2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 
     Consumes:
     - application/json

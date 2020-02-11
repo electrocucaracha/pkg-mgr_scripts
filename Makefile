@@ -21,7 +21,7 @@ swagger:
 
 .PHONY: run
 run: clean test cover
-	PKG_DEBUG=true PKG_SQL_ENGINE=sqlite PKG_SCRIPTS_PATH=$(PWD)/scripts go run ./cmd/main.go
+	PKG_DEBUG=true PKG_SQL_ENGINE=sqlite PKG_SCRIPTS_PATH=$(PWD)/scripts PKG_MAIN_FILE=$(PWD)/install.sh go run ./cmd/main.go
 
 test:
 	@go test -v ./...

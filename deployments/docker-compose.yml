@@ -23,8 +23,9 @@ services:
       PKG_DB_PASSWORD: "${DB_PASSWORD}"
       PKG_DB_DATABASE: "${DB_NAME}"
       PKG_SCRIPTS_PATH: /pkg/scripts
+      PKG_MAIN_FILE: /pkg/install.sh
     volumes:
-      - ../scripts:/pkg/scripts
+      - ../:/pkg:ro
     depends_on:
       - mariadb
     ports:

@@ -22,6 +22,10 @@ func init() {
   "info": {
     "description": "This application provides bash scripts for the installation of packages on different Linux distributions",
     "title": "cURL Package Manager Server",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
     "version": "1.0.0"
   },
   "paths": {
@@ -34,6 +38,9 @@ func init() {
         "parameters": [
           {
             "$ref": "#/parameters/pkg"
+          },
+          {
+            "$ref": "#/parameters/pkg_update"
           }
         ],
         "responses": {
@@ -62,6 +69,12 @@ func init() {
       "name": "pkg",
       "in": "query",
       "required": true
+    },
+    "pkg_update": {
+      "type": "boolean",
+      "description": "Specifies whether the update action has been requested",
+      "name": "pkg_update",
+      "in": "query"
     }
   },
   "responses": {
@@ -78,6 +91,10 @@ func init() {
   "info": {
     "description": "This application provides bash scripts for the installation of packages on different Linux distributions",
     "title": "cURL Package Manager Server",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
     "version": "1.0.0"
   },
   "paths": {
@@ -95,6 +112,12 @@ func init() {
             "name": "pkg",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "boolean",
+            "description": "Specifies whether the update action has been requested",
+            "name": "pkg_update",
+            "in": "query"
           }
         ],
         "responses": {
@@ -123,6 +146,12 @@ func init() {
       "name": "pkg",
       "in": "query",
       "required": true
+    },
+    "pkg_update": {
+      "type": "boolean",
+      "description": "Specifies whether the update action has been requested",
+      "name": "pkg_update",
+      "in": "query"
     }
   },
   "responses": {

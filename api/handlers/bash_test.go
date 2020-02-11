@@ -19,16 +19,16 @@ var testserver *httptest.Server
 
 type mockDB struct {
 	*gorm.DB
-	Item *models.Bash
-	Err  error
+	Items map[string]models.Bash
+	Err   error
 }
 
 func (db *mockDB) GetScript(pkg string) (*models.Bash, error) {
 	if db.Err != nil {
 		return nil, db.Err
 	}
-	if db.Item.Pkg == pkg {
-		return db.Item, nil
+	if i, ok := db.Items[pkg]; ok {
+		return &i, nil
 	}
 
 	return nil, nil
@@ -57,8 +57,8 @@ func TestGetScriptHandler(t *testing.T) {
 				"pkg": "mock_pkg",
 			},
 			mockDatastore: &mockDB{
-				Item: &models.Bash{
-					Pkg: "mock_pkg2",
+				Items: map[string]models.Bash{
+					"mock_pkg2": models.Bash{Pkg: "mock_pkg2"},
 				},
 			},
 			expectedCode: http.StatusNotFound,
@@ -69,16 +69,64 @@ func TestGetScriptHandler(t *testing.T) {
 				"pkg": "mock_pkg",
 			},
 			mockDatastore: &mockDB{
-				Item: &models.Bash{
-					Pkg: "mock_pkg",
-					Functions: []models.Function{models.Function{
-						Name:    "main",
-						Content: "echo test",
-					}},
+				Items: map[string]models.Bash{
+					"mock_pkg": models.Bash{Pkg: "mock_pkg",
+						Functions: []models.Function{models.Function{
+							Name:    "main",
+							Content: "    echo test",
+						}},
+					},
 				},
 			},
-			expectedCode:     http.StatusOK,
-			expectedResponse: []byte(fmt.Sprintf("%s\n\n%s\n\nfunction main { \necho test\n}\n\nmain", header, setters)),
+			expectedCode: http.StatusOK,
+			expectedResponse: []byte(fmt.Sprintf(`%s
+
+%s
+
+function main {
+    echo test
+}
+
+main`, header, setters)),
+		},
+		{
+			label: "Get an existing bash script sucessfully with update_repo",
+			queryParams: map[string]string{
+				"pkg":        "mock_pkg",
+				"pkg_update": "true",
+			},
+			mockDatastore: &mockDB{
+				Items: map[string]models.Bash{
+					"mock_pkg": models.Bash{Pkg: "mock_pkg",
+						Functions: []models.Function{models.Function{
+							Name:    "main",
+							Content: "    echo test",
+						}},
+					},
+					MainBashPackage: models.Bash{Pkg: MainBashPackage,
+						Functions: []models.Function{models.Function{
+							Name:    "update_repo",
+							Content: "    apt-get update",
+						}},
+					},
+				},
+			},
+			expectedCode: http.StatusOK,
+			expectedResponse: []byte(fmt.Sprintf(`%s
+
+%s
+
+function main {
+    echo test
+}
+
+function update_repo {
+    apt-get update
+}
+
+update_repos
+
+main`, header, setters)),
 		},
 	}
 
@@ -128,6 +176,4 @@ func TestGetScriptHandler(t *testing.T) {
 
 		})
 	}
-	// do some requests to testserver.URL
-	// assert.Equal(t, 201, response.StatusCode, "Great success")
 }

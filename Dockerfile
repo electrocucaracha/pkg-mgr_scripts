@@ -20,6 +20,7 @@ ENV PKG_DB_PASSWORD ""
 ENV PKG_DB_HOSTNAME ""
 ENV PKG_DB_DATABASE "pkg_db"
 ENV PKG_SCRIPTS_PATH "./scripts"
+ENV PKG_MAIN_FILE "./install.sh"
 
 LABEL io.k8s.display-name="cURL Package Manager"
 EXPOSE 3000

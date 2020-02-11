@@ -9,11 +9,14 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
+
+	"github.com/go-openapi/swag"
 )
 
 // GetScriptURL generates an URL for the get script operation
 type GetScriptURL struct {
-	Pkg string
+	Pkg       string
+	PkgUpdate *bool
 
 	_basePath string
 	// avoid unkeyed usage
@@ -49,6 +52,14 @@ func (o *GetScriptURL) Build() (*url.URL, error) {
 	pkgQ := o.Pkg
 	if pkgQ != "" {
 		qs.Set("pkg", pkgQ)
+	}
+
+	var pkgUpdateQ string
+	if o.PkgUpdate != nil {
+		pkgUpdateQ = swag.FormatBool(*o.PkgUpdate)
+	}
+	if pkgUpdateQ != "" {
+		qs.Set("pkg_update", pkgUpdateQ)
 	}
 
 	_result.RawQuery = qs.Encode()
