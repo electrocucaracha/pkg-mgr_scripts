@@ -20,10 +20,11 @@ swagger:
 	@swagger generate server -t gen -f ./api/openapi-spec/swagger.yaml --exclude-main -A pkg-mgr
 
 .PHONY: run
-run: clean test cover
-	PKG_DEBUG=true PKG_SQL_ENGINE=sqlite PKG_SCRIPTS_PATH=$(PWD)/scripts PKG_MAIN_FILE=$(PWD)/install.sh go run ./cmd/main.go
+run: clean test cover undeploy
+	PKG_SQL_ENGINE=sqlite PKG_SCRIPTS_PATH=$(PWD)/scripts PKG_MAIN_FILE=$(PWD)/install.sh go run ./cmd/server/main.go init
+	PKG_DEBUG=true PKG_SQL_ENGINE=sqlite go run ./cmd/server/main.go serve
 
-test:
+test: format
 	@go test -v ./...
 
 .PHONY: cover

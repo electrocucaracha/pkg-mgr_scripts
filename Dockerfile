@@ -8,7 +8,7 @@ ENV CGO_ENABLED "1"
 ENV GOOS "linux"
 ENV GOARCH "amd64"
 
-RUN go build -v -tags netgo -installsuffix netgo -o /bin/pkg_mgr cmd/main.go
+RUN go build -v -tags netgo -installsuffix netgo -o /bin/pkg_mgr cmd/server/main.go
 
 FROM debian:buster
 MAINTAINER Victor Morales <electrocucaracha@gmail.com>
@@ -27,4 +27,5 @@ EXPOSE 3000
 
 COPY --from=builder /bin/pkg_mgr /pkg_mgr
 
-CMD ["/pkg_mgr"]
+ENTRYPOINT ["/pkg_mgr"]
+CMD ["--help"]

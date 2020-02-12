@@ -11,7 +11,7 @@
 version: '3.7'
 
 services:
-  pkg:
+  init:
     restart: on-failure
     image: electrocucaracha/pkg_mgr
     build:
@@ -28,8 +28,25 @@ services:
       - ../:/pkg:ro
     depends_on:
       - mariadb
+    command:
+      - init
+  api:
+    restart: on-failure
+    image: electrocucaracha/pkg_mgr
+    build:
+      context: ../
+    environment:
+      PKG_DB_HOSTNAME: mariadb
+      PKG_SQL_ENGINE: mysql
+      PKG_DB_USERNAME: "${DB_USERNAME}"
+      PKG_DB_PASSWORD: "${DB_PASSWORD}"
+      PKG_DB_DATABASE: "${DB_NAME}"
+    depends_on:
+      - init
     ports:
       - 3000:3000
+    command:
+      - serve
   mariadb:
     image: mariadb:10.1.38
     restart: always

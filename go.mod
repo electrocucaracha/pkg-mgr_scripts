@@ -18,6 +18,7 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/jinzhu/gorm v1.9.12
 	github.com/sirupsen/logrus v1.4.2
+	github.com/spf13/cobra v0.0.3
 	go.mongodb.org/mongo-driver v1.3.0 // indirect
 	golang.org/x/net v0.0.0-20200202094626-16171245cfb2
 	google.golang.org/appengine v1.6.2 // indirect
