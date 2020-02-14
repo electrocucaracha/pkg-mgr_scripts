@@ -40,10 +40,12 @@ clean:
 docker: clean
 	@docker-compose --file deployments/docker-compose.yml build --compress --force-rm
 	@docker image prune --force
-
+install: pull deploy
+pull:
+	@docker-compose --file deployments/docker-compose.yml pull
 deploy: undeploy
-	@docker-compose --file deployments/docker-compose.yml --env-file deployments/.env up --force-recreate --detach
+	@docker-compose --file deployments/docker-compose.yml --env-file deployments/.env up --force-recreate --detach --no-build
 logs:
-	@docker-compose --file deployments/docker-compose.yml logs -f
+	@docker-compose --file deployments/docker-compose.yml logs --follow
 undeploy:
 	@docker-compose --file deployments/docker-compose.yml down --remove-orphans

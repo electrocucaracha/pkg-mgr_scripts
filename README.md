@@ -25,6 +25,25 @@ instruction is needed:
 
     curl -fsSL http://bit.ly/pkgInstall | PKG="docker docker-compose" bash
 
+## How to deploy it locally?
+
+This project includes the code of a Web Server which can be deployed
+locally. The purpose of this local server is to collect information
+about package's usage and centralize the installation recipes for a
+development team. This initiative is under development but it can be
+tested using the following instructions.
+
+    curl -fsSL http://bit.ly/pkgInstall | PKG="docker docker-compose make git" bash
+    newgrp docker
+    git clone --depth 1 https://github.com/electrocucaracha/pkg-mgr
+    cd pkg-mgr/
+    make install
+
+Once it's deployed locally, it's possible to consume the scripts
+with the following instruction:
+
+    curl -fsSL http://localhost:3000/pkgInstall?pkg=terraform | bash
+
 ## License
 
 Apache-2.0
