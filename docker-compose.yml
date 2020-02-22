@@ -13,9 +13,9 @@ version: '3.7'
 services:
   init:
     restart: on-failure
-    image: electrocucaracha/pkg_mgr
+    image: electrocucaracha/pkg_mgr-init
     build:
-      context: ../
+      context: ./
     environment:
       PKG_DB_HOSTNAME: mariadb
       PKG_SQL_ENGINE: mysql
@@ -32,9 +32,7 @@ services:
       - init
   api:
     restart: on-failure
-    image: electrocucaracha/pkg_mgr
-    build:
-      context: ../
+    image: electrocucaracha/pkg_mgr:latest
     environment:
       PKG_DB_HOSTNAME: mariadb
       PKG_SQL_ENGINE: mysql

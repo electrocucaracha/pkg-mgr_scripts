@@ -8,44 +8,13 @@
 ##############################################################################
 
 PWD := $(shell pwd)
-BINARY := pkg_mgr
 
-export GO111MODULE=on
-
-format:
-	@go fmt ./...
-
-swagger:
-	@rm -rf gen/*
-	@swagger generate server -t gen -f ./api/openapi-spec/swagger.yaml --exclude-main -A pkg-mgr
-
-.PHONY: run
-run: clean test cover undeploy
-	PKG_SQL_ENGINE=sqlite PKG_SCRIPTS_PATH=$(PWD)/scripts PKG_MAIN_FILE=$(PWD)/install.sh go run ./cmd/server/main.go init
-	PKG_DEBUG=true PKG_SQL_ENGINE=sqlite go run ./cmd/server/main.go serve
-
-test: format
-	@go test -v ./...
-
-.PHONY: cover
-cover:
-	@go test -race ./... -coverprofile=coverage.out
-	@go tool cover -html=coverage.out -o coverage.html
-
-clean:
-	@rm -f *.db
-	@rm -f coverage.*
-	@rm -f $(BINARY)
-
-docker: clean
-	@docker-compose --file deployments/docker-compose.yml build --compress --force-rm
+docker:
+	@docker-compose build --compress --force-rm
 	@docker image prune --force
-install: pull deploy
-pull:
-	@docker-compose --file deployments/docker-compose.yml pull
 deploy: undeploy
-	@docker-compose --file deployments/docker-compose.yml --env-file deployments/.env up --force-recreate --detach --no-build
+	@docker-compose up --force-recreate --detach --no-build
 logs:
-	@docker-compose --file deployments/docker-compose.yml logs --follow
+	@docker-compose logs --follow
 undeploy:
-	@docker-compose --file deployments/docker-compose.yml down --remove-orphans
+	@docker-compose down --remove-orphans
