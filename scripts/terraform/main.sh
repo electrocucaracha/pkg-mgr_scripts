@@ -23,7 +23,7 @@ function main {
     pushd "$(mktemp -d)"
     curl -o "$tarball" "https://releases.hashicorp.com/terraform/$version/$tarball"
     if ! command -v unzip; then
-        curl -fsSL http://bit.ly/pkgInstall | PKG=unzip bash
+        curl -fsSL http://bit.ly/install_pkg | PKG=unzip bash
     fi
     unzip "$tarball"
     sudo mkdir -p /usr/local/bin/

@@ -53,7 +53,7 @@ function main {
     if [ -n "${SOCKS_PROXY:-}" ]; then
         socks_tmp="${SOCKS_PROXY#*//}"
         if ! command -v wget; then
-            curl -fsSL http://bit.ly/pkgInstall | PKG=wget bash
+            curl -fsSL http://bit.ly/install_pkg | PKG=wget bash
         fi
         curl -sSL https://raw.githubusercontent.com/crops/chameleonsocks/master/chameleonsocks.sh | sudo PROXY="${socks_tmp%:*}" PORT="${socks_tmp#*:}" bash -s -- --install
     else

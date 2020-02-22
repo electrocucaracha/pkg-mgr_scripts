@@ -30,7 +30,7 @@ function main {
             sudo rpm --import oracle_vbox.asc
         ;;
         ubuntu|debian)
-            curl -fsSL http://bit.ly/pkgInstall | PKG=gnupg bash
+            curl -fsSL http://bit.ly/install_pkg | PKG=gnupg bash
             echo "deb http://download.virtualbox.org/virtualbox/debian $UBUNTU_CODENAME contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
             curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo apt-key add -
         ;;
@@ -47,7 +47,7 @@ function main {
     esac
     rm oracle_vbox.asc
     popd
-    curl -fsSL http://bit.ly/pkgInstall | PKG="$pkgs" PKG_UDPATE=true bash
+    curl -fsSL http://bit.ly/install_pkg | PKG="$pkgs" PKG_UDPATE=true bash
 }
 
 main
