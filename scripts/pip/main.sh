@@ -51,10 +51,10 @@ function _vercmp {
 }
 
 function main {
-    local min_python_version="3.5"
+    local major_python_version=${PKG_PYTHON_MAJOR_VERSION:-3}
     local min_pip_version="20"
 
-    if ! command -v python  || _vercmp "$(python -V 2>&1 | awk '{print $2}')" '<' "$min_python_version"; then
+    if ! command -v python  || _vercmp "$(python -V 2>&1 | awk '{print $2}')" '<' "$major_python_version"; then
         # shellcheck disable=SC1091
         source /etc/os-release || source /usr/lib/os-release
         case ${ID,,} in
@@ -67,20 +67,24 @@ function main {
                 sudo -H -E apt-get -y -q=3 install software-properties-common
                 sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
                 sudo apt update
-                sudo -H -E apt-get -y -q=3 install python3.7
+                sudo -H -E apt-get -y -q=3 install python3.7 python-minimal
             ;;
             rhel|centos|fedora)
                 PKG_MANAGER=$(command -v dnf || command -v yum)
-                sudo -H -E "${PKG_MANAGER}" -q -y install python36 yum-utils
+                sudo -H -E "${PKG_MANAGER}" -q -y install python36 yum-utils python2
                 for file in yum yum-config-manager; do
-                    sudo sed -i "s|#\!/usr/bin/python|#!$(command -v python2)|g" "/usr/bin/$file"
+                    if [ -f "/usr/bin/$file" ]; then
+                        sudo sed -i "s|#\!/usr/bin/python|#!$(command -v python2)|g" "/usr/bin/$file"
+                    fi
                 done
-                sudo sed -i "s|#\! /usr/bin/python|#!$(command -v python2)|g" /usr/libexec/urlgrabber-ext-down
+                if [ -f /usr/libexec/urlgrabber-ext-down ]; then
+                    sudo sed -i "s|#\! /usr/bin/python|#!$(command -v python2)|g" /usr/libexec/urlgrabber-ext-down
+                fi
             ;;
         esac
-        sudo rm -f /usr/bin/python
-        sudo ln -s /usr/bin/python3 /usr/bin/python
     fi
+    sudo rm -f /usr/bin/python
+    sudo ln -s "/usr/bin/python${major_python_version}" /usr/bin/python
     if ! command -v pip || _vercmp "$(pip -V | awk '{print $2}')" '<' "$min_pip_version"; then
         curl -sL https://bootstrap.pypa.io/get-pip.py | sudo python
     fi
