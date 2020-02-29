@@ -13,7 +13,7 @@ set -o errexit
 set -o pipefail
 
 mgmt_nic=$(ip route | grep "^192" | head -n1 | awk '{ print $3 }')
-mgmt_ip=$(ip addr | awk "/${mgmt_nic}\$/ { sub(/\/[0-9]*/, \"\","' $2); print $2}')
+mgmt_ip=$(ip addr | awk "/${mgmt_nic}\$/ { sub(/\/[0-9]*/, \"\","' $2); print $2; exit}')
 
 function info {
     _print_msg "INFO" "$1"

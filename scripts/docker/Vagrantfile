@@ -47,6 +47,11 @@ Vagrant.configure("2") do |config|
   config.vm.provision 'shell', privileged: false do |sh|
     sh.inline = <<-SHELL
       set -o errexit
+
+      sudo ip link add veth0 type veth peer name veth1
+      sudo ip addr add 10.10.13.7/24 dev veth0
+      sudo ip link set veth0 up
+
       cd /vagrant
       ./main.sh | tee ~/main.log
       ./validate.sh | tee ~/validate.log

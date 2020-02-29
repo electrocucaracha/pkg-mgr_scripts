@@ -85,7 +85,10 @@ function main {
         sudo cp "$HOME/.docker/config.json" /root/.docker/config.json
     fi
     sudo mkdir -p /etc/docker
-    insecure_registries="\"0.0.0.0/0\", \"$(ip addr | awk "/$(ip route | grep "^default" | head -n1 | awk '{ print $5 }')\$/ { sub(/\/[0-9]*/, \"\","' $2); print $2}')\""
+    insecure_registries="\"0.0.0.0/0\""
+    for ip in $(ip addr | awk "/$(ip route | grep "^default" | head -n1 | awk '{ print $5 }')\$/ { sub(/\/[0-9]*/, \"\","' $2); print $2}'); do
+        insecure_registries+=", \"$ip\""
+    done
     if [ -n "${PKG_DOCKER_INSECURE_REGISTRIES:-}" ]; then
         insecure_registries+=", \"${PKG_DOCKER_INSECURE_REGISTRIES}\""
     fi
