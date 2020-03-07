@@ -13,7 +13,7 @@ set -o errexit
 set -o pipefail
 
 function main {
-    local version=${PKG_GOLANG_VERSION:-1.13.5}
+    local version=${PKG_GOLANG_VERSION:-1.14}
     local os=linux
     local arch=amd64
     local tarball=go$version.$os-$arch.tar.gz
