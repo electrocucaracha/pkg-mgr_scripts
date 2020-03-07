@@ -13,7 +13,7 @@ set -o errexit
 set -o pipefail
 
 function main {
-    local version=${PKG_TERRAFORM_VERSION:-0.12.18}
+    local version=${PKG_TERRAFORM_VERSION:-0.12.23}
     local tarball="terraform_${version}_linux_amd64.zip"
 
     if command -v terraform; then
