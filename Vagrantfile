@@ -44,24 +44,27 @@ Vagrant.configure("2") do |config|
 
   $vagrant_root = File.dirname(__FILE__)
   config.vm.provision 'shell', path: "#{$vagrant_root}/_requirements.sh"
-  config.vm.provision 'shell', privileged: false do |sh|
-    sh.inline = <<-SHELL
-      set -o errexit
-      set -o xtrace
-      cd /vagrant
-      for test_script in $(ls tests/*sh ); do
-          test_case=${test_script%.sh}
-          bash $test_script | tee ~/${test_case##*/}.log
-      done
-      echo "Tests completed!!!"
-    SHELL
-  end
+  config.vm.provision 'shell', privileged: false, inline: <<-SHELL
+    set -o errexit
+    set -o xtrace
+
+    cd /vagrant
+    for test_script in $(ls tests/*sh ); do
+        test_case=${test_script%.sh}
+        bash $test_script | tee ~/${test_case##*/}.log
+    done
+    echo "Tests completed!!!"
+  SHELL
 
   [:virtualbox, :libvirt].each do |provider|
   config.vm.provider provider do |p|
       p.cpus = 1
       p.memory = 1024
     end
+  end
+
+  config.vm.provider "virtualbox" do |v|
+    v.gui = false
   end
 
   config.vm.provider :libvirt do |v|

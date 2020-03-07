@@ -16,9 +16,9 @@ end
 $no_proxy += ",10.0.2.15"
 $socks_proxy = ENV['socks_proxy'] || ENV['SOCKS_PROXY'] || ""
 
-File.exists?("/usr/share/qemu/OVMF.fd") ? loader = "/usr/share/qemu/OVMF.fd" : loader = File.join(File.dirname(__FILE__), "/../OVMF.fd")
+File.exists?("/usr/share/qemu/OVMF.fd") ? loader = "/usr/share/qemu/OVMF.fd" : loader = File.join(File.dirname(__FILE__), "/../../OVMF.fd")
 if not File.exists?(loader)
-  system('curl -o ../OVMF.fd https://download.clearlinux.org/image/OVMF.fd')
+  system('curl -o ../../OVMF.fd https://download.clearlinux.org/image/OVMF.fd')
 end
 
 distros = YAML.load_file(File.dirname(__FILE__) + '/../../distros_supported.yml')
@@ -44,26 +44,29 @@ Vagrant.configure("2") do |config|
 
   $vagrant_root = File.dirname(__FILE__)
   config.vm.provision 'shell', path: "#{$vagrant_root}/../../_requirements.sh"
-  config.vm.provision 'shell', privileged: false do |sh|
-    sh.inline = <<-SHELL
-      set -o errexit
+  config.vm.provision 'shell', privileged: false, inline: <<-SHELL
+    set -o errexit
+    set -o xtrace
 
-      sudo ip link add veth0 type veth peer name veth1
-      sudo ip addr add 10.10.13.7/24 dev veth0
-      sudo ip link set veth0 up
+    sudo ip link add veth0 type veth peer name veth1
+    sudo ip addr add 10.10.13.7/24 dev veth0
+    sudo ip link set veth0 up
 
-      cd /vagrant
-      ./main.sh | tee ~/main.log
-      ./validate.sh | tee ~/validate.log
-      echo "Tests completed!!!"
-    SHELL
-  end
+    cd /vagrant
+    ./main.sh | tee ~/main.log
+    ./validate.sh | tee ~/validate.log
+    echo "Tests completed!!!"
+  SHELL
 
   [:virtualbox, :libvirt].each do |provider|
   config.vm.provider provider do |p|
       p.cpus = 1
-      p.memory = 1024
+      p.memory = 512
     end
+  end
+
+  config.vm.provider "virtualbox" do |v|
+    v.gui = false
   end
 
   config.vm.provider :libvirt do |v|
