@@ -13,7 +13,7 @@ set -o errexit
 set -o pipefail
 
 function main {
-    local version=${PKG_VIRTUALBOX_VERSION:-6.0}
+    local version=${PKG_VIRTUALBOX_VERSION:-6.1}
 
     if command -v VBoxManage; then
         return
