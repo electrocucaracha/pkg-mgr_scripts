@@ -10,7 +10,7 @@
 
 - name: "clearlinux"
   box: "AntonioMeireles/ClearLinux"
-  version: "32510"
+  version: "32610"
 - name: "centos_7"
   box: "centos/7"
   version: "1905.01"
@@ -25,4 +25,4 @@
   version: "2.0.6"
 - name: "opensuse"
   box: "opensuse/Tumbleweed.x86_64"
-  version: "1.0.20200305"
+  version: "1.0.20200314"
