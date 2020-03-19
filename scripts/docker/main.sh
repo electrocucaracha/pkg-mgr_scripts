@@ -47,7 +47,7 @@ function main {
     sudo mkdir -p /etc/systemd/system/docker.service.d
     mkdir -p "$HOME/.docker/"
     sudo mkdir -p /root/.docker/
-    if getent group docker; then
+    if ! getent group docker | grep -q "$USER"; then
         sudo usermod -aG docker "$USER"
     fi
     if [ -n "${SOCKS_PROXY:-}" ]; then
