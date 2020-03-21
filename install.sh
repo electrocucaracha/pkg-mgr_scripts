@@ -10,7 +10,9 @@
 
 set -o errexit
 set -o pipefail
-set -o xtrace
+if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+    set -o xtrace
+fi
 
 function _check_requirements {
     if ! sudo -n "true"; then
@@ -82,20 +84,35 @@ function main {
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
         *suse*)
-            INSTALLER_CMD="sudo -H -E zypper -q install -y --no-recommends"
+            INSTALLER_CMD="sudo -H -E zypper"
+            if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+=" -q"
+            fi
+            INSTALLER_CMD+=" install -y --no-recommends"
             PKG_OS_FAMILY="Suse"
         ;;
         ubuntu|debian)
-            INSTALLER_CMD="sudo -H -E apt-get -y -q=3 install"
+            INSTALLER_CMD="sudo -H -E apt-get -y"
+            if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+=" -q=3"
+            fi
+            INSTALLER_CMD+=" install"
             PKG_OS_FAMILY="Debian"
         ;;
         rhel|centos|fedora)
             PKG_MANAGER=$(command -v dnf || command -v yum)
-            INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -q -y install"
+            INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
+            if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+=" --quiet --errorlevel=0"
+            fi
+            INSTALLER_CMD+=" install"
             PKG_OS_FAMILY="RedHat"
         ;;
         clear-linux-os)
-            INSTALLER_CMD="sudo -H -E swupd bundle-add --quiet"
+            INSTALLER_CMD="sudo -H -E swupd bundle-add"
+            if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+=" --quiet"
+            fi
             PKG_OS_FAMILY="ClearLinux"
         ;;
     esac
@@ -113,6 +130,9 @@ function main {
                         curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/pip/main.sh" | bash
                     fi
                     PIP_CMD="sudo -E $(command -v pip) install"
+                    if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                        PIP_CMD+=" --quiet"
+                    fi
                     $PIP_CMD "$pkg"
                 elif [[ "$distro_pkg" != "$PKG_MGR_UNSUPPORTED" ]]; then
                     sanity_pkgs+=" $distro_pkg"

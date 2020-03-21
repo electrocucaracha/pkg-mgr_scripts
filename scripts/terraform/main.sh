@@ -11,6 +11,9 @@
 set -o nounset
 set -o errexit
 set -o pipefail
+if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+    set -o xtrace
+fi
 
 function main {
     local version=${PKG_TERRAFORM_VERSION:-0.12.23}
@@ -20,17 +23,22 @@ function main {
         return
     fi
 
-    pushd "$(mktemp -d)"
-    curl -o "$tarball" "https://releases.hashicorp.com/terraform/$version/$tarball"
+    pushd "$(mktemp -d)" > /dev/null
     if ! command -v unzip; then
         curl -fsSL http://bit.ly/install_pkg | PKG=unzip bash
     fi
-    unzip "$tarball"
+    if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+        curl -o "$tarball" "https://releases.hashicorp.com/terraform/$version/$tarball"
+        unzip "$tarball"
+    else
+        curl -o "$tarball" "https://releases.hashicorp.com/terraform/$version/$tarball" 2>/dev/null
+        unzip -qq "$tarball"
+    fi
     sudo mkdir -p /usr/local/bin/
     sudo mv terraform /usr/local/bin/
     rm "$tarball"
     mkdir -p ~/.terraform.d/plugins
-    popd
+    popd > /dev/null
 }
 
 main

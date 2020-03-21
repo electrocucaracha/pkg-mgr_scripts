@@ -11,6 +11,9 @@
 set -o nounset
 set -o errexit
 set -o pipefail
+if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+    set -o xtrace
+fi
 
 function main {
     # shellcheck disable=SC1091
@@ -20,20 +23,31 @@ function main {
 
         case ${ID,,} in
             clear-linux-os)
-                sudo -E swupd bundle-add containers-basic
+                if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+                    sudo -E swupd bundle-add containers-basic
+                else
+                    sudo -E swupd bundle-add --quiet containers-basic
+                fi
             ;;
             *suse*)
-                sudo -H -E zypper -q addrepo https://download.opensuse.org/repositories/Virtualization:containers/openSUSE_Tumbleweed/Virtualization:containers.repo
+                ZYPPER_CMD="sudo -H -E zypper"
+                if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                    ZYPPER_CMD+=" -q"
+                fi
+                $ZYPPER_CMD addrepo https://download.opensuse.org/repositories/Virtualization:containers/openSUSE_Tumbleweed/Virtualization:containers.repo
                 sudo zypper --gpg-auto-import-keys refresh
-                sudo -H -E zypper -q install -y --no-recommends docker
+                $ZYPPER_CMD install -y --no-recommends docker
             ;;
+            rhel|centos|fedora)
+                PKG_MANAGER=$(command -v dnf || command -v yum)
+                if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+                    sudo -H -E "${PKG_MANAGER}" -y install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+                else
+                    sudo -H -E "${PKG_MANAGER}" -y install --quiet --errorlevel=0 https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+                fi
+                curl -fsSL https://get.docker.com/ | sh
+                ;;
             *)
-                case ${ID,,} in
-                    rhel|centos|fedora)
-                        PKG_MANAGER=$(command -v dnf || command -v yum)
-                        sudo -H -E "${PKG_MANAGER}" -q -y install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
-                    ;;
-                esac
                 curl -fsSL https://get.docker.com/ | sh
             ;;
         esac

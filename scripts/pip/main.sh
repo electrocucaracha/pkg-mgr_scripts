@@ -11,6 +11,9 @@
 set -o nounset
 set -o errexit
 set -o pipefail
+if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+    set -o xtrace
+fi
 
 # _vercmp() - Function that compares two versions
 function _vercmp {
@@ -59,19 +62,32 @@ function main {
         source /etc/os-release || source /usr/lib/os-release
         case ${ID,,} in
             *suse*)
-                sudo -H -E zypper -q addrepo https://download.opensuse.org/repositories/openSUSE:Leap:15.1:Update/standard/openSUSE:Leap:15.1:Update.repo
+                INSTALLER_CMD="sudo -H -E zypper "
+                if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                    INSTALLER_CMD+="-q "
+                fi
+                $INSTALLER_CMD addrepo https://download.opensuse.org/repositories/openSUSE:Leap:15.1:Update/standard/openSUSE:Leap:15.1:Update.repo
                 sudo zypper --gpg-auto-import-keys refresh
-                sudo -H -E zypper -q install -y --no-recommends python3
+                $INSTALLER_CMD install -y --no-recommends python3
             ;;
             ubuntu|debian)
-                sudo -H -E apt-get -y -q=3 install software-properties-common
+                INSTALLER_CMD="sudo -H -E apt-get -y "
+                if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                    INSTALLER_CMD+="-q=3 "
+                fi
+                $INSTALLER_CMD install software-properties-common
                 sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
                 sudo apt update
-                sudo -H -E apt-get -y -q=3 install python3.7 python-minimal
+                $INSTALLER_CMD install python3.7 python-minimal
             ;;
             rhel|centos|fedora)
                 PKG_MANAGER=$(command -v dnf || command -v yum)
-                sudo -H -E "${PKG_MANAGER}" -q -y install python36 yum-utils python2
+                INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
+                if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                    INSTALLER_CMD+=" --quiet --errorlevel=0"
+                fi
+                INSTALLER_CMD+=" install"
+                $INSTALLER_CMD python36 yum-utils python2
                 for file in yum yum-config-manager; do
                     if [ -f "/usr/bin/$file" ]; then
                         sudo sed -i "s|#\!/usr/bin/python|#!$(command -v python2)|g" "/usr/bin/$file"

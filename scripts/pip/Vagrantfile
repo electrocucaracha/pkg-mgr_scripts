@@ -15,6 +15,7 @@ $no_proxy = ENV['NO_PROXY'] || ENV['no_proxy'] || "127.0.0.1,localhost"
 end
 $no_proxy += ",10.0.2.15"
 $socks_proxy = ENV['socks_proxy'] || ENV['SOCKS_PROXY'] || ""
+$pkg_mgr_debug = ENV['DEBUG'] || "true"
 
 File.exists?("/usr/share/qemu/OVMF.fd") ? loader = "/usr/share/qemu/OVMF.fd" : loader = File.join(File.dirname(__FILE__), "/../../OVMF.fd")
 if not File.exists?(loader)
@@ -44,15 +45,22 @@ Vagrant.configure("2") do |config|
 
   $vagrant_root = File.dirname(__FILE__)
   config.vm.provision 'shell', path: "#{$vagrant_root}/../../_requirements.sh"
-  config.vm.provision 'shell', privileged: false, inline: <<-SHELL
-    set -o errexit
-    set -o xtrace
+  config.vm.provision 'shell', privileged: false do |sh|
+    sh.env = {
+      'PKG_MGR_DEBUG': "#{$pkg_mgr_debug}",
+    }
+    sh.inline = <<-SHELL
+      set -o errexit
+      if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+          set -o xtrace
+      fi
 
-    cd /vagrant
-    ./main.sh | tee ~/main.log
-    ./validate.sh | tee ~/validate.log
-    echo "Tests completed!!!"
-  SHELL
+      cd /vagrant
+      ./main.sh | tee ~/main.log
+      ./validate.sh | tee ~/validate.log
+      echo "Tests completed!!!"
+    SHELL
+  end
 
   [:virtualbox, :libvirt].each do |provider|
   config.vm.provider provider do |p|
