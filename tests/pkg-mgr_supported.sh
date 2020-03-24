@@ -29,7 +29,7 @@ if command -v go; then
     exit 1
 fi
 
-PKG="docker golang" ./install.sh
+PKG="docker go-lang" ./install.sh
 
 # shellcheck disable=SC1091
 source /etc/profile.d/path.sh
