@@ -26,8 +26,8 @@ instruction is needed:
 
 ### Program environment variables
 
-| Name          | Description                                                     |
-|:--------------|:----------------------------------------------------------------|
-| PKG           | Package name(s) to be installed on the requester.(String value) |
-| PKG_UPDATE    | Update package manager metadata information.(Boolean value)     |
-| PKG_MGR_DEBUG | Enable verbose output during the execution.(Boolean value)      |
+| Name       | Description                                                     |
+|:-----------|:----------------------------------------------------------------|
+| PKG        | Package name(s) to be installed on the requester.(String value) |
+| PKG_UPDATE | Update package manager metadata information.(Boolean value)     |
+| PKG_DEBUG  | Enable verbose output during the execution.(Boolean value)      |

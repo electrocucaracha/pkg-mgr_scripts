@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
@@ -29,7 +29,7 @@ function main {
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
         opensuse*)
-            if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+            if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                 sudo curl -o /etc/zypp/repos.d/virtualbox.repo "http://download.virtualbox.org/virtualbox/rpm/opensuse/virtualbox.repo"
             else
                 sudo curl -o /etc/zypp/repos.d/virtualbox.repo "http://download.virtualbox.org/virtualbox/rpm/opensuse/virtualbox.repo" 2> /dev/null
@@ -43,7 +43,7 @@ function main {
         ;;
         rhel|centos|fedora)
             PKG_MANAGER=$(command -v dnf || command -v yum)
-            if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+            if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                 sudo curl -o /etc/yum.repos.d/virtualbox.repo https://download.virtualbox.org/virtualbox/rpm/el/virtualbox.repo
                 sudo rpm --import --verbose oracle_vbox.asc
                 sudo -E "$PKG_MANAGER" update --assumeyes --verbose

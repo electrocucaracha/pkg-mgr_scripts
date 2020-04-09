@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
@@ -27,7 +27,7 @@ function main {
     if ! command -v unzip; then
         curl -fsSL http://bit.ly/install_pkg | PKG=unzip bash
     fi
-    if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
         curl -o "$tarball" "https://releases.hashicorp.com/terraform/$version/$tarball"
         unzip "$tarball"
     else

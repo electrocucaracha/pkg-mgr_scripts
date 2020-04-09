@@ -10,7 +10,7 @@
 
 set -o errexit
 set -o pipefail
-if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
@@ -86,7 +86,7 @@ function main {
     case ${ID,,} in
         *suse*)
             INSTALLER_CMD="sudo -H -E zypper"
-            if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q"
             fi
             INSTALLER_CMD+=" install -y --no-recommends"
@@ -94,7 +94,7 @@ function main {
         ;;
         ubuntu|debian)
             INSTALLER_CMD="sudo -H -E apt-get -y --no-install-recommends"
-            if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q=3"
             fi
             INSTALLER_CMD+=" install"
@@ -103,7 +103,7 @@ function main {
         rhel|centos|fedora)
             PKG_MANAGER=$(command -v dnf || command -v yum)
             INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
-            if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" --quiet --errorlevel=0"
             fi
             INSTALLER_CMD+=" install"
@@ -111,7 +111,7 @@ function main {
         ;;
         clear-linux-os)
             INSTALLER_CMD="sudo -H -E swupd bundle-add"
-            if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" --quiet"
             fi
             PKG_OS_FAMILY="ClearLinux"
@@ -131,7 +131,7 @@ function main {
                         curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/pip/main.sh" | bash
                     fi
                     PIP_CMD="sudo -E $(command -v pip) install"
-                    if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                    if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                         PIP_CMD+=" --quiet"
                     fi
                     $PIP_CMD "$pkg"

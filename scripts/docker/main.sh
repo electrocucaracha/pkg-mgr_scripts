@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
@@ -23,7 +23,7 @@ function main {
 
         case ${ID,,} in
             clear-linux-os)
-                if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+                if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                     sudo -E swupd bundle-add containers-basic
                 else
                     sudo -E swupd bundle-add --quiet containers-basic
@@ -31,7 +31,7 @@ function main {
             ;;
             *suse*)
                 ZYPPER_CMD="sudo -H -E zypper"
-                if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     ZYPPER_CMD+=" -q"
                 fi
                 $ZYPPER_CMD addrepo https://download.opensuse.org/repositories/Virtualization:containers/openSUSE_Tumbleweed/Virtualization:containers.repo
@@ -40,7 +40,7 @@ function main {
             ;;
             rhel|centos|fedora)
                 PKG_MANAGER=$(command -v dnf || command -v yum)
-                if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+                if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                     sudo -H -E "${PKG_MANAGER}" -y install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
                 else
                     sudo -H -E "${PKG_MANAGER}" -y install --quiet --errorlevel=0 https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm

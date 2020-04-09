@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
@@ -27,7 +27,7 @@ function main {
     echo "INFO: Installing go $version version..."
 
     pushd "$(mktemp -d)" > /dev/null
-    if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
         curl -o "$tarball" "https://dl.google.com/go/$tarball"
         sudo tar -C /usr/local -vxzf "$tarball"
     else

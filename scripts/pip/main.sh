@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
@@ -63,7 +63,7 @@ function main {
         case ${ID,,} in
             *suse*)
                 INSTALLER_CMD="sudo -H -E zypper "
-                if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+="-q "
                 fi
                 $INSTALLER_CMD addrepo https://download.opensuse.org/repositories/openSUSE:Leap:15.1:Update/standard/openSUSE:Leap:15.1:Update.repo
@@ -72,7 +72,7 @@ function main {
             ;;
             ubuntu|debian)
                 INSTALLER_CMD="sudo -H -E apt-get -y "
-                if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+="-q=3 "
                 fi
                 $INSTALLER_CMD install software-properties-common
@@ -83,7 +83,7 @@ function main {
             rhel|centos|fedora)
                 PKG_MANAGER=$(command -v dnf || command -v yum)
                 INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
-                if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
+                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+=" --quiet --errorlevel=0"
                 fi
                 INSTALLER_CMD+=" install"

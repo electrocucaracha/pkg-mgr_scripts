@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
@@ -70,7 +70,7 @@ function main {
         opensuse*)
             vagrant_pgp="pgp_keys.asc"
             vagrant_pkg+="rpm"
-            if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+            if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                 curl -o "$vagrant_pgp" "https://keybase.io/hashicorp/$vagrant_pgp"
                 curl -o "$vagrant_pkg" "https://releases.hashicorp.com/vagrant/$version/$vagrant_pkg"
                 gpg --with-fingerprint "$vagrant_pgp"
@@ -86,7 +86,7 @@ function main {
         ;;
         ubuntu|debian)
             vagrant_pkg+="deb"
-            if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+            if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                 curl -o "$vagrant_pkg" "https://releases.hashicorp.com/vagrant/$version/$vagrant_pkg"
                 sudo dpkg -i "$vagrant_pkg"
             else
@@ -97,7 +97,7 @@ function main {
         rhel|centos|fedora)
             vagrant_pkg+="rpm"
             PKG_MANAGER=$(command -v dnf || command -v yum)
-            if [[ "${PKG_MGR_DEBUG:-false}" == "true" ]]; then
+            if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                 curl -o "$vagrant_pkg" "https://releases.hashicorp.com/vagrant/$version/$vagrant_pkg"
                 sudo -H -E "${PKG_MANAGER}" -y install "$vagrant_pkg"
             else
