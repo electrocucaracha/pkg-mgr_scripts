@@ -148,7 +148,7 @@ function main {
     fi
 }
 
-if [[ "${PKG_UDPATE:-false}" == "true" ]]; then
+if [[ "${PKG_UPDATE:-false}" == "true" ]]; then
     update_repos
 fi
 main

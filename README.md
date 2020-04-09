@@ -29,5 +29,5 @@ instruction is needed:
 | Name          | Description                                                     |
 |:--------------|:----------------------------------------------------------------|
 | PKG           | Package name(s) to be installed on the requester.(String value) |
-| PKG_UDPATE    | Update package manager metadata information.(Boolean value)     |
+| PKG_UPDATE    | Update package manager metadata information.(Boolean value)     |
 | PKG_MGR_DEBUG | Enable verbose output during the execution.(Boolean value)      |

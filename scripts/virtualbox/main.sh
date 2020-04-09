@@ -60,7 +60,7 @@ function main {
     esac
     rm oracle_vbox.asc
     popd 2> /dev/null
-    curl -fsSL http://bit.ly/install_pkg | PKG="$pkgs" PKG_UDPATE=true bash
+    curl -fsSL http://bit.ly/install_pkg | PKG="$pkgs" PKG_UPDATE=true bash
 }
 
 main

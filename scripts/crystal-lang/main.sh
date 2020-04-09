@@ -43,7 +43,7 @@ function main {
             return
         ;;
     esac
-    curl -fsSL http://bit.ly/install_pkg | PKG="$pkgs" PKG_UDPATE=true bash
+    curl -fsSL http://bit.ly/install_pkg | PKG="$pkgs" PKG_UPDATE=true bash
 }
 
 main
