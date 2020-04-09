@@ -93,7 +93,7 @@ function main {
             PKG_OS_FAMILY="Suse"
         ;;
         ubuntu|debian)
-            INSTALLER_CMD="sudo -H -E apt-get -y"
+            INSTALLER_CMD="sudo -H -E apt-get -y --no-install-recommends"
             if [[ "${PKG_MGR_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q=3"
             fi
