@@ -16,7 +16,7 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
 fi
 
 function main {
-    local version=${PKG_TERRAFORM_VERSION:-0.12.23}
+    local version=${PKG_TERRAFORM_VERSION:-0.12.24}
     local tarball="terraform_${version}_linux_amd64.zip"
 
     if command -v terraform; then
