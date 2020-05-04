@@ -13,7 +13,7 @@ Distributions.
 | Ubuntu     | 16.04/18.04/20.04 |
 | CentOS     | 7/8               |
 | OpenSUSE   | Tumbleweed        |
-| ClearLinux | 32890             |
+| ClearLinux | 32990             |
 
 ## How to use this script?
 
