@@ -16,7 +16,7 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
 fi
 
 function main {
-    local version=${PKG_KIND_VERSION:-0.7.0}
+    local version=${PKG_KIND_VERSION:-0.8.1}
 
     if command -v kind; then
         return
