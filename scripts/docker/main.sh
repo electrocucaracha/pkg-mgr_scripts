@@ -106,9 +106,13 @@ function main {
     if [ -n "${PKG_DOCKER_INSECURE_REGISTRIES:-}" ]; then
         insecure_registries+=", \"${PKG_DOCKER_INSECURE_REGISTRIES}\""
     fi
+    default_address_pools=""
+    if [ -n "${PKG_DOCKER_DEFAULT_ADDRESS_POOLS:-}" ]; then
+        default_address_pools=$(printf "\n  \"default-address-pools\": [ %s ]," "$PKG_DOCKER_DEFAULT_ADDRESS_POOLS")
+    fi
     sudo tee /etc/docker/daemon.json << EOF
 {
-  "exec-opts": ["native.cgroupdriver=systemd"],
+  "exec-opts": ["native.cgroupdriver=systemd"],$default_address_pools
   "insecure-registries" : [$insecure_registries]
 }
 EOF
