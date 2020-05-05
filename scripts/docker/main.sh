@@ -108,6 +108,7 @@ function main {
     fi
     sudo tee /etc/docker/daemon.json << EOF
 {
+  "exec-opts": ["native.cgroupdriver=systemd"],
   "insecure-registries" : [$insecure_registries]
 }
 EOF
