@@ -23,10 +23,17 @@ function main {
     fi
     echo "INFO: Installing kind..."
 
+    cpu_arch="amd64"
+    if command -v dpkg; then
+        cpu_arch=$(dpkg --print-architecture)
+    fi
+    if [ -n "${PKG_CPU_ARCH:-}" ]; then
+        cpu_arch="$PKG_CPU_ARCH"
+    fi
     if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-        curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v${version}/kind-$(uname)-amd64"
+        curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v${version}/kind-$(uname)-$cpu_arch"
     else
-        curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v${version}/kind-$(uname)-amd64" 2> /dev/null
+        curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v${version}/kind-$(uname)-$cpu_arch" 2> /dev/null
     fi
     chmod +x ./kind
     sudo mkdir -p  /usr/local/bin/

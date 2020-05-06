@@ -19,7 +19,7 @@ if ! command -v curl; then
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
         ubuntu|debian|raspbian)
-            sudo apt-get update
+            sudo apt-get update -qq > /dev/null
             sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 curl
         ;;
     esac

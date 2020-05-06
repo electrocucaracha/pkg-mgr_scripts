@@ -27,8 +27,9 @@ instruction is needed:
 
 ### Program environment variables
 
-| Name       | Description                                                     |
-|:-----------|:----------------------------------------------------------------|
-| PKG        | Package name(s) to be installed on the requester.(String value) |
-| PKG_UPDATE | Update package manager metadata information.(Boolean value)     |
-| PKG_DEBUG  | Enable verbose output during the execution.(Boolean value)      |
+| Name         | Description                                                               |
+|:-------------|:--------------------------------------------------------------------------|
+| PKG          | Package name(s) to be installed on the requester.(String value)           |
+| PKG_UPDATE   | Update package manager metadata information.(Boolean value)               |
+| PKG_DEBUG    | Enable verbose output during the execution.(Boolean value)                |
+| PKG_CPU_ARCH | Overrides the CPU architecture used for the installation of some binaries |

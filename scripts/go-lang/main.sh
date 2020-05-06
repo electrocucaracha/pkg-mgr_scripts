@@ -18,8 +18,15 @@ fi
 function main {
     local version=${PKG_GOLANG_VERSION:-1.14.2}
     local os=linux
-    local arch=amd64
-    local tarball=go$version.$os-$arch.tar.gz
+
+    cpu_arch="amd64"
+    if command -v dpkg; then
+        cpu_arch=$(dpkg --print-architecture)
+    fi
+    if [ -n "${PKG_CPU_ARCH:-}" ]; then
+        cpu_arch="$PKG_CPU_ARCH"
+    fi
+    local tarball=go$version.$os-$cpu_arch.tar.gz
 
     if command -v go; then
         return
