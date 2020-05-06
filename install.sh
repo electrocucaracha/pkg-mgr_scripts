@@ -35,7 +35,7 @@ function update_repos {
         *suse*)
             sudo zypper -n ref
         ;;
-        ubuntu|debian)
+        ubuntu|debian|raspbian)
             sudo apt-get update
         ;;
         rhel|centos|fedora)
@@ -94,7 +94,7 @@ function main {
             INSTALLER_CMD+=" install -y --no-recommends"
             PKG_OS_FAMILY="Suse"
         ;;
-        ubuntu|debian)
+        ubuntu|debian|raspbian)
             INSTALLER_CMD="sudo -H -E apt-get -y --no-install-recommends"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q=3"

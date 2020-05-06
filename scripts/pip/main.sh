@@ -70,7 +70,7 @@ function main {
                 sudo zypper --gpg-auto-import-keys refresh
                 $INSTALLER_CMD install -y --no-recommends python3
             ;;
-            ubuntu|debian)
+            ubuntu|debian|raspbian)
                 INSTALLER_CMD="sudo -H -E apt-get -y "
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+="-q=3 "

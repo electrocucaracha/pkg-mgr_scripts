@@ -14,11 +14,13 @@ set -o pipefail
 
 sudo date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)Z"
 
-# shellcheck disable=SC1091
-source /etc/os-release || source /usr/lib/os-release
-case ${ID,,} in
-    ubuntu|debian)
-        sudo apt-get update
-        sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 curl
-    ;;
-esac
+if ! command -v curl; then
+    # shellcheck disable=SC1091
+    source /etc/os-release || source /usr/lib/os-release
+    case ${ID,,} in
+        ubuntu|debian|raspbian)
+            sudo apt-get update
+            sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 curl
+        ;;
+    esac
+fi

@@ -36,9 +36,9 @@ function main {
             fi
             sudo rpm --import oracle_vbox.asc
         ;;
-        ubuntu|debian)
+        ubuntu|debian|raspbian)
             curl -fsSL http://bit.ly/install_pkg | PKG=gnupg bash
-            echo "deb http://download.virtualbox.org/virtualbox/debian $UBUNTU_CODENAME contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list 2> /dev/null
+            echo "deb http://download.virtualbox.org/virtualbox/debian $VERSION_CODENAME contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list 2> /dev/null
             curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo apt-key add -
         ;;
         rhel|centos|fedora)

@@ -84,7 +84,7 @@ function main {
             sudo rpm --install "$vagrant_pkg"
             rm $vagrant_pgp
         ;;
-        ubuntu|debian)
+        ubuntu|debian|raspbian)
             vagrant_pkg+="deb"
             if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                 curl -o "$vagrant_pkg" "https://releases.hashicorp.com/vagrant/$version/$vagrant_pkg"

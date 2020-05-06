@@ -29,7 +29,7 @@ function main {
             sudo rpm --import https://dist.crystal-lang.org/rpm/RPM-GPG-KEY
             sudo zypper ar -e -f -t rpm-md https://dist.crystal-lang.org/rpm/ Crystal
         ;;
-        ubuntu|debian)
+        ubuntu|debian|raspbian)
             curl -fsSL http://bit.ly/install_pkg | PKG="gnupg" bash
             curl -sL "https://keybase.io/crystal/pgp_keys.asc" | sudo apt-key add -
             echo "deb https://dist.crystal-lang.org/apt crystal main" | sudo tee /etc/apt/sources.list.d/crystal.list

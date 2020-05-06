@@ -14,6 +14,7 @@ Distributions.
 | CentOS     | 7/8               |
 | OpenSUSE   | Tumbleweed        |
 | ClearLinux | 32990             |
+| Raspbian   | Stretch           |
 
 ## How to use this script?
 
