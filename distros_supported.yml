@@ -29,6 +29,3 @@
 - name: "opensuse"
   box: "opensuse/Tumbleweed.x86_64"
   version: "1.0.20200428"
-- name: "raspbian"
-  box: "gvfoster/raspbian"
-  version: "0.0.4"

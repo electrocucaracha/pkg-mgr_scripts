@@ -53,7 +53,7 @@ function main {
             curl -fsSL http://bit.ly/install_pkg | PKG="kvm-host" bash
             return
         ;;
-        ubuntu|debian|raspbian)
+        ubuntu|debian)
             configure_flags+=" --enable-numa"
             pkgs+=" libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libpmem-dev libnuma-dev"
             if [ "$VERSION_CODENAME" == "xenial" ]; then
