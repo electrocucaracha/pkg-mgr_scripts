@@ -84,8 +84,9 @@ function main {
             echo "Environment=\"NO_PROXY=$NO_PROXY\"" | sudo tee --append /etc/systemd/system/docker.service.d/no-proxy.conf
         fi
     fi
+    config="{ \"experimental\": \"enabled\","
     if [ -n "${HTTP_PROXY:-}" ] || [ -n "${HTTPS_PROXY:-}" ] || [ -n "${NO_PROXY:-}" ]; then
-        config="{ \"proxies\": { \"default\": { "
+        config="\"proxies\": { \"default\": { "
         if [ -n "${HTTP_PROXY:-}" ]; then
             config+="\"httpProxy\": \"$HTTP_PROXY\","
         fi
@@ -95,9 +96,10 @@ function main {
         if [ -n "${NO_PROXY:-}" ]; then
             config+="\"noProxy\": \"$NO_PROXY\","
         fi
-        echo "${config::-1} } } }" | tee "$HOME/.docker/config.json"
-        sudo cp "$HOME/.docker/config.json" /root/.docker/config.json
+        config="${config::-1} } },"
     fi
+    echo "${config::-1} }" | tee "$HOME/.docker/config.json"
+    sudo cp "$HOME/.docker/config.json" /root/.docker/config.json
     sudo mkdir -p /etc/docker
     insecure_registries="\"0.0.0.0/0\""
     for ip in $(ip addr | awk "/$(ip route | grep "^default" | head -n1 | awk '{ print $5 }')\$/ { sub(/\/[0-9]*/, \"\","' $2); print $2}'); do
@@ -129,6 +131,7 @@ EOF
         printf "."
         sleep 2
     done
+    # curl -fsSL https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh | bash
 }
 
 main
