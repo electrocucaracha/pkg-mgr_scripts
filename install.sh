@@ -36,6 +36,7 @@ function update_repos {
             sudo zypper -n ref
         ;;
         ubuntu|debian)
+            echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
             sudo apt-get update
         ;;
         rhel|centos|fedora)
