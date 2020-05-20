@@ -30,14 +30,16 @@ function main {
     if ! command -v kubectl; then
         echo "INFO: Installing kubectl..."
 
+        pushd "$(mktemp -d)" > /dev/null
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-            curl -o ./kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$cpu_arch/kubectl"
+            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$cpu_arch/kubectl"
         else
-            curl -o ./kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$cpu_arch/kubectl" 2> /dev/null
+            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$cpu_arch/kubectl" 2> /dev/null
         fi
-        chmod +x ./kubectl
-        sudo mkdir -p  /usr/local/bin/
-        sudo mv ./kubectl /usr/local/bin/kubectl
+        chmod +x kubectl
+        sudo mkdir -p /usr/local/bin/
+        sudo mv kubectl /usr/local/bin/kubectl
+        popd > /dev/null
     fi
 
     if ! kubectl krew version &>/dev/null; then
