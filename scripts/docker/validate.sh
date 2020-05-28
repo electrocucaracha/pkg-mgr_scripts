@@ -71,3 +71,9 @@ fi
 if ! sudo docker push "$mgmt_ip:5000/bash:test"; then
     error "Docker push action doesn't work"
 fi
+if ! command -v jq; then
+    error "Docker validation requires jq"
+fi
+if [ "$(curl -s -X GET http://localhost:5000/v2/_catalog | jq -r '.repositories | contains(["bash"])')" != "true" ]; then
+    error "Bash docker image wasn't stored in a local registry"
+fi
