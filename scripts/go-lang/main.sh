@@ -16,7 +16,7 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
 fi
 
 function main {
-    local version=${PKG_GOLANG_VERSION:-1.14.2}
+    local version=${PKG_GOLANG_VERSION:-1.14.4}
     local os=linux
 
     cpu_arch="amd64"
