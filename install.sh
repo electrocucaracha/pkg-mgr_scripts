@@ -136,7 +136,7 @@ function main {
                     if ! command -v pip; then
                         curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/pip/main.sh" | bash
                     fi
-                    PIP_CMD="sudo -E $(command -v pip) install --no-cache-dir"
+                    PIP_CMD="sudo -E $(command -v pip) install --no-cache-dir --no-warn-script-location"
                     if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                         PIP_CMD+=" --quiet"
                     fi

@@ -1,13 +1,56 @@
-matrix:
+---
+# SPDX-license-identifier: Apache-2.0
+##############################################################################
+# Copyright (c) 2020
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Apache License, Version 2.0
+# which accompanies this distribution, and is available at
+# http://www.apache.org/licenses/LICENSE-2.0
+##############################################################################
+
+language: shell
+os: linux
+git:
+  depth: 1
+dist: bionic
+cache:
+  directories:
+    - /home/travis/.vagrant.d/boxes
+before_install:
+  - if [ -n "${VAGRANT_EXECUTION:-}" ]; then curl -fsSL http://bit.ly/install_pkg | PKG_UPDATE="true" PKG="vagrant" bash ; fi
+  - if [ -n "${VAGRANT_EXECUTION:-}" ]; then sudo apt-get install -y bridge-utils dnsmasq-base ebtables libvirt-bin libvirt-dev qemu-kvm qemu-utils ruby-dev; fi
+  - if [ -n "${VAGRANT_EXECUTION:-}" ]; then sudo vagrant plugin install vagrant-libvirt; fi
+jobs:
   include:
-    - language: python
+    - name: Lint validation
+      language: python
       install:
         - pip install tox
       script:
-        - tox
-      env:
-        - TOXENV=lint
-
-    - language: shell
-      script:
+        - tox -e lint
         - bash -c 'shopt -s globstar; shellcheck -x **/*.sh'
+    - name: CentOS 7 validation
+      script:
+        - sudo ./check.sh centos_7
+      env:
+        - VAGRANT_EXECUTION=true
+    - name: CentOS 8 validation
+      script:
+        - sudo ./check.sh centos_8
+      env:
+        - VAGRANT_EXECUTION=true
+    - name: Ubuntu 16.04 LTS validation
+      script:
+        - sudo ./check.sh ubuntu_xenial
+      env:
+        - VAGRANT_EXECUTION=true
+    - name: Ubuntu 18.04 LTS validation
+      script:
+        - sudo ./check.sh ubuntu_bionic
+      env:
+        - VAGRANT_EXECUTION=true
+    - name: Ubuntu 20.04 LTS validation
+      script:
+        - sudo ./check.sh ubuntu_focal
+      env:
+        - VAGRANT_EXECUTION=true

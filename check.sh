@@ -11,11 +11,42 @@
 set -o errexit
 set -o pipefail
 
-while IFS= read -r -d '' vagrantfile; do
+function die {
+    echo >&2 "$@"
+    exit 1
+}
+
+function info {
+    _print_msg "INFO" "$1"
+}
+
+function error {
+    _print_msg "ERROR" "$1"
+    exit 1
+}
+
+function _print_msg {
+    echo "$1: $2"
+}
+
+[ "$#" -eq 1 ] || die "1 argument required, $# provided"
+
+info "Starting Integration tests - $1"
+MEMORY=6144 vagrant up "$1" > /dev/null
+vagrant destroy -f "$1" > /dev/null
+
+# shellcheck disable=SC2044
+for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile); do
     pushd "$(dirname "$vagrantfile")" > /dev/null
-    for vm in $(vagrant status | grep running | awk '{ print $1 }'); do
-        echo "$vm - Validation log"
-        vagrant ssh "$vm" -- cat validate.log | grep "ERROR\|INFO"
-    done
+    info "Starting VM on $(pwd) for $1"
+    MEMORY=4096 vagrant up "$1" > /dev/null
+    if vagrant ssh "$1" -- cat validate.log | grep "ERROR"; then
+        vagrant ssh "$1" -- cat main.log
+        error "Error $1 VM on $(pwd)"
+    fi
+    vagrant ssh "$1" -- cat validate.log | grep "INFO"
+    info "Destroying VM on $(pwd) for $1"
+    vagrant destroy -f "$1" > /dev/null
     popd > /dev/null
-done <   <(find . -mindepth 2 -type f -name Vagrantfile -print0)
+done
+info "Integration tests completed - $1"

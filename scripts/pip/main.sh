@@ -77,7 +77,7 @@ function main {
                 fi
                 $INSTALLER_CMD install software-properties-common
                 sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
-                sudo apt update
+                sudo apt-get update
                 $INSTALLER_CMD install python3.7 python-minimal
             ;;
             rhel|centos|fedora)
