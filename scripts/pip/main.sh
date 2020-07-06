@@ -78,7 +78,11 @@ function main {
                 $INSTALLER_CMD install software-properties-common
                 sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
                 sudo apt-get update
-                $INSTALLER_CMD install python3.7 python-minimal
+                pkgs="python3.7 python3-setuptools"
+                if _vercmp "${VERSION_ID}" '<=' "18.04"; then
+                    pkgs+=" python-minimal"
+                fi
+                eval "$INSTALLER_CMD --no-install-recommends install $pkgs"
             ;;
             rhel|centos|fedora)
                 PKG_MANAGER=$(command -v dnf || command -v yum)
