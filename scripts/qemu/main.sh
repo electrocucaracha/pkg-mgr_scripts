@@ -21,6 +21,10 @@ function main {
     local pmdk_version=${PKG_PMDK_VERSION:-1.4}
     local pmdk_url="https://github.com/pmem/pmdk/releases/download/$pmdk_version/pmdk-${pmdk_version}-"
 
+    if command -v qemu-img; then
+        return
+    fi
+
     cpu_arch="amd64"
     if command -v dpkg; then
         cpu_arch=$(dpkg --print-architecture)
@@ -73,7 +77,7 @@ function main {
         ;;
         rhel|centos|fedora)
             configure_flags+=" --enable-numa"
-            pkgs+=" glib2-devel pixman-devel zlib-devel libpmem-devel numactl-devel"
+            pkgs+=" glib2-devel pixman-devel zlib-devel libpmem-devel numactl-devel bzip2"
         ;;
     esac
     curl -fsSL http://bit.ly/install_pkg | PKG="$pkgs" bash
@@ -81,14 +85,13 @@ function main {
     pushd "$(mktemp -d)" > /dev/null
     if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
         curl -o qemu.tar.tz "https://download.qemu.org/$qemu_tarball"
-        tar xvf qemu.tar.tz
     else
         curl -o qemu.tar.tz "https://download.qemu.org/$qemu_tarball" 2> /dev/null
-        tar xf qemu.tar.tz
     fi
+    tar xf qemu.tar.tz
     pushd "qemu-${version}" > /dev/null
     eval "./configure $configure_flags"
-    make
+    make > /dev/null
     sudo make install
     popd > /dev/null
     popd > /dev/null
