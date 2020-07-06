@@ -29,6 +29,3 @@
 - name: "opensuse_15"
   box: "generic/opensuse15"
   version: "3.0.10"
-- name: "opensuse_42"
-  box: "generic/opensuse42"
-  version: "3.0.10"
