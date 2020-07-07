@@ -1,4 +1,3 @@
----
 # SPDX-license-identifier: Apache-2.0
 ##############################################################################
 # Copyright (c) 2019
@@ -7,25 +6,25 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
-- name: "clearlinux"
-  box: "AntonioMeireles/ClearLinux"
-  version: "33420"
-- name: "centos_7"
-  box: "generic/centos7"
-  version: "3.0.10"
-- name: "centos_8"
-  box: "generic/centos8"
-  version: "3.0.10"
-- name: "ubuntu_xenial"
-  box: "generic/ubuntu1604"
-  version: "3.0.10"
-- name: "ubuntu_bionic"
-  box: "generic/ubuntu1804"
-  version: "3.0.10"
-- name: "ubuntu_focal"
-  box: "generic/ubuntu2004"
-  version: "3.0.10"
-- name: "opensuse_15"
-  box: "generic/opensuse15"
-  version: "3.0.10"
+linux:
+  - alias: clearlinux
+    name: "AntonioMeireles/ClearLinux"
+    version: 33450
+  - alias: centos_7
+    name: "generic/centos7"
+    version: 3.0.12
+  - alias: centos_8
+    name: "generic/centos8"
+    version: 3.0.12
+  - alias: ubuntu_xenial
+    name: "generic/ubuntu1604"
+    version: 3.0.12
+  - alias: ubuntu_bionic
+    name: "generic/ubuntu1804"
+    version: 3.0.12
+  - alias: ubuntu_focal
+    name: "generic/ubuntu2004"
+    version: 3.0.12
+  - alias: opensuse_15
+    name: "generic/opensuse15"
+    version: 3.0.12

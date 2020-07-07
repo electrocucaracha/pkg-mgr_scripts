@@ -30,12 +30,12 @@ Vagrant.configure("2") do |config|
 
   config.vm.synced_folder './', '/vagrant', type: "rsync",
     rsync__args: ["--verbose", "--archive", "--delete", "-z"]
-  distros.each do |distro|
-    config.vm.define distro["name"] do |node|
-      node.vm.box = distro["box"]
+  distros["linux"].each do |distro|
+    config.vm.define distro["alias"] do |node|
+      node.vm.box = distro["name"]
       node.vm.box_version = distro["version"]
       node.vm.box_check_update = false
-      if distro["name"] == "clearlinux"
+      if distro["alias"] == "clearlinux"
         node.vm.provider 'libvirt' do |v|
           v.loader = loader
         end
