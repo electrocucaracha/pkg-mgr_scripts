@@ -54,3 +54,8 @@ jobs:
         - sudo ./check.sh ubuntu_focal
       env:
         - VAGRANT_EXECUTION=true
+    - name: OpenSUSE Tumbleweed validation
+      script:
+        - sudo ./check.sh opensuse
+      env:
+        - VAGRANT_EXECUTION=true
