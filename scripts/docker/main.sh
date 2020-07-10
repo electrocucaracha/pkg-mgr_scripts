@@ -46,8 +46,10 @@ function main {
                     sudo -H -E "${PKG_MANAGER}" -y install --quiet --errorlevel=0 https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
                 fi
                 curl -fsSL https://get.docker.com/ | sh
-                ;;
-            *)
+                sudo sed -i "s/FirewallBackend=.*/FirewallBackend=iptables/g" /etc/firewalld/firewalld.conf
+                sudo systemctl restart firewalld
+            ;;
+            ubuntu|debian)
                 curl -fsSL https://get.docker.com/ | sh
             ;;
         esac

@@ -49,7 +49,7 @@ info "Validating Docker pulling process with $docker_image image"
 if ! sudo docker pull "$docker_image"; then
     error "Docker pull action doesn't work"
 fi
-
+sudo docker run busybox nslookup google.com
 
 info "Validating Docker building process with $docker_image image"
 pushd "$(mktemp -d)"
