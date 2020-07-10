@@ -15,6 +15,9 @@ for box in $(vagrant box list | awk '{print $1}'); do
     echo "Validating $box box..."
     current_version=$(curl -s "https://app.vagrantup.com/api/v1/box/$box" | jq -r '.current_version.version')
     local_version=$(yq r distros_supported.yml "linux.(name==$box).version")
+    if [ ! "$local_version" ]; then
+        continue
+    fi
     if [ "$local_version" != "$current_version" ]; then
         vagrant box update --box "$box"
         if vagrant box list | grep "$box" | grep "$local_version" > /dev/null; then
