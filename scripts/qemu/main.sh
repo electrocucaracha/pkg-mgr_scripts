@@ -39,7 +39,7 @@ function main {
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
         opensuse*)
-            pkgs+=" bzip2 glib2-devel libpixman-1-0-devel"
+            pkgs+=" bzip2 glib2-devel libpixman-1-0-devel diffutils"
             pushd "$(mktemp -d)" > /dev/null
             if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                 curl -L -o pmdk-rpms.tar.gz "${pmdk_url}rpms.tar.gz"

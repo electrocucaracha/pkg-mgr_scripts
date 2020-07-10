@@ -26,7 +26,7 @@ function error {
 }
 
 function _print_msg {
-    echo "$1: $2"
+    echo "$(date +%H:%M:%S) - $1: $2"
 }
 
 [ "$#" -eq 1 ] || die "1 argument required, $# provided"
