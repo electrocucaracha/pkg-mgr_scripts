@@ -44,7 +44,7 @@ function update_repos {
             if ! sudo "$PKG_MANAGER" repolist | grep "epel/"; then
                 sudo -H -E "$PKG_MANAGER" -q -y install epel-release
             fi
-            sudo "$PKG_MANAGER" updateinfo
+            sudo "$PKG_MANAGER" updateinfo --assumeyes
         ;;
         clear-linux-os)
             sudo swupd update --download
@@ -60,6 +60,9 @@ function main {
     declare -A pkg_mgr_supported
 
     pkg_mgr_supported[bind-utils]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"bind-utils\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
+    pkg_mgr_supported[bridge-utils]="{\"Suse\": \"bridge-utils\",\"Debian\": \"bridge-utils\",\"RedHat\": \"bridge-utils\",\"ClearLinux\": \"network-basic\"}"
+    pkg_mgr_supported[dnsmasq]="{\"Suse\": \"dnsmasq\",\"Debian\": \"dnsmasq-base\",\"RedHat\": \"dnsmasq\",\"ClearLinux\": \"dhcp-server\"}"
+    pkg_mgr_supported[ebtables]="{\"Suse\": \"ebtables\",\"Debian\": \"ebtables\",\"RedHat\": \"ebtables\",\"ClearLinux\": \"network-basic\"}"
     pkg_mgr_supported[gpgme]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"gpgme\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
     pkg_mgr_supported[gpgme-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"gpgme-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
     pkg_mgr_supported[krb5-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"libkrb5-dev\",\"RedHat\": \"krb5-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
@@ -67,6 +70,7 @@ function main {
     pkg_mgr_supported[libassuan-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
     pkg_mgr_supported[mkpasswd]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"mkpasswd\",\"RedHat\": \"expect\",\"ClearLinux\": \"sysadmin-basic\"}"
     pkg_mgr_supported[python-devel]="{\"Suse\": \"python-devel\",\"Debian\": \"python-dev\",\"RedHat\": \"python3-devel python2-devel\",\"ClearLinux\": \"python-basic\"}"
+    pkg_mgr_supported[ruby-devel]="{\"Suse\": \"ruby-devel\",\"Debian\": \"ruby-dev\",\"RedHat\": \"ruby-devel\",\"ClearLinux\": \"ruby-basic\"}"
     pkg_mgr_supported[tito]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"tito\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
 
     pkg_mgr_supported[crystal-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
