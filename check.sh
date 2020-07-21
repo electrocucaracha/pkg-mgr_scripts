@@ -17,16 +17,7 @@ function die {
 }
 
 function info {
-    _print_msg "INFO" "$1"
-}
-
-function error {
-    _print_msg "ERROR" "$1"
-    exit 1
-}
-
-function _print_msg {
-    echo "$(date +%H:%M:%S) - $1: $2"
+    echo "$(date +%H:%M:%S) - INFO: $1"
 }
 
 [ "$#" -eq 1 ] || die "1 argument required, $# provided"
@@ -58,10 +49,12 @@ for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile); do
     info "Starting VM on $(pwd) for $1"
     start=$(date +%s)
     newgrp libvirt <<EONG
-    MEMORY=4096 vagrant up "$1" > /dev/null
+    trap "vagrant ssh $1 -- cat main.log" ERR
+    MEMORY=4096 vagrant up "$1"
     if vagrant ssh "$1" -- cat validate.log | grep "ERROR"; then
+        echo "$(date +%H:%M:%S) - ERROR"
         vagrant ssh "$1" -- cat main.log
-        error "Error $1 VM on $(pwd)"
+        exit 1
     fi
     vagrant ssh "$1" -- cat validate.log | grep "INFO"
 EONG
