@@ -9,22 +9,22 @@
 linux:
   - alias: clearlinux
     name: AntonioMeireles/ClearLinux
-    version: 33500
+    version: 33560
   - alias: centos_7
     name: generic/centos7
-    version: 3.0.14
+    version: 3.0.20
   - alias: centos_8
     name: generic/centos8
-    version: 3.0.14
+    version: 3.0.20
   - alias: ubuntu_xenial
     name: generic/ubuntu1604
-    version: 3.0.14
+    version: 3.0.20
   - alias: ubuntu_bionic
     name: generic/ubuntu1804
-    version: 3.0.14
+    version: 3.0.20
   - alias: ubuntu_focal
     name: generic/ubuntu2004
-    version: 3.0.14
+    version: 3.0.20
   - alias: opensuse
     name: opensuse/Tumbleweed.x86_64
-    version: 1.0.20200717
+    version: 1.0.20200730
