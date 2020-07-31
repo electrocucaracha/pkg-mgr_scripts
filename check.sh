@@ -48,21 +48,17 @@ for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile); do
     pushd "$(dirname "$vagrantfile")" > /dev/null
     info "Starting VM on $(pwd) for $1"
     start=$(date +%s)
-    newgrp libvirt <<EONG
-    trap "vagrant ssh $1 -- cat main.log" ERR
-    MEMORY=4096 vagrant up "$1"
-    if vagrant ssh "$1" -- cat validate.log | grep "ERROR"; then
+    trap 'sudo vagrant ssh $1 -- cat main.log' ERR
+    MEMORY=4096 sudo vagrant up "$1"
+    if sudo vagrant ssh "$1" -- cat validate.log | grep "ERROR"; then
         echo "$(date +%H:%M:%S) - ERROR"
-        vagrant ssh "$1" -- cat main.log
+        sudo vagrant ssh "$1" -- cat main.log
         exit 1
     fi
-    vagrant ssh "$1" -- cat validate.log | grep "INFO"
-EONG
+    sudo vagrant ssh "$1" -- cat validate.log | grep "INFO"
     info "Duration time: $(($(date +%s)-start)) secs"
     info "Destroying VM on $(pwd) for $1"
-    newgrp libvirt <<EONG
-    vagrant destroy -f "$1" > /dev/null
-EONG
+    sudo vagrant destroy -f "$1" > /dev/null
     popd > /dev/null
 done
 info "Integration tests completed - $1"
