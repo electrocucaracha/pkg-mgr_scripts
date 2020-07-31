@@ -66,9 +66,11 @@ function main {
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+="-q "
                 fi
-                $INSTALLER_CMD addrepo https://download.opensuse.org/repositories/openSUSE:Leap:15.1:Update/standard/openSUSE:Leap:15.1:Update.repo
-                sudo zypper --gpg-auto-import-keys refresh
-                $INSTALLER_CMD install -y --no-recommends python3
+                if ! $INSTALLER_CMD repos | grep "openSUSE_Leap_15.1_Update"; then
+                    $INSTALLER_CMD addrepo https://download.opensuse.org/repositories/openSUSE:Leap:15.1:Update/standard/openSUSE:Leap:15.1:Update.repo
+                fi
+                $INSTALLER_CMD --gpg-auto-import-keys refresh
+                $INSTALLER_CMD install -y --no-recommends python38
             ;;
             ubuntu|debian)
                 INSTALLER_CMD="sudo -H -E apt-get -y "
