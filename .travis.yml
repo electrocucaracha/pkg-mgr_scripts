@@ -13,9 +13,6 @@ os: linux
 git:
   depth: 1
 dist: bionic
-cache:
-  directories:
-    - /home/travis/.vagrant.d/boxes
 jobs:
   include:
     - name: Lint validation
