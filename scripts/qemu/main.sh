@@ -40,18 +40,20 @@ function main {
     case ${ID,,} in
         opensuse*)
             pkgs+=" bzip2 glib2-devel libpixman-1-0-devel diffutils"
-            pushd "$(mktemp -d)" > /dev/null
-            if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-                curl -L -o pmdk-rpms.tar.gz "${pmdk_url}rpms.tar.gz"
-                tar xvf pmdk-rpms.tar.gz
-            else
-                curl -L -o pmdk-rpms.tar.gz "${pmdk_url}rpms.tar.gz" 2> /dev/null
-                tar xf pmdk-rpms.tar.gz
+            if ! sudo zypper search --match-exact --installed-only libpmem; then
+                pushd "$(mktemp -d)" > /dev/null
+                if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+                    curl -L -o pmdk-rpms.tar.gz "${pmdk_url}rpms.tar.gz"
+                    tar xvf pmdk-rpms.tar.gz
+                else
+                    curl -L -o pmdk-rpms.tar.gz "${pmdk_url}rpms.tar.gz" 2> /dev/null
+                    tar xf pmdk-rpms.tar.gz
+                fi
+                for pkg in libpmem libpmem-devel; do
+                    sudo rpm -i "x86_64/${pkg}-${pmdk_version}-1.fc25.x86_64.rpm"
+                done
+                popd
             fi
-            for pkg in libpmem libpmem-devel; do
-                sudo rpm -i "x86_64/${pkg}-${pmdk_version}-1.fc25.x86_64.rpm"
-            done
-            popd
         ;;
         clearlinux)
             curl -fsSL http://bit.ly/install_pkg | PKG="kvm-host" bash
