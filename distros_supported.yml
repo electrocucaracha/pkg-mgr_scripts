@@ -27,4 +27,4 @@ linux:
     version: 3.0.20
   - alias: opensuse
     name: opensuse/Tumbleweed.x86_64
-    version: 1.0.20200730
+    version: 1.0.20200802
