@@ -22,5 +22,5 @@ for box in $(yq r distros_supported.yml "linux.(*).name"); do
         fi
     fi
     echo "Registering $current_version version for $box..."
-    yq w -i distros_supported.yml "linux.(name==$box).version" "$current_version"
+    yq w -i distros_supported.yml "linux.(name==$box).version" "\"$current_version\""
 done

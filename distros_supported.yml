@@ -9,7 +9,7 @@
 linux:
   - alias: clearlinux
     name: AntonioMeireles/ClearLinux
-    version: 33560
+    version: "33560"
   - alias: centos_7
     name: generic/centos7
     version: 3.0.20
@@ -27,4 +27,4 @@ linux:
     version: 3.0.20
   - alias: opensuse
     name: opensuse/Tumbleweed.x86_64
-    version: 1.0.20200802
+    version: 1.0.20200803
