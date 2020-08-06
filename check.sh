@@ -44,8 +44,13 @@ vagrant destroy -f "$1" > /dev/null
 EONG
 
 # shellcheck disable=SC2044
-for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile); do
+for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
     pushd "$(dirname "$vagrantfile")" > /dev/null
+    if [ -f os-blacklist.conf ] && grep "$1" os-blacklist.conf > /dev/null; then
+        popd > /dev/null
+        info "Skipping test $(pwd) for $1"
+        continue
+    fi
     info "Starting VM on $(pwd) for $1"
     start=$(date +%s)
     trap 'sudo vagrant ssh $1 -- cat main.log' ERR
