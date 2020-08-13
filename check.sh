@@ -47,11 +47,11 @@ EONG
 for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
     pushd "$(dirname "$vagrantfile")" > /dev/null
     if [ -f os-blacklist.conf ] && grep "$1" os-blacklist.conf > /dev/null; then
+        info "Skipping $(basename "$(pwd)") test for $1"
         popd > /dev/null
-        info "Skipping test $(pwd) for $1"
         continue
     fi
-    info "Starting VM on $(pwd) for $1"
+    info "Starting $(basename "$(pwd)") test for $1"
     start=$(date +%s)
     trap 'sudo vagrant ssh $1 -- cat main.log' ERR
     MEMORY=4096 sudo vagrant up "$1"
@@ -62,7 +62,7 @@ for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
     fi
     sudo vagrant ssh "$1" -- cat validate.log | grep "INFO"
     info "Duration time: $(($(date +%s)-start)) secs"
-    info "Destroying VM on $(pwd) for $1"
+    info "$(basename "$(pwd)") test completed for $1"
     sudo vagrant destroy -f "$1" > /dev/null
     popd > /dev/null
 done
