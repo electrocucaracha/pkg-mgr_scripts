@@ -15,18 +15,30 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function main {
-    local version=${PKG_GOLANG_VERSION:-1.14.4}
-    local os=linux
+function get_cpu_arch {
+    if [ -z "${PKG_CPU_ARCH:-}" ]; then
+        case "$(uname -m)" in
+            x86_64)
+                PKG_CPU_ARCH=amd64
+            ;;
+            armv8*)
+                PKG_CPU_ARCH=arm64
+            ;;
+            aarch64*)
+                PKG_CPU_ARCH=arm64
+            ;;
+            armv*)
+                PKG_CPU_ARCH=armv7
+            ;;
+        esac
+    fi
+    echo "$PKG_CPU_ARCH"
+}
 
-    cpu_arch="amd64"
-    if command -v dpkg; then
-        cpu_arch=$(dpkg --print-architecture)
-    fi
-    if [ -n "${PKG_CPU_ARCH:-}" ]; then
-        cpu_arch="$PKG_CPU_ARCH"
-    fi
-    local tarball=go$version.$os-$cpu_arch.tar.gz
+function main {
+    local version=${PKG_GOLANG_VERSION:-1.15}
+    local os=linux
+    tarball=go$version.$os-$(get_cpu_arch).tar.gz
 
     if command -v go; then
         return
