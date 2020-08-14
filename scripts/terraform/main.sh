@@ -15,9 +15,30 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+function get_cpu_arch {
+    if [ -z "${PKG_CPU_ARCH:-}" ]; then
+        case "$(uname -m)" in
+            x86_64)
+                PKG_CPU_ARCH=amd64
+            ;;
+            armv8*)
+                PKG_CPU_ARCH=arm64
+            ;;
+            aarch64*)
+                PKG_CPU_ARCH=arm64
+            ;;
+            armv*)
+                PKG_CPU_ARCH=armv7
+            ;;
+        esac
+    fi
+    echo "$PKG_CPU_ARCH"
+}
+
 function main {
-    local version=${PKG_TERRAFORM_VERSION:-0.12.24}
-    local tarball="terraform_${version}_linux_amd64.zip"
+    local version=${PKG_TERRAFORM_VERSION:-0.13.0}
+    local os=linux
+    tarball=terraform_${version}_${os}_$(get_cpu_arch).zip
 
     if command -v terraform; then
         return
