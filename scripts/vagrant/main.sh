@@ -15,6 +15,26 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+function get_cpu_arch {
+    if [ -z "${PKG_CPU_ARCH:-}" ]; then
+        case "$(uname -m)" in
+            x86_64)
+                PKG_CPU_ARCH=amd64
+            ;;
+            armv8*)
+                PKG_CPU_ARCH=arm64
+            ;;
+            aarch64*)
+                PKG_CPU_ARCH=arm64
+            ;;
+            armv*)
+                PKG_CPU_ARCH=armv7
+            ;;
+        esac
+    fi
+    echo "$PKG_CPU_ARCH"
+}
+
 # _vercmp() - Function that compares two versions
 function _vercmp {
     local v1=$1
@@ -106,7 +126,7 @@ function main {
             fi
         ;;
         clear-linux-os)
-            vagrant_pkg="vagrant_${version}_linux_amd64.zip"
+            vagrant_pkg="vagrant_${version}_linux_$(get_cpu_arch).zip"
             if ! command -v unzip; then
                 if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                     sudo -H -E swupd bundle-add unzip
