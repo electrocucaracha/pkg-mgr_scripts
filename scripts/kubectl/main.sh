@@ -15,26 +15,37 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+function get_cpu_arch {
+    if [ -z "${PKG_CPU_ARCH:-}" ]; then
+        case "$(uname -m)" in
+            x86_64)
+                PKG_CPU_ARCH=amd64
+            ;;
+            armv8*)
+                PKG_CPU_ARCH=arm64
+            ;;
+            aarch64*)
+                PKG_CPU_ARCH=arm64
+            ;;
+            armv*)
+                PKG_CPU_ARCH=armv7
+            ;;
+        esac
+    fi
+    echo "$PKG_CPU_ARCH"
+}
+
 function main {
     local version=${PKG_KIND_VERSION:-$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)}
-    local krew_version="v0.3.4"
-
-    cpu_arch="amd64"
-    if command -v dpkg; then
-        cpu_arch=$(dpkg --print-architecture)
-    fi
-    if [ -n "${PKG_CPU_ARCH:-}" ]; then
-        cpu_arch="$PKG_CPU_ARCH"
-    fi
 
     if ! command -v kubectl; then
         echo "INFO: Installing kubectl..."
 
         pushd "$(mktemp -d)" > /dev/null
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$cpu_arch/kubectl"
+            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$(get_cpu_arch)/kubectl"
         else
-            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$cpu_arch/kubectl" 2> /dev/null
+            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$(get_cpu_arch)/kubectl" 2> /dev/null
         fi
         chmod +x kubectl
         sudo mkdir -p /usr/local/bin/
@@ -47,13 +58,13 @@ function main {
 
         pushd "$(mktemp -d)" > /dev/null
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/${krew_version}/krew.{tar.gz,yaml}"
+            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}"
             tar -vxzf krew.tar.gz
         else
-            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/${krew_version}/krew.{tar.gz,yaml}" 2> /dev/null
+            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}" 2> /dev/null
             tar -xzf krew.tar.gz
         fi
-        ./krew-"$(uname | tr '[:upper:]' '[:lower:]')_$cpu_arch" install --manifest=krew.yaml --archive=krew.tar.gz
+        ./krew-"$(uname | tr '[:upper:]' '[:lower:]')_$(get_cpu_arch)" install --manifest=krew.yaml --archive=krew.tar.gz
 
         sudo mkdir -p /etc/profile.d/
         # shellcheck disable=SC2016
