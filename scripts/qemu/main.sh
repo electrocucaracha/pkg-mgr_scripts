@@ -15,6 +15,26 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+function get_cpu_arch {
+    if [ -z "${PKG_CPU_ARCH:-}" ]; then
+        case "$(uname -m)" in
+            x86_64)
+                PKG_CPU_ARCH=amd64
+            ;;
+            armv8*)
+                PKG_CPU_ARCH=arm64
+            ;;
+            aarch64*)
+                PKG_CPU_ARCH=arm64
+            ;;
+            armv*)
+                PKG_CPU_ARCH=armv7
+            ;;
+        esac
+    fi
+    echo "$PKG_CPU_ARCH"
+}
+
 function main {
     local version=${PKG_QEMU_VERSION:-5.0.0}
     local qemu_tarball="qemu-${version}.tar.xz"
@@ -25,15 +45,7 @@ function main {
         return
     fi
 
-    cpu_arch="amd64"
-    if command -v dpkg; then
-        cpu_arch=$(dpkg --print-architecture)
-    fi
-    if [ -n "${PKG_CPU_ARCH:-}" ]; then
-        cpu_arch="$PKG_CPU_ARCH"
-    fi
-
-    configure_flags="--target-list="$(lscpu | grep "Architecture:" | awk '{print $2}')-softmmu" --enable-libpmem --enable-kvm"
+    configure_flags="--target-list="$(uname -m)-softmmu" --enable-libpmem --enable-kvm"
     pkgs="pip gcc make"
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
@@ -72,7 +84,7 @@ function main {
                     tar xf pmdk-dpkgs.tar.gz
                 fi
                 for pkg in libpmem libpmem-dev; do
-                    sudo dpkg -i "${pkg}_${pmdk_version}-1_${cpu_arch}.deb"
+                    sudo dpkg -i "${pkg}_${pmdk_version}-1_$(get_cpu_arch).deb"
                 done
                 popd
             fi
