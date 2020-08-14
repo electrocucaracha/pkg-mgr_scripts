@@ -24,6 +24,7 @@ function main {
 
     pushd "$(mktemp -d)" 2> /dev/null
     pkgs="VirtualBox-$version dkms"
+    enable_build_vbox_modules="false"
     curl -o oracle_vbox.asc https://www.virtualbox.org/download/oracle_vbox.asc
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
@@ -62,6 +63,8 @@ function main {
                 sudo rpm --import --quiet oracle_vbox.asc
             fi
             sudo "$(command -v dnf || command -v yum)" repolist --assumeyes || true
+            pkgs+=" kernel-devel kernel-devel-$(uname -r)"
+            enable_build_vbox_modules="true"
         ;;
         clear-linux-os)
             echo "WARN: The VirtualBox provider isn't supported by ClearLinux yet."
@@ -71,6 +74,9 @@ function main {
     rm oracle_vbox.asc
     popd 2> /dev/null
     curl -fsSL http://bit.ly/install_pkg | PKG="$pkgs" PKG_UPDATE=true bash
+    if [ "$enable_build_vbox_modules" == "true" ]; then
+        sudo /sbin/vboxconfig
+    fi
 }
 
 main
