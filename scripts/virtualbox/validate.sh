@@ -29,3 +29,6 @@ info "Validating VirtualBox installation..."
 if ! command -v VBoxManage; then
     error "VirtualBox command line wasn't installed"
 fi
+
+info "Validating VirtualBox execution"
+VBoxManage -v
