@@ -29,3 +29,10 @@ info "Validating pip installation..."
 if ! command -v pip; then
     error "pip command line wasn't installed"
 fi
+eval "sudo -E $(command -v pip) -V"
+
+if [ ! -f "$HOME/.local/bin/tox" ]; then
+    info "Validating pip execution"
+    pip install --no-warn-script-location --no-cache-dir tox
+    "$HOME/.local/bin/tox" --version
+fi
