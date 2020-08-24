@@ -80,7 +80,7 @@ function main {
                 $INSTALLER_CMD install software-properties-common
                 sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
                 sudo apt-get update
-                pkgs="python3.7 python3-setuptools"
+                pkgs="python3.7 python3-setuptools python-setuptools"
                 if _vercmp "${VERSION_ID}" '<=' "18.04"; then
                     pkgs+=" python-minimal"
                 fi
