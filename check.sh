@@ -11,6 +11,8 @@
 set -o errexit
 set -o pipefail
 
+vagrant_version=2.2.10
+
 function die {
     echo >&2 "$@"
     exit 1
@@ -27,14 +29,14 @@ info "Install Integration dependencies - $1"
 source /etc/os-release || source /usr/lib/os-release
 case ${ID,,} in
     ubuntu|debian)
+        echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
         sudo apt-get update
-        sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 --no-install-recommends curl qemu
+        sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 --no-install-recommends curl qemu bridge-utils dnsmasq ebtables libvirt-daemon-system libvirt-dev libxslt-dev libxml2-dev zlib1g-dev cpu-checker qemu-kvm ruby-dev gcc
+        sudo usermod -a -G libvirt "$USER"
+        curl -o vagrant.deb "https://releases.hashicorp.com/vagrant/$vagrant_version/vagrant_${vagrant_version}_x86_64.deb"
+        sudo dpkg -i vagrant.deb
     ;;
 esac
-PKG="vagrant bridge-utils dnsmasq ebtables libvirt qemu-kvm"
-PKG+=" ruby-devel gcc"
-export PKG
-curl -fsSL http://bit.ly/install_pkg | bash
 vagrant plugin install vagrant-libvirt
 
 info "Starting Integration tests - $1"
