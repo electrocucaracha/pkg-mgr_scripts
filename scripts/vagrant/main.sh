@@ -74,7 +74,7 @@ function _vercmp {
 }
 
 function main {
-    local version=${PKG_VAGRANT_VERSION:-2.2.9}
+    local version=${PKG_VAGRANT_VERSION:-2.2.10}
 
     if command -v vagrant; then
         if _vercmp "$(vagrant version | awk 'NR==1{print $3}')" '>=' "$version"; then
@@ -148,6 +148,7 @@ function main {
         ;;
     esac
     rm "$vagrant_pkg"
+    vagrant autocomplete install
     popd > /dev/null
 }
 

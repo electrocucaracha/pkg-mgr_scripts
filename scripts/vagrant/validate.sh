@@ -29,3 +29,16 @@ info "Validating vagrant installation..."
 if ! command -v vagrant; then
     error "Vagrant command line wasn't installed"
 fi
+
+info "Validating Vagrant operation"
+pushd "$(mktemp -d)"
+vagrant init centos/7
+if ! [ -f Vagrantfile ]; then
+    error "Vagrantfile wasn't created"
+fi
+popd
+
+info "Validate autocomplete functions"
+if declare -F | grep -q "_vagrant"; then
+    error "Vagrant autocomplete install failed"
+fi
