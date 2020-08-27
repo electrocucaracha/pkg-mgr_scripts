@@ -24,6 +24,10 @@ instruction is needed:
 
     curl -fsSL http://bit.ly/install_pkg | PKG="docker docker-compose" bash
 
+`bit.ly/install_pkg` redirects to the install script in this repository and the invocation above is equivalent to:
+
+    curl -fsSL https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/install.sh | PKG="docker docker-compose" bash
+
 ### Program environment variables
 
 | Name         | Description                                                               |
