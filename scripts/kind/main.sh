@@ -38,19 +38,19 @@ function get_cpu_arch {
 function main {
     local version=${PKG_KIND_VERSION:-0.8.1}
 
-    if command -v kind; then
-        return
+    if ! command -v kubectl || [[ "$(kind --version | awk '{print $3}')" != "$version" ]]; then
+        echo "INFO: Installing kind..."
+        url="https://github.com/kubernetes-sigs/kind/releases/download/v${version}/kind-$(uname)-$(get_cpu_arch)"
+        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+            curl -Lo ./kind "$url"
+        else
+            curl -Lo ./kind "$url" 2> /dev/null
+        fi
+        chmod +x ./kind
+        sudo mkdir -p  /usr/local/bin/
+        sudo mv ./kind /usr/local/bin/kind
     fi
-
-    echo "INFO: Installing kind..."
-    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-        curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v${version}/kind-$(uname)-$(get_cpu_arch)"
-    else
-        curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v${version}/kind-$(uname)-$(get_cpu_arch)" 2> /dev/null
-    fi
-    chmod +x ./kind
-    sudo mkdir -p  /usr/local/bin/
-    sudo mv ./kind /usr/local/bin/kind
+    kind completion bash | sudo tee /etc/bash_completion.d/kind
 }
 
 main

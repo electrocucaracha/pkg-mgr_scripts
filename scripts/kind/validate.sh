@@ -29,3 +29,8 @@ info "Validating kind installation..."
 if ! command -v kind; then
     error "Kubernetes IN Docker command line wasn't installed"
 fi
+
+info "Validating autocomplete functions"
+if declare -F | grep -q "_kind"; then
+    error "Kind autocomplete install failed"
+fi
