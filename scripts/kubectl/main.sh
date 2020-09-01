@@ -36,9 +36,9 @@ function get_cpu_arch {
 }
 
 function main {
-    local version=${PKG_KIND_VERSION:-$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)}
+    local version=${PKG_KUBECTL_VERSION:-$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)}
 
-    if ! command -v kubectl; then
+    if ! command -v kubectl || [[ "$(kubectl version --short --client | awk '{print $3}')" != "$version" ]]; then
         echo "INFO: Installing kubectl..."
 
         pushd "$(mktemp -d)" > /dev/null
@@ -48,9 +48,12 @@ function main {
             curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$(get_cpu_arch)/kubectl" 2> /dev/null
         fi
         chmod +x kubectl
+        mkdir -p ~/{.local,}/bin
+        sudo mkdir -p /snap/bin
         sudo mkdir -p /usr/local/bin/
         sudo mv kubectl /usr/local/bin/kubectl
         popd > /dev/null
+        kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
     fi
 
     if ! kubectl krew version &>/dev/null; then
@@ -73,7 +76,32 @@ function main {
         popd > /dev/null
     fi
     if ! command -v git; then
-        curl -fsSL http://bit.ly/install_pkg | PKG=git bash
+         # shellcheck disable=SC1091
+        source /etc/os-release || source /usr/lib/os-release
+        case ${ID,,} in
+            *suse*)
+                INSTALLER_CMD="sudo -H -E zypper "
+                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                    INSTALLER_CMD+="-q "
+                fi
+                $INSTALLER_CMD install -y --no-recommends git
+            ;;
+            ubuntu|debian)
+                INSTALLER_CMD="sudo -H -E apt-get -y "
+                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                    INSTALLER_CMD+="-q=3 "
+                fi
+                $INSTALLER_CMD --no-install-recommends install git
+            ;;
+            rhel|centos|fedora)
+                PKG_MANAGER=$(command -v dnf || command -v yum)
+                INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
+                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                    INSTALLER_CMD+=" --quiet --errorlevel=0"
+                fi
+                $INSTALLER_CMD install git
+            ;;
+        esac
     fi
     kubectl krew update
     kubectl krew install tree

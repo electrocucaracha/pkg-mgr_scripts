@@ -29,3 +29,13 @@ info "Validating kubectl installation..."
 if ! command -v kubectl; then
     error "Kubectl command line wasn't installed"
 fi
+
+info "Validating autocomplete functions"
+if declare -F | grep -q "_kubectl"; then
+    error "Kubectl autocomplete install failed"
+fi
+
+info "Validating krew installation..."
+if ! kubectl plugin list | grep "kubectl-krew"; then
+    error "Krew plugin wasn't installed"
+fi
