@@ -29,3 +29,6 @@ info "Validating crystal installation..."
 if ! command -v crystal; then
     error "Crystal command line wasn't installed"
 fi
+
+info "Validating crystal execution..."
+crystal version

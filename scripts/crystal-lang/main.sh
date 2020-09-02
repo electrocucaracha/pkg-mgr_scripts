@@ -28,22 +28,41 @@ function main {
         *suse*)
             sudo rpm --import https://dist.crystal-lang.org/rpm/RPM-GPG-KEY
             sudo zypper ar -e -f -t rpm-md https://dist.crystal-lang.org/rpm/ Crystal
+            INSTALLER_CMD="zypper "
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+="-q "
+            fi
+            INSTALLER_CMD+=" install -y --no-recommends"
         ;;
         ubuntu|debian)
-            curl -fsSL http://bit.ly/install_pkg | PKG="gnupg" bash
+            INSTALLER_CMD="apt-get -y "
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+="-q=3 "
+            fi
+            INSTALLER_CMD+=" --no-install-recommends install"
+            # shellcheck disable=SC2086
+            sudo -H -E $INSTALLER_CMD gnupg
             curl -sL "https://keybase.io/crystal/pgp_keys.asc" | sudo apt-key add -
             echo "deb https://dist.crystal-lang.org/apt crystal main" | sudo tee /etc/apt/sources.list.d/crystal.list
-            pkgs+=" libssl-dev libxml2-dev libyaml-dev libgmp-dev libreadline-dev libz-dev"
+            sudo apt update
+            pkgs+=" libssl-dev libxml2-dev libyaml-dev libgmp-dev libreadline-dev libz-dev crystal"
         ;;
         rhel|centos|fedora)
             curl -sSL https://dist.crystal-lang.org/rpm/setup.sh | sudo bash
+            PKG_MANAGER=$(command -v dnf || command -v yum)
+            INSTALLER_CMD="${PKG_MANAGER} -y"
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+=" --quiet --errorlevel=0"
+            fi
+            INSTALLER_CMD+=" install"
         ;;
         clear-linux-os)
             echo "WARN: The Crystal programming isn't supported by ClearLinux yet."
             return
         ;;
     esac
-    curl -fsSL http://bit.ly/install_pkg | PKG="$pkgs" PKG_UPDATE=true bash
+    # shellcheck disable=SC2086
+    sudo -H -E $INSTALLER_CMD $pkgs
 }
 
 main
