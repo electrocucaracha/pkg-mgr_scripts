@@ -66,12 +66,12 @@ function main {
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
         opensuse*)
-            INSTALLER_CMD="sudo -H -E zypper"
+            INSTALLER_CMD="zypper"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q"
             fi
             INSTALLER_CMD+=" install -y"
-            $INSTALLER_CMD -t pattern devel_C_C++
+            sudo -H -E "$INSTALLER_CMD" -t pattern devel_C_C++
             INSTALLER_CMD+=" --no-recommends"
             pkgs="pciutils libudev-devel openssl-devel gcc-c++ kernel-source kernel-syms"
             echo "WARN: QAT driver is not supported in openSUSE $VERSION_ID"
@@ -82,7 +82,7 @@ function main {
                 echo "WARN: QAT driver is not supported in Ubuntu $VERSION_ID"
                 return
             fi
-            INSTALLER_CMD="sudo -H -E apt-get -y --no-install-recommends"
+            INSTALLER_CMD="apt-get -y --no-install-recommends"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q=3"
             fi
@@ -95,7 +95,7 @@ function main {
             PKG_MANAGER=$(command -v dnf || command -v yum)
             sudo "${PKG_MANAGER}" groups mark install -y "Development Tools"
             sudo "${PKG_MANAGER}" groups install -y "Development Tools"
-            INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
+            INSTALLER_CMD="${PKG_MANAGER} -y"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" --quiet --errorlevel=0"
             fi
@@ -106,7 +106,7 @@ function main {
             fi
         ;;
         clear-linux-os)
-            INSTALLER_CMD="sudo -H -E swupd bundle-add"
+            INSTALLER_CMD="swupd bundle-add"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" --quiet"
             fi
@@ -133,7 +133,8 @@ EOF
             return
         ;;
     esac
-    eval "$INSTALLER_CMD $pkgs"
+    # shellcheck disable=SC2086
+    sudo -H -E $INSTALLER_CMD $pkgs
 
     for mod in $(lsmod | grep "^intel_qat" | awk '{print $4}'); do
         sudo rmmod "$mod"

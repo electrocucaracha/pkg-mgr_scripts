@@ -73,18 +73,21 @@ function main {
                 $INSTALLER_CMD install -y --no-recommends python38
             ;;
             ubuntu|debian)
-                INSTALLER_CMD="sudo -H -E apt-get -y "
+                INSTALLER_CMD="apt-get -y "
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+="-q=3 "
                 fi
-                $INSTALLER_CMD install software-properties-common
+                INSTALLER_CMD+=" --no-install-recommends install"
+                # shellcheck disable=SC2086
+                sudo -H -E $INSTALLER_CMD software-properties-common
                 sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
                 sudo apt-get update
                 pkgs="python3.7 python3-setuptools python-setuptools"
                 if _vercmp "${VERSION_ID}" '<=' "18.04"; then
                     pkgs+=" python-minimal"
                 fi
-                eval "$INSTALLER_CMD --no-install-recommends install $pkgs"
+                # shellcheck disable=SC2086
+                sudo -H -E $INSTALLER_CMD $pkgs
             ;;
             rhel|centos|fedora)
                 PKG_MANAGER=$(command -v dnf || command -v yum)

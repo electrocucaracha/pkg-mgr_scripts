@@ -149,7 +149,8 @@ function main {
     fi
     tar xf qemu.tar.tz
     pushd "qemu-${version}" > /dev/null
-    eval "./configure $configure_flags"
+    # shellcheck disable=SC2086
+    ./configure $configure_flags
     if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
         make
     else

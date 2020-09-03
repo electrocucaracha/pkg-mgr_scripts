@@ -61,7 +61,7 @@ function main {
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
         *suse*)
-            INSTALLER_CMD="sudo -H -E zypper"
+            INSTALLER_CMD="zypper"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q"
             fi
@@ -71,7 +71,7 @@ function main {
             sudo zypper -n ref
         ;;
         ubuntu|debian)
-            INSTALLER_CMD="sudo -H -E apt-get -y --no-install-recommends"
+            INSTALLER_CMD="apt-get -y --no-install-recommends"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q=3"
             fi
@@ -79,7 +79,7 @@ function main {
             if _vercmp "${VERSION_ID}" '<=' "16.04"; then
                 libvirt_group+="d"
             fi
-            if _vercmp "${VERSION_ID}" '>' "20.04"; then
+            if _vercmp "${VERSION_ID}" '<' "20.04"; then
                 pkgs+=" libvirt-bin"
             else
                 pkgs+=" libvirt-daemon-system"
@@ -91,7 +91,7 @@ function main {
         ;;
         rhel|centos|fedora)
             PKG_MANAGER=$(command -v dnf || command -v yum)
-            INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
+            INSTALLER_CMD="${PKG_MANAGER} -y"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" --quiet --errorlevel=0"
             fi
@@ -100,7 +100,7 @@ function main {
             sudo "$PKG_MANAGER" updateinfo --assumeyes
         ;;
         clear-linux-os)
-            INSTALLER_CMD="sudo -H -E swupd bundle-add"
+            INSTALLER_CMD="swupd bundle-add"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" --quiet"
             fi
@@ -120,7 +120,8 @@ function main {
             fi
         ;;
     esac
-    eval "$INSTALLER_CMD $pkgs"
+    # shellcheck disable=SC2086
+    sudo -H -E $INSTALLER_CMD $pkgs
     sudo usermod -a -G $libvirt_group "$USER"
 
     # Start libvirt service

@@ -100,7 +100,7 @@ function main {
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
         *suse*)
-            INSTALLER_CMD="sudo -H -E zypper"
+            INSTALLER_CMD="zypper"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q"
             fi
@@ -108,7 +108,7 @@ function main {
             PKG_OS_FAMILY="Suse"
         ;;
         ubuntu|debian)
-            INSTALLER_CMD="sudo -H -E apt-get -y --no-install-recommends"
+            INSTALLER_CMD="apt-get -y --no-install-recommends"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q=3"
             fi
@@ -116,8 +116,7 @@ function main {
             PKG_OS_FAMILY="Debian"
         ;;
         rhel|centos|fedora)
-            PKG_MANAGER=$(command -v dnf || command -v yum)
-            INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
+            INSTALLER_CMD="$(command -v dnf || command -v yum) -y"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" --quiet --errorlevel=0"
             fi
@@ -125,7 +124,7 @@ function main {
             PKG_OS_FAMILY="RedHat"
         ;;
         clear-linux-os)
-            INSTALLER_CMD="sudo -H -E swupd bundle-add"
+            INSTALLER_CMD="swupd bundle-add"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" --quiet"
             fi
@@ -160,7 +159,8 @@ function main {
             fi
         done
         if [[ -n "${sanity_pkgs}" ]]; then
-            eval "$INSTALLER_CMD $sanity_pkgs"
+            # shellcheck disable=SC2086
+            sudo -H -E $INSTALLER_CMD $sanity_pkgs
         fi
     fi
 }
