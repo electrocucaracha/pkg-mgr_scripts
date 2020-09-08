@@ -41,6 +41,28 @@ function main {
     tarball=go$version.$os-$(get_cpu_arch).tar.gz
 
     if ! command -v go || [[ "$(go version | awk '{print $3}')" != "go$version" ]]; then
+        # NOTE: Ensure go-lang was not installed by the OS package manager
+        # shellcheck disable=SC1091
+        source /etc/os-release || source /usr/lib/os-release
+        case ${ID,,} in
+            *suse*)
+                if zypper search --match-exact --installed-only go &>/dev/null; then
+                    sudo zypper -q remove -y -u go
+                fi
+            ;;
+            ubuntu|debian)
+                if dpkg -l golang &>/dev/null; then
+                    sudo apt autoremove -y -qq golang
+                fi
+            ;;
+            rhel|centos|fedora)
+                if rpm -q golang &>/dev/null; then
+                    # shellcheck disable=SC2046
+                    sudo $(command -v dnf || command -v yum) -y --quiet --errorlevel=0 autoremove golang
+                fi
+            ;;
+        esac
+
         echo "INFO: Installing go $version version..."
         pushd "$(mktemp -d)" > /dev/null
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then

@@ -34,3 +34,8 @@ fi
 
 info "Validating go execution..."
 go env
+
+info "Checking go version"
+if [ "$(go version | awk '{print $3}')" != "go1.15.1" ]; then
+    error "Go version installed is different that expected"
+fi
