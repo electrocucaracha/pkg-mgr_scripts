@@ -36,28 +36,26 @@ function get_cpu_arch {
 }
 
 function main {
-    local version=${PKG_GOLANG_VERSION:-1.15}
+    local version=${PKG_GOLANG_VERSION:-1.15.1}
     local os=linux
     tarball=go$version.$os-$(get_cpu_arch).tar.gz
 
-    if command -v go; then
-        return
-    fi
-    echo "INFO: Installing go $version version..."
+    if ! command -v go || [[ "$(go version | awk '{print $3}')" != "go$version" ]]; then
+        echo "INFO: Installing go $version version..."
+        pushd "$(mktemp -d)" > /dev/null
+        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+            curl -o "$tarball" "https://dl.google.com/go/$tarball"
+            sudo tar -C /usr/local -vxzf "$tarball"
+        else
+            curl -o "$tarball" "https://dl.google.com/go/$tarball" 2> /dev/null
+            sudo tar -C /usr/local -xzf "$tarball"
+        fi
+        popd > /dev/null
 
-    pushd "$(mktemp -d)" > /dev/null
-    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-        curl -o "$tarball" "https://dl.google.com/go/$tarball"
-        sudo tar -C /usr/local -vxzf "$tarball"
-    else
-        curl -o "$tarball" "https://dl.google.com/go/$tarball" 2> /dev/null
-        sudo tar -C /usr/local -xzf "$tarball"
+        sudo mkdir -p /etc/profile.d/
+        # shellcheck disable=SC2016
+        echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee /etc/profile.d/path.sh > /dev/null
     fi
-    popd > /dev/null
-
-    sudo mkdir -p /etc/profile.d/
-    # shellcheck disable=SC2016
-    echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee /etc/profile.d/path.sh > /dev/null
 }
 
 main

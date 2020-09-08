@@ -31,3 +31,6 @@ info "Validating go installation..."
 if ! command -v go; then
     error "Go command line wasn't installed"
 fi
+
+info "Validating go execution..."
+go env
