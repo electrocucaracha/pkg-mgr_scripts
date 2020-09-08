@@ -37,3 +37,25 @@ instruction is needed:
 | PKG_UPDATE   | Update package manager metadata information.(Boolean value)               |
 | PKG_DEBUG    | Enable verbose output during the execution.(Boolean value)                |
 | PKG_CPU_ARCH | Overrides the CPU architecture used for the installation of some binaries |
+
+### Bindep usage
+
+The cURL package installer can be combined with [bindep tool][1] to
+perform multiOS installations. The following example demostrates how
+to install the [Portable Hardware Locality tools][2] in the current
+node.
+
+```bash
+curl -fsSL http://bit.ly/install_pkg | PKG=bindep bash
+
+cat << EOF > bindep.txt
+hwloc [node]
+hwloc-lstopo [node platform:suse]
+EOF
+curl -fsSL http://bit.ly/install_pkg | PKG="$(bindep node -b)" bash
+
+lstopo-no-graphics
+```
+
+[1]: https://docs.openstack.org/infra/bindep/
+[2]: https://www.open-mpi.org/projects/hwloc/
