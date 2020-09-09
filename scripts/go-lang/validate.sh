@@ -36,6 +36,6 @@ info "Validating go execution..."
 go env
 
 info "Checking go version"
-if [ "$(go version | awk '{print $3}')" != "go1.15.1" ]; then
+if [ "$(go version | awk '{print $3}')" != "$(curl -s "https://golang.org/VERSION?m=text")" ]; then
     error "Go version installed is different that expected"
 fi

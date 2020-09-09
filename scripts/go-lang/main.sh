@@ -36,7 +36,7 @@ function get_cpu_arch {
 }
 
 function main {
-    local version=${PKG_GOLANG_VERSION:-1.15.1}
+    local version=${PKG_GOLANG_VERSION:-$(curl -s https://golang.org/VERSION?m=text | awk '{sub("go", "", $1) ; print $1}')}
     local os=linux
     tarball=go$version.$os-$(get_cpu_arch).tar.gz
 
