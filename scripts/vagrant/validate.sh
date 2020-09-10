@@ -30,13 +30,20 @@ if ! command -v vagrant; then
     error "Vagrant command line wasn't installed"
 fi
 
+pushd "$(mktemp -d)" > /dev/null
+
+info "Checking vagrant version"
+if ! vagrant version | grep -q "You're running an up-to-date version of Vagrant\!"; then
+    error "Vagrant latest version was not installed"
+fi
+
 info "Validating Vagrant operation"
-pushd "$(mktemp -d)"
 vagrant init centos/7
 if ! [ -f Vagrantfile ]; then
     error "Vagrantfile wasn't created"
 fi
-popd
+
+popd > /dev/null
 
 info "Validate autocomplete functions"
 if declare -F | grep -q "_vagrant"; then

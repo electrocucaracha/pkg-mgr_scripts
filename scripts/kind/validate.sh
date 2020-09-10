@@ -34,3 +34,8 @@ info "Validating autocomplete functions"
 if declare -F | grep -q "_kind"; then
     error "Kind autocomplete install failed"
 fi
+
+info "Checking kind version"
+if [ "v$(kind --version | awk '{print $3}')" != "$(curl -s https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')" ]; then
+    error "Kind version installed is different that expected"
+fi

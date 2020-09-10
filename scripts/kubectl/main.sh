@@ -53,7 +53,7 @@ function main {
         sudo mkdir -p /usr/local/bin/
         sudo mv kubectl /usr/local/bin/kubectl
         popd > /dev/null
-        kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
+        kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
     fi
 
     if ! kubectl krew version &>/dev/null; then

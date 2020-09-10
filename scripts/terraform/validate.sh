@@ -29,3 +29,8 @@ info "Validating terraform installation..."
 if ! command -v terraform; then
     error "Terraform command line wasn't installed"
 fi
+
+info "Checking terraform version"
+if [ "$(terraform version | awk '{ print $2}')" != "$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')" ]; then
+    error "Terraform version installed is different that expected"
+fi

@@ -36,30 +36,52 @@ function get_cpu_arch {
 }
 
 function main {
-    local version=${PKG_TERRAFORM_VERSION:-0.13.0}
-    local os=linux
-    tarball=terraform_${version}_${os}_$(get_cpu_arch).zip
+    local version=${PKG_TERRAFORM_VERSION:-$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')}
 
-    if command -v terraform; then
-        return
+    if ! command -v terraform || [ "$(terraform version | awk '{ print $2}')" != "$version" ]; then
+        pushd "$(mktemp -d)" > /dev/null
+        if ! command -v unzip; then
+            INSTALLER_CMD="sudo -H -E "
+            # shellcheck disable=SC1091
+            source /etc/os-release || source /usr/lib/os-release
+            case ${ID,,} in
+                *suse*)
+                    INSTALLER_CMD+="zypper "
+                    if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                        INSTALLER_CMD+="-q "
+                    fi
+                    INSTALLER_CMD+="install -y --no-recommends"
+                ;;
+                ubuntu|debian)
+                    INSTALLER_CMD+="apt-get -y "
+                    if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                        INSTALLER_CMD+="-q=3 "
+                    fi
+                    INSTALLER_CMD+=" --no-install-recommends install"
+                ;;
+                rhel|centos|fedora)
+                    INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
+                    if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                        INSTALLER_CMD+=" --quiet --errorlevel=0"
+                    fi
+                    INSTALLER_CMD+=" install"
+                ;;
+            esac
+            $INSTALLER_CMD unzip
+        fi
+        url="https://releases.hashicorp.com/terraform/${version#*v}/terraform_${version#*v}_$(uname | awk '{print tolower($0)}')_$(get_cpu_arch).zip"
+        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+            curl -o terraform.zip "$url"
+            unzip terraform.zip
+        else
+            curl -o terraform.zip "$url" 2>/dev/null
+            unzip -qq terraform.zip
+        fi
+        sudo mkdir -p /usr/local/bin/
+        sudo mv terraform /usr/local/bin/
+        mkdir -p ~/.terraform.d/plugins
+        popd > /dev/null
     fi
-
-    pushd "$(mktemp -d)" > /dev/null
-    if ! command -v unzip; then
-        curl -fsSL http://bit.ly/install_pkg | PKG=unzip bash
-    fi
-    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-        curl -o "$tarball" "https://releases.hashicorp.com/terraform/$version/$tarball"
-        unzip "$tarball"
-    else
-        curl -o "$tarball" "https://releases.hashicorp.com/terraform/$version/$tarball" 2>/dev/null
-        unzip -qq "$tarball"
-    fi
-    sudo mkdir -p /usr/local/bin/
-    sudo mv terraform /usr/local/bin/
-    rm "$tarball"
-    mkdir -p ~/.terraform.d/plugins
-    popd > /dev/null
 }
 
 main
