@@ -125,6 +125,9 @@ EOF
     sudo systemctl daemon-reload
     sudo systemctl restart docker
 
+    # Enable autocompletion
+    sudo curl -s https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
+
     printf "Waiting for docker service..."
     until sudo docker info; do
         printf "."

@@ -33,6 +33,11 @@ if ! command -v docker; then
     error "Docker command line wasn't installed"
 fi
 
+info "Validate autocomplete functions"
+if declare -F | grep -q "_docker"; then
+    error "Docker autocomplete functions weren't installed"
+fi
+
 docker_image="alpine"
 for image in "$mgmt_ip:5000/bash:test" "$docker_image"; do
     docker_id=$(sudo docker images "$image" -q)
