@@ -39,6 +39,7 @@ function main {
     local version=${PKG_TERRAFORM_VERSION:-$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')}
 
     if ! command -v terraform || [ "$(terraform version | awk '{ print $2}')" != "$version" ]; then
+        echo "INFO: Installing terraform $version version..."
         pushd "$(mktemp -d)" > /dev/null
         if ! command -v unzip; then
             INSTALLER_CMD="sudo -H -E "

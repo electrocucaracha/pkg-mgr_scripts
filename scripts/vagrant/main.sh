@@ -39,6 +39,7 @@ function main {
     local version=${PKG_VAGRANT_VERSION:-$(curl -s https://api.github.com/repos/hashicorp/vagrant/tags | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')}
 
     if ! command -v vagrant || [ "$(vagrant --version | awk '{ print $2}')" != "${version#*v}" ]; then
+        echo "INFO: Installing vagrant $version version..."
         pushd "$(mktemp -d)" > /dev/null
         vagrant_pkg="vagrant_${version#*v}_$(uname -m)."
         vagrant_url_pkg="https://releases.hashicorp.com/vagrant/${version#*v}"
