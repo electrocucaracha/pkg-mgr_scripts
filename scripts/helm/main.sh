@@ -45,6 +45,7 @@ EOF
     else
         curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
     fi
+    helm completion bash | sudo tee /etc/bash_completion.d/helm > /dev/null
 }
 
 main

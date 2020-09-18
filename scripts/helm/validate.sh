@@ -29,3 +29,8 @@ info "Validating helm installation..."
 if ! command -v helm; then
     error "Helm command line wasn't installed"
 fi
+
+info "Validating autocomplete functions"
+if declare -F | grep -q "_helm"; then
+    error "Helm autocomplete install failed"
+fi
