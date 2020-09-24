@@ -54,7 +54,7 @@ function _vercmp {
 }
 
 function main {
-    local version=${PKG_QAT_DRIVER_VERSION:-"1.7.l.4.6.0-00025"} # Jul 23, 2019 https://01.org/intel-quick-assist-technology/downloads
+    local version=${PKG_QAT_DRIVER_VERSION:-"1.7.l.4.11.0-00001"} # Sep 17, 2020 https://01.org/intel-quick-assist-technology/downloads
     local qat_driver_tarball="qat${version}.tar.gz"
 
     if systemctl is-active --quiet qat_service; then
