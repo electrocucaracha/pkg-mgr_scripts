@@ -22,6 +22,10 @@ function info {
     echo "$(date +%H:%M:%S) - INFO: $1"
 }
 
+function exit_trap {
+    sudo vagrant ssh "$1" -- cat main.log
+}
+
 [ "$#" -eq 1 ] || die "1 argument required, $# provided"
 
 info "Install Integration dependencies - $1"
@@ -45,6 +49,7 @@ MEMORY=6144 vagrant up "$1" > /dev/null
 vagrant destroy -f "$1" > /dev/null
 EONG
 
+trap exit_trap ERR
 # shellcheck disable=SC2044
 for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
     pushd "$(dirname "$vagrantfile")" > /dev/null
@@ -55,8 +60,7 @@ for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
     fi
     info "Starting $(basename "$(pwd)") test for $1"
     start=$(date +%s)
-    trap 'sudo vagrant ssh $1 -- cat main.log' ERR
-    MEMORY=4096 sudo vagrant up "$1"
+    MEMORY=4096 sudo vagrant up --no-destroy-on-error "$1"
     if sudo vagrant ssh "$1" -- cat validate.log | grep "ERROR"; then
         echo "$(date +%H:%M:%S) - ERROR"
         sudo vagrant ssh "$1" -- cat main.log
