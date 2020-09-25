@@ -22,15 +22,30 @@ function error {
 }
 
 function _print_msg {
-    echo "$1: $2"
+echo "$1: $2"
 }
 
 info "Validating terraform installation..."
 if ! command -v terraform; then
-    error "Terraform command line wasn't installed"
+error "Terraform command line wasn't installed"
 fi
 
 info "Checking terraform version"
-if [ "$(terraform version | awk '{ print $2}')" != "$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')" ]; then
+attempt_counter=0
+max_attempts=5
+version=""
+until [ "$version" ]; do
+    release="$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest)"
+    if [ "$release" ]; then
+        version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+        break
+    elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        echo "Max attempts reached"
+        exit 1
+    fi
+    attempt_counter=$((attempt_counter+1))
+    sleep 2
+done
+if [ "$(terraform version | awk '{ print $2}')" != "$version" ]; then
     error "Terraform version installed is different that expected"
 fi

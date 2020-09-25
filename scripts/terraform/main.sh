@@ -36,7 +36,22 @@ function get_cpu_arch {
 }
 
 function main {
-    local version=${PKG_TERRAFORM_VERSION:-$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')}
+    local version=${PKG_TERRAFORM_VERSION:-}
+
+    attempt_counter=0
+    max_attempts=5
+    until [ "$version" ]; do
+        release="$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest)"
+        if [ "$release" ]; then
+            version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+            break
+        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+            echo "Max attempts reached"
+            exit 1
+        fi
+        attempt_counter=$((attempt_counter+1))
+        sleep 2
+    done
 
     if ! command -v terraform || [ "$(terraform version | awk '{ print $2}')" != "$version" ]; then
         echo "INFO: Installing terraform $version version..."
