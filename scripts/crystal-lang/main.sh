@@ -42,7 +42,7 @@ function main {
             INSTALLER_CMD+=" --no-install-recommends install"
             # shellcheck disable=SC2086
             sudo -H -E $INSTALLER_CMD gnupg
-            curl -sL "https://keybase.io/crystal/pgp_keys.asc" | sudo apt-key add -
+            curl -sL https://keybase.io/crystal/pgp_keys.asc | sudo apt-key add -
             echo "deb https://dist.crystal-lang.org/apt crystal main" | sudo tee /etc/apt/sources.list.d/crystal.list
             sudo apt update
             pkgs+=" libssl-dev libxml2-dev libyaml-dev libgmp-dev libreadline-dev libz-dev crystal"
