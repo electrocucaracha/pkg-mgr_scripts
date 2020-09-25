@@ -36,6 +36,21 @@ info "Validating go execution..."
 go env
 
 info "Checking go version"
-if [ "$(go version | awk '{print $3}')" != "$(curl -s "https://golang.org/VERSION?m=text")" ]; then
+attempt_counter=0
+max_attempts=5
+version=""
+until [ "$version" ]; do
+    stable_version="$(curl -s https://golang.org/VERSION?m=text)"
+    if [ "$stable_version" ]; then
+        version="${stable_version#go}"
+        break
+    elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        echo "Max attempts reached"
+        exit 1
+    fi
+    attempt_counter=$((attempt_counter+1))
+    sleep 2
+done
+if [ "$(go version | awk '{print $3}')" != "go$version" ]; then
     error "Go version installed is different that expected"
 fi

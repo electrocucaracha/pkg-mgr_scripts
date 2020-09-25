@@ -36,9 +36,23 @@ function get_cpu_arch {
 }
 
 function main {
-    local version=${PKG_GOLANG_VERSION:-$(curl -s https://golang.org/VERSION?m=text | awk '{sub("go", "", $1) ; print $1}')}
-    local os=linux
-    tarball=go$version.$os-$(get_cpu_arch).tar.gz
+    local version=${PKG_GOLANG_VERSION:-}
+
+    attempt_counter=0
+    max_attempts=5
+    until [ "$version" ]; do
+        stable_version="$(curl -s https://golang.org/VERSION?m=text)"
+        if [ "$stable_version" ]; then
+            version="${stable_version#go}"
+            break
+        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+            echo "Max attempts reached"
+            exit 1
+        fi
+        attempt_counter=$((attempt_counter+1))
+        sleep 2
+    done
+    tarball=go$version.$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch).tar.gz
 
     if ! command -v go || [[ "$(go version | awk '{print $3}')" != "go$version" ]]; then
         # NOTE: Ensure go-lang was not installed by the OS package manager
