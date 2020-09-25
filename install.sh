@@ -74,6 +74,7 @@ function main {
     pkg_mgr_supported[sysfsutils]="{\"Suse\": \"sysfsutils\",\"Debian\": \"sysfsutils\",\"RedHat\": \"sysfsutils\",\"ClearLinux\": \"openstack-common\"}"
     pkg_mgr_supported[tito]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"tito\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
 
+    # cURL Package Manager Supported
     pkg_mgr_supported[crystal-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
     pkg_mgr_supported[docker]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
     pkg_mgr_supported[go-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
@@ -89,6 +90,7 @@ function main {
     pkg_mgr_supported[virtualbox]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
     pkg_mgr_supported[terraform]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
 
+    # PIP required
     pkg_mgr_supported[ansible]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
     pkg_mgr_supported[bindep]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
     pkg_mgr_supported[docker-compose]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
@@ -138,22 +140,29 @@ function main {
             json_pkg="${pkg_mgr_supported[$pkg]}"
             if [[ -n "${json_pkg}" ]]; then
                 distro_pkg=$(echo "$json_pkg" | grep -oP "(?<=\"$PKG_OS_FAMILY\": \")[^\"]*")
-                if [[ "$distro_pkg" == "$PKG_MGR_SUPPORTED" ]]; then
-                    curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/${pkg}/main.sh" | bash
-                elif [[ "$distro_pkg" == "$PKG_MGR_PIP_REQUIRED" ]]; then
-                    if ! command -v pip; then
-                        curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/pip/main.sh" | bash
-                    fi
-                    PATH="$PATH:/usr/local/bin/"
-                    export PATH
-                    PIP_CMD="sudo -E $(command -v pip) install --no-cache-dir --no-warn-script-location"
-                    if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                        PIP_CMD+=" --quiet"
-                    fi
-                    $PIP_CMD "$pkg"
-                elif [[ "$distro_pkg" != "$PKG_MGR_UNSUPPORTED" ]]; then
-                    sanity_pkgs+=" $distro_pkg"
-                fi
+                case $distro_pkg in
+                    "$PKG_MGR_UNSUPPORTED")
+                        echo "$pkg is not supported by $PKG_OS_FAMILY"
+                    ;;
+                    "$PKG_MGR_SUPPORTED")
+                        curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/${pkg}/main.sh" | bash
+                    ;;
+                    "$PKG_MGR_PIP_REQUIRED")
+                        if ! command -v pip; then
+                            curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/pip/main.sh" | bash
+                        fi
+                        PATH="$PATH:/usr/local/bin/"
+                        export PATH
+                        PIP_CMD="sudo -E $(command -v pip) install --no-cache-dir --no-warn-script-location"
+                        if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                            PIP_CMD+=" --quiet"
+                        fi
+                        $PIP_CMD "$pkg"
+                    ;;
+                    *)
+                        sanity_pkgs+=" $distro_pkg"
+                    ;;
+                esac
             else
                 sanity_pkgs+=" $pkg"
             fi
