@@ -18,7 +18,9 @@ linux:
     name: generic/ubuntu1604
   - alias: ubuntu_bionic
     name: generic/ubuntu1804
+    version: 3.0.30
   - alias: ubuntu_focal
     name: generic/ubuntu2004
+    version: 3.0.30
   - alias: opensuse
     name: opensuse/Tumbleweed.x86_64

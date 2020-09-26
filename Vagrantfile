@@ -33,6 +33,9 @@ Vagrant.configure("2") do |config|
   distros["linux"].each do |distro|
     config.vm.define distro["alias"] do |node|
       node.vm.box = distro["name"]
+      if distro.has_key? "version"
+        node.vm.box_version = distro["version"]
+      end
       node.vm.box_check_update = false
       if distro["alias"] == "clearlinux"
         node.vm.provider 'libvirt' do |v|
