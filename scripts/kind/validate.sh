@@ -36,6 +36,21 @@ if declare -F | grep -q "_kind"; then
 fi
 
 info "Checking kind version"
-if [ "v$(kind --version | awk '{print $3}')" != "$(curl -s https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')" ]; then
-    error "Kind version installed is different that expected"
+attempt_counter=0
+max_attempts=5
+version=""
+until [ "$version" ]; do
+    release="$(curl -s https://api.github.com/repos/kubernetes-sigs/kind/releases/latest)"
+    if [ "$release" ]; then
+        version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+        break
+    elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        echo "Max attempts reached"
+        exit 1
+    fi
+    attempt_counter=$((attempt_counter+1))
+    sleep 2
+done
+if [ "v$(kind --version | awk '{print $3}')" != "$version" ]; then
+    error "Kind version installed is $(kind --version) but $version expected"
 fi
