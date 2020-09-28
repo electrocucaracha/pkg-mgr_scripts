@@ -116,7 +116,6 @@ function main {
     fi
     sudo tee /etc/docker/daemon.json << EOF
 {
-  "exec-opts": ["native.cgroupdriver=${PKG_DOCKER_CGROUPDRIVER:-cgroupfs}"],
   "default-address-pools":[$default_address_pools],
   "registry-mirrors" : [${PKG_DOCKER_REGISTRY_MIRRORS:-}],
   "insecure-registries" : [$insecure_registries]
