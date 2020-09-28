@@ -1,5 +1,7 @@
 # Docker
 
+![Logo](../../docs/img/docker.png)
+
 Docker is a set of platform as a service (PaaS) products that use
 OS-level virtualization to deliver software in packages called
 containers. Containers are isolated from one another and bundle their
@@ -7,3 +9,42 @@ own software, libraries and configuration files; they can communicate
 with each other through well-defined channels. All containers are run
 by a single operating-system kernel and are thus more lightweight than
 virtual machines.
+
+## Operating System Support Matrix
+
+| Name       | Version    | Supported |
+|:-----------|:----------:|:---------:|
+| Ubuntu     | 16.04      | [x]       |
+| Ubuntu     | 18.04      | [x]       |
+| Ubuntu     | 20.04      | [x]       |
+| CentOS     | 7          | [x]       |
+| CentOS     | 8          | [x]       |
+| OpenSUSE   | Tumbleweed | [x]       |
+| ClearLinux |            | [x]       |
+
+## How to use it
+
+```bash
+curl -fsSL http://bit.ly/install_pkg | PKG=docker bash
+```
+### Environment variables
+
+| Name                             | Default                                                               | Description                                                                         |
+|:---------------------------------|:----------------------------------------------------------------------|:------------------------------------------------------------------------------------|
+| PKG_DOCKER_INSECURE_REGISTRIES   |                                                                       | Determines the insecure registries to configure                                     |
+| PKG_DOCKER_DEFAULT_ADDRESS_POOLS | {"base":"172.80.0.0/16","size":24},{"base":"172.90.0.0/16","size":24} | Defines the subnet network that Docker will pick to local scope networks            |
+| PKG_DOCKER_REGISTRY_MIRRORS      |                                                                       | Defines a list of Docker registries                                                 |
+
+## Used by
+
+- [GW Tester Demo](https://github.com/electrocucaracha/gw-tester)
+- [cURL package installer - Local Web server](https://github.com/electrocucaracha/pkg-mgr)
+- [K6 Grafana Dashboard](https://github.com/electrocucaracha/k6board)
+- [GrimoireLab Cloud-Native](https://github.com/electrocucaracha/grimoirelab)
+- [Kubernetes Reference Deployment](https://github.com/electrocucaracha/krd)
+- [OpenStack Multi-Node Deployment](https://github.com/electrocucaracha/openstack-multinode)
+- [Firewall Cloud-Native Network Function Demo](https://github.com/electrocucaracha/cFW-demo)
+- [Kubernetes Development Environment](https://github.com/electrocucaracha/kubernetes-dev)
+- [Kubernetes NonPreemptingPriority gate feature demo](https://github.com/electrocucaracha/k8s-NonPreemptingPriority-demo)
+- [CentOS Mirror Server](https://github.com/electrocucaracha/centos-mirror)
+- [QAT enablement on OKD](https://github.com/electrocucaracha/okd)
