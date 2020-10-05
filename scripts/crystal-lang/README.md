@@ -1,5 +1,7 @@
 # Crystal
 
+![Logo](../../docs/img/crystal-lang.gif)
+
 It's a general-purpose, object-oriented programming language with
 syntax inspired by the language Ruby,it is a compiled language with
 static type-checking, but specifying the types of variables or method
@@ -16,13 +18,18 @@ global type inference algorithm.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
-| ClearLinux |            | []        |
+| ClearLinux |            | [ ]       |
 
 ## How to use it
 
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=crystal-lang bash
 ```
+
+### Environment variables
+
+| Name               | Default | Description                              |
+|:-------------------|:--------|:-----------------------------------------|
 
 ## Used by
 

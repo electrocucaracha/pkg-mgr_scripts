@@ -25,7 +25,6 @@ garbage collection, structural typing, and CSP-style concurrency.
 curl -fsSL http://bit.ly/install_pkg | PKG=go-lang bash
 source /etc/profile.d/path.sh
 ```
-
 ### Environment variables
 
 | Name               | Default | Description                              |
