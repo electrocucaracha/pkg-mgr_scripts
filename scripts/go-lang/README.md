@@ -1,5 +1,7 @@
 # Go
 
+![Logo](../../docs/img/go-lang.png)
+
 Go, also known as Golang, is a statically typed, compiled programming
 language designed at Google by Robert Griesemer, Rob Pike, and Ken
 Thompson. Go is syntactically similar to C, but with memory safety,
@@ -21,7 +23,14 @@ garbage collection, structural typing, and CSP-style concurrency.
 
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=go-lang bash
+source /etc/profile.d/path.sh
 ```
+
+### Environment variables
+
+| Name               | Default | Description                              |
+|:-------------------|:--------|:-----------------------------------------|
+| PKG_GOLANG_VERSION |         | Specifies the Go version to be installed |
 
 ## Used by
 
