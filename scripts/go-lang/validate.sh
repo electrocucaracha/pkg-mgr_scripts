@@ -25,8 +25,6 @@ function _print_msg {
     echo "$1: $2"
 }
 
-# shellcheck disable=SC1091
-source /etc/profile.d/path.sh
 info "Validating go installation..."
 if ! command -v go; then
     error "Go command line wasn't installed"
