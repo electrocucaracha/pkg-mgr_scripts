@@ -25,6 +25,26 @@ function _print_msg {
     echo "$1: $2"
 }
 
+function get_version {
+    local version=${PKG_KIND_VERSION:-}
+
+    attempt_counter=0
+    max_attempts=5
+    until [ "$version" ]; do
+        release="$(curl -s https://api.github.com/repos/kubernetes-sigs/kind/releases/latest)"
+        if [ "$release" ]; then
+            version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+            break
+        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+            echo "Max attempts reached"
+            exit 1
+        fi
+        attempt_counter=$((attempt_counter+1))
+        sleep 2
+    done
+    echo "${version#*v}"
+}
+
 info "Validating kind installation..."
 if ! command -v kind; then
     error "Kubernetes IN Docker command line wasn't installed"
@@ -35,22 +55,7 @@ if declare -F | grep -q "_kind"; then
     error "Kind autocomplete install failed"
 fi
 
-info "Checking kind version"
-attempt_counter=0
-max_attempts=5
-version=""
-until [ "$version" ]; do
-    release="$(curl -s https://api.github.com/repos/kubernetes-sigs/kind/releases/latest)"
-    if [ "$release" ]; then
-        version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
-        break
-    elif [ ${attempt_counter} -eq ${max_attempts} ];then
-        echo "Max attempts reached"
-        exit 1
-    fi
-    attempt_counter=$((attempt_counter+1))
-    sleep 2
-done
-if [ "v$(kind --version | awk '{print $3}')" != "$version" ]; then
-    error "Kind version installed is $(kind --version) but $version expected"
+info "Checking Kind version"
+if [ "$(kind --version | awk '{print $3}')" != "$(get_version)" ]; then
+    error "Kind version installed is different that expected"
 fi

@@ -22,30 +22,35 @@ function error {
 }
 
 function _print_msg {
-echo "$1: $2"
+    echo "$1: $2"
+}
+
+function get_version {
+    local version=${PKG_TERRAFORM_VERSION:-}
+
+    attempt_counter=0
+    max_attempts=5
+    until [ "$version" ]; do
+        release="$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest)"
+        if [ "$release" ]; then
+            version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+            break
+        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+            echo "Max attempts reached"
+            exit 1
+        fi
+        attempt_counter=$((attempt_counter+1))
+        sleep 2
+    done
+    echo "v${version#*v}"
 }
 
 info "Validating terraform installation..."
 if ! command -v terraform; then
-error "Terraform command line wasn't installed"
+    error "Terraform command line wasn't installed"
 fi
 
 info "Checking terraform version"
-attempt_counter=0
-max_attempts=5
-version=""
-until [ "$version" ]; do
-    release="$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest)"
-    if [ "$release" ]; then
-        version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
-        break
-    elif [ ${attempt_counter} -eq ${max_attempts} ];then
-        echo "Max attempts reached"
-        exit 1
-    fi
-    attempt_counter=$((attempt_counter+1))
-    sleep 2
-done
-if [ "$(terraform version | awk '{ print $2}')" != "$version" ]; then
+if [ "$(terraform version | awk '{ print $2}')" != "$(get_version)" ]; then
     error "Terraform version installed is different that expected"
 fi

@@ -85,7 +85,8 @@ function main {
             esac
             $INSTALLER_CMD unzip
         fi
-        url="https://releases.hashicorp.com/terraform/${version#*v}/terraform_${version#*v}_$(uname | awk '{print tolower($0)}')_$(get_cpu_arch).zip"
+        zip_file="terraform_${version#*v}_$(uname | tr '[:upper:]' '[:lower:]')_$(get_cpu_arch).zip"
+        url="https://releases.hashicorp.com/terraform/${version#*v}/$zip_file"
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -o terraform.zip "$url"
             unzip terraform.zip

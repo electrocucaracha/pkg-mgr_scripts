@@ -55,7 +55,8 @@ function main {
 
     if ! command -v kind || [[ "v$(kind --version | awk '{print $3}')" != "$version" ]]; then
         echo "INFO: Installing kind $version version..."
-        url="https://github.com/kubernetes-sigs/kind/releases/download/${version}/kind-$(uname)-$(get_cpu_arch)"
+        binary="kind-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch)"
+        url="https://github.com/kubernetes-sigs/kind/releases/download/v${version#*v}/$binary"
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -Lo ./kind "$url"
         else
