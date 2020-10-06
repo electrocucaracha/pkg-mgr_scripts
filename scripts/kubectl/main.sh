@@ -76,26 +76,26 @@ function main {
         popd > /dev/null
     fi
     if ! command -v git; then
-         # shellcheck disable=SC1091
+        INSTALLER_CMD="sudo -H -E "
+        # shellcheck disable=SC1091
         source /etc/os-release || source /usr/lib/os-release
         case ${ID,,} in
             *suse*)
-                INSTALLER_CMD="sudo -H -E zypper "
+                INSTALLER_CMD+="zypper "
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+="-q "
                 fi
                 $INSTALLER_CMD install -y --no-recommends git
             ;;
             ubuntu|debian)
-                INSTALLER_CMD="sudo -H -E apt-get -y "
+                INSTALLER_CMD+="apt-get -y "
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+="-q=3 "
                 fi
                 $INSTALLER_CMD --no-install-recommends install git
             ;;
             rhel|centos|fedora)
-                PKG_MANAGER=$(command -v dnf || command -v yum)
-                INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
+                INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+=" --quiet --errorlevel=0"
                 fi
