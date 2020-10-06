@@ -34,7 +34,6 @@ function main {
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     ZYPPER_CMD+=" -q"
                 fi
-                $ZYPPER_CMD addrepo https://download.opensuse.org/repositories/Virtualization:containers/openSUSE_Tumbleweed/Virtualization:containers.repo
                 sudo zypper --gpg-auto-import-keys refresh
                 $ZYPPER_CMD install -y --no-recommends docker
             ;;
