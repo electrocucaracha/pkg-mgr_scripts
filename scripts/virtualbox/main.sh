@@ -24,7 +24,6 @@ function main {
 
     pushd "$(mktemp -d)" 2> /dev/null
     pkgs="VirtualBox-$version dkms"
-    enable_build_vbox_modules="false"
     curl -o oracle_vbox.asc https://www.virtualbox.org/download/oracle_vbox.asc
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
@@ -33,13 +32,7 @@ function main {
             supported_versions="11.4 12.3 13.1 13.2 15.0 42.1 42.2 42.3"
             if [[ "$supported_versions" != *"$VERSION_ID"* ]]; then
                 echo "WARN: VirtualBox's repo is not supported in openSUSE $VERSION_ID"
-                INSTALLER_CMD="sudo -H -E zypper "
-                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                    INSTALLER_CMD+="-q "
-                fi
-                sudo zypper --gpg-auto-import-keys refresh
-                $INSTALLER_CMD install -y --no-recommends virtualbox dkms
-                return
+                pkgs="virtualbox dkms"
             else
                 if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                     sudo curl -o /etc/zypp/repos.d/virtualbox.repo "http://download.virtualbox.org/virtualbox/rpm/opensuse/virtualbox.repo"
@@ -48,11 +41,19 @@ function main {
                 fi
                 sudo rpm --import oracle_vbox.asc
             fi
+            sudo zypper --gpg-auto-import-keys refresh
+            INSTALLER_CMD="sudo -H -E zypper "
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+="-q "
+            fi
+            eval "$INSTALLER_CMD install -y --no-recommends $pkgs"
         ;;
         ubuntu|debian)
-            curl -fsSL http://bit.ly/install_pkg | PKG=gnupg bash
+            sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 gnupg
             echo "deb http://download.virtualbox.org/virtualbox/debian $VERSION_CODENAME contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list 2> /dev/null
             curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo apt-key add -
+            sudo apt-get update -qq > /dev/null
+            eval "sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 $pkgs"
         ;;
         rhel|centos|fedora)
             if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
@@ -64,19 +65,16 @@ function main {
             fi
             sudo "$(command -v dnf || command -v yum)" repolist --assumeyes || true
             pkgs+=" kernel-devel kernel-devel-$(uname -r)"
-            enable_build_vbox_modules="true"
+            eval "sudo $(command -v dnf || command -v yum) -y --quiet --errorlevel=0 install $pkgs"
+            sudo usermod -aG vboxusers "$USER"
+            sudo /sbin/vboxconfig
         ;;
         clear-linux-os)
             echo "WARN: The VirtualBox provider isn't supported by ClearLinux yet."
             return
         ;;
     esac
-    rm oracle_vbox.asc
     popd 2> /dev/null
-    curl -fsSL http://bit.ly/install_pkg | PKG="$pkgs" PKG_UPDATE=true bash
-    if [ "$enable_build_vbox_modules" == "true" ]; then
-        sudo /sbin/vboxconfig
-    fi
 }
 
 main
