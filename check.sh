@@ -16,6 +16,7 @@ export PKG_GOLANG_VERSION=1.15.2
 export PKG_KIND_VERSION=0.9.0
 export PKG_TERRAFORM_VERSION=0.13.4
 export PKG_VAGRANT_VERSION=2.2.10
+export PKG_CNI_PLUGINS_VERSION=0.8.7
 
 function info {
     echo "$(date +%H:%M:%S) - INFO: $1"

@@ -75,6 +75,7 @@ function main {
     pkg_mgr_supported[tito]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"tito\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
 
     # cURL Package Manager Supported
+    pkg_mgr_supported[cni-plugins]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
     pkg_mgr_supported[crystal-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
     pkg_mgr_supported[docker]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
     pkg_mgr_supported[go-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
