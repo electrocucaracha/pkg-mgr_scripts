@@ -16,23 +16,17 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
 fi
 
 function get_cpu_arch {
-    if [ -z "${PKG_CPU_ARCH:-}" ]; then
-        case "$(uname -m)" in
-            x86_64)
-                PKG_CPU_ARCH=amd64
-            ;;
-            armv8*)
-                PKG_CPU_ARCH=arm64
-            ;;
-            aarch64*)
-                PKG_CPU_ARCH=arm64
-            ;;
-            armv*)
-                PKG_CPU_ARCH=armv7
-            ;;
-        esac
-    fi
-    echo "$PKG_CPU_ARCH"
+    case "$(uname -m)" in
+        x86_64)
+            echo "amd64"
+        ;;
+        armv8*|aarch64*)
+            echo "arm64"
+        ;;
+        armv*)
+            echo "armv7"
+        ;;
+    esac
 }
 
 function main {
