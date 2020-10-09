@@ -17,22 +17,15 @@ export PKG_KIND_VERSION=0.9.0
 export PKG_TERRAFORM_VERSION=0.13.4
 export PKG_VAGRANT_VERSION=2.2.10
 
-function die {
-    echo >&2 "$@"
-    exit 1
-}
-
 function info {
     echo "$(date +%H:%M:%S) - INFO: $1"
 }
 
 function exit_trap {
-    sudo vagrant ssh "$1" -- cat main.log
+    sudo vagrant ssh "${VAGRANT_NAME:-ubuntu_xenial}" -- cat main.log
 }
 
-[ "$#" -eq 1 ] || die "1 argument required, $# provided"
-
-info "Install Integration dependencies - $1"
+info "Install Integration dependencies - ${VAGRANT_NAME:-ubuntu_xenial}"
 # shellcheck disable=SC1091
 source /etc/os-release || source /usr/lib/os-release
 case ${ID,,} in
@@ -47,33 +40,33 @@ case ${ID,,} in
 esac
 vagrant plugin install vagrant-libvirt
 
-info "Starting Integration tests - $1"
+info "Starting Integration tests - ${VAGRANT_NAME:-ubuntu_xenial}"
 newgrp libvirt <<EONG
-MEMORY=6144 vagrant up "$1" > /dev/null
-vagrant destroy -f "$1" > /dev/null
+CPUS=2 MEMORY=6144 vagrant up "${VAGRANT_NAME:-ubuntu_xenial}" > /dev/null
+vagrant destroy -f "${VAGRANT_NAME:-ubuntu_xenial}" > /dev/null
 EONG
 
 trap exit_trap ERR
 # shellcheck disable=SC2044
 for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
     pushd "$(dirname "$vagrantfile")" > /dev/null
-    if [ -f os-blacklist.conf ] && grep "$1" os-blacklist.conf > /dev/null; then
-        info "Skipping $(basename "$(pwd)") test for $1"
+    if [ -f os-blacklist.conf ] && grep "${VAGRANT_NAME:-ubuntu_xenial}" os-blacklist.conf > /dev/null; then
+        info "Skipping $(basename "$(pwd)") test for ${VAGRANT_NAME:-ubuntu_xenial}"
         popd > /dev/null
         continue
     fi
-    info "Starting $(basename "$(pwd)") test for $1"
+    info "Starting $(basename "$(pwd)") test for ${VAGRANT_NAME:-ubuntu_xenial}"
     start=$(date +%s)
-    MEMORY=4096 sudo vagrant up --no-destroy-on-error "$1"
-    if sudo vagrant ssh "$1" -- cat validate.log | grep "ERROR"; then
+    CPUS=2 MEMORY=6144 sudo -E vagrant up --no-destroy-on-error "${VAGRANT_NAME:-ubuntu_xenial}"
+    if sudo vagrant ssh "${VAGRANT_NAME:-ubuntu_xenial}" -- cat validate.log | grep "ERROR"; then
         echo "$(date +%H:%M:%S) - ERROR"
-        sudo vagrant ssh "$1" -- cat main.log
+        sudo vagrant ssh "${VAGRANT_NAME:-ubuntu_xenial}" -- cat main.log
         exit 1
     fi
-    sudo vagrant ssh "$1" -- cat validate.log | grep "INFO"
+    sudo vagrant ssh "${VAGRANT_NAME:-ubuntu_xenial}" -- cat validate.log | grep "INFO"
     info "Duration time: $(($(date +%s)-start)) secs"
-    info "$(basename "$(pwd)") test completed for $1"
-    sudo vagrant destroy -f "$1" > /dev/null
+    info "$(basename "$(pwd)") test completed for ${VAGRANT_NAME:-ubuntu_xenial}"
+    sudo vagrant destroy -f "${VAGRANT_NAME:-ubuntu_xenial}" > /dev/null
     popd > /dev/null
 done
-info "Integration tests completed - $1"
+info "Integration tests completed - ${VAGRANT_NAME:-ubuntu_xenial}"

@@ -8,7 +8,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-language: minimal
+language: shell
 os: linux
 git:
   depth: 1
@@ -16,6 +16,15 @@ dist: bionic
 cache:
   directories:
     - /home/travis/.vagrant.d/boxes
+script:
+  - ./check.sh
+env:
+  - VAGRANT_NAME=ubuntu_xenial
+  - VAGRANT_NAME=centos_7
+  - VAGRANT_NAME=opensuse
+  - VAGRANT_NAME=centos_8
+  - VAGRANT_NAME=ubuntu_bionic
+  - VAGRANT_NAME=ubuntu_focal
 jobs:
   include:
     - name: Lint validation
@@ -24,21 +33,3 @@ jobs:
       script:
         - tox -e lint
         - bash -c 'shopt -s globstar; shellcheck -x **/*.sh'
-    - name: CentOS 7 validation
-      script:
-        - ./check.sh centos_7
-    - name: Ubuntu 18.04 LTS validation
-      script:
-        - ./check.sh ubuntu_bionic
-    - name: OpenSUSE Tumbleweed validation
-      script:
-        - ./check.sh opensuse
-    - name: CentOS 8 validation
-      script:
-        - ./check.sh centos_8
-    - name: Ubuntu 16.04 LTS validation
-      script:
-        - ./check.sh ubuntu_xenial
-    - name: Ubuntu 20.04 LTS validation
-      script:
-        - ./check.sh ubuntu_focal
