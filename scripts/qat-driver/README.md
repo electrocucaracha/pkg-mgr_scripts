@@ -22,6 +22,11 @@ control processing.
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=qat-driver bash
 ```
+### Environment variables
+
+| Name                   | Default            | Description                                      |
+|:-----------------------|:-------------------|:-------------------------------------------------|
+| PKG_QAT_DRIVER_VERSION | 1.7.l.4.11.0-00001 | Specifies the QAT driver version to be installed |
 
 ## Used by
 
