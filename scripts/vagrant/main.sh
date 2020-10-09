@@ -36,7 +36,22 @@ function get_cpu_arch {
 }
 
 function main {
-    local version=${PKG_VAGRANT_VERSION:-$(curl -s https://api.github.com/repos/hashicorp/vagrant/tags | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')}
+    local version=${PKG_VAGRANT_VERSION:-}
+
+    attempt_counter=0
+    max_attempts=5
+    until [ "$version" ]; do
+        tags="$(curl -s https://api.github.com/repos/hashicorp/vagrant/tags)"
+        if [ "$tags" ]; then
+            version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+            break
+        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+            echo "Max attempts reached"
+            exit 1
+        fi
+        attempt_counter=$((attempt_counter+1))
+        sleep 2
+    done
 
     if ! command -v vagrant || [ "$(vagrant --version | awk '{ print $2}')" != "${version#*v}" ]; then
         echo "INFO: Installing vagrant $version version..."

@@ -15,6 +15,7 @@ vagrant_version=2.2.10
 export PKG_GOLANG_VERSION=1.15.2
 export PKG_KIND_VERSION=0.9.0
 export PKG_TERRAFORM_VERSION=0.13.4
+export PKG_VAGRANT_VERSION=2.2.10
 
 function die {
     echo >&2 "$@"
