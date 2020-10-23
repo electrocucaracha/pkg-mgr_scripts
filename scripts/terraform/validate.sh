@@ -51,6 +51,6 @@ if ! command -v terraform; then
 fi
 
 info "Checking terraform version"
-if [ "$(terraform version | awk '{ print $2}')" != "$(get_version)" ]; then
+if [ "$(terraform version | awk 'NR==1{ print $2}')" != "$(get_version)" ]; then
     error "Terraform version installed is different that expected"
 fi
