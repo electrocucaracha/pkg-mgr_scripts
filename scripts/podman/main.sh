@@ -80,7 +80,7 @@ function get_github_latest_release {
         elif [ ${attempt_counter} -eq ${max_attempts} ];then
             echo "Max attempts reached"
             exit 1
-        fi  
+        fi
         attempt_counter=$((attempt_counter+1))
         sleep 2
     done

@@ -29,13 +29,13 @@ function get_cpu_arch {
     esac
 }
 
-function main {
-    local version=${PKG_KIND_VERSION:-}
-
+function get_github_latest_release {
+    version=""
     attempt_counter=0
     max_attempts=5
+
     until [ "$version" ]; do
-        release="$(curl -s https://api.github.com/repos/kubernetes-sigs/kind/releases/latest)"
+        release="$(curl -s "https://api.github.com/repos/$1/releases/latest")"
         if [ "$release" ]; then
             version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
             break
@@ -47,10 +47,16 @@ function main {
         sleep 2
     done
 
+    echo "${version#*v}"
+}
+
+function main {
+    local version=${PKG_KIND_VERSION:-$(get_github_latest_release kubernetes-sigs/kind)}
+
     if ! command -v kind || [[ "v$(kind --version | awk '{print $3}')" != "$version" ]]; then
         echo "INFO: Installing kind $version version..."
         binary="kind-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch)"
-        url="https://github.com/kubernetes-sigs/kind/releases/download/v${version#*v}/$binary"
+        url="https://github.com/kubernetes-sigs/kind/releases/download/v${version}/$binary"
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -Lo ./kind "$url"
         else

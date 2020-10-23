@@ -29,14 +29,13 @@ function get_cpu_arch {
     esac
 }
 
-function main {
-    local version=${PKG_CNI_PLUGINS_VERSION:-}
-    local cni_folder=${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}
-
+function get_github_latest_release {
+    version=""
     attempt_counter=0
     max_attempts=5
+
     until [ "$version" ]; do
-        release="$(curl -s https://api.github.com/repos/containernetworking/plugins/releases/latest)"
+        release="$(curl -s "https://api.github.com/repos/$1/releases/latest")"
         if [ "$release" ]; then
             version="$(echo "$release" | grep -Po '"tag_name":.*?[^\\]",' | awk -F  "\"" 'NR==1{gsub("v",""); print $4}')"
             break
@@ -47,6 +46,14 @@ function main {
         attempt_counter=$((attempt_counter+1))
         sleep 2
     done
+
+    echo "${version#*v}"
+}
+
+function main {
+    local version=${PKG_CNI_PLUGINS_VERSION:-$(get_github_latest_release containernetworking/plugins)}
+    local cni_folder=${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}
+
 
     if [ ! -d "$cni_folder" ]; then
         echo "INFO: Installing CNI plugins $version version..."

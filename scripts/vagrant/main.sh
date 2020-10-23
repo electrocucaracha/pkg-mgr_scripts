@@ -29,13 +29,13 @@ function get_cpu_arch {
     esac
 }
 
-function main {
-    local version=${PKG_VAGRANT_VERSION:-}
-
+function get_github_latest_tag {
+    version=""
     attempt_counter=0
     max_attempts=5
+
     until [ "$version" ]; do
-        tags="$(curl -s https://api.github.com/repos/hashicorp/vagrant/tags)"
+        tags="$(curl -s "https://api.github.com/repos/$1/tags")"
         if [ "$tags" ]; then
             version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
             break
@@ -46,6 +46,12 @@ function main {
         attempt_counter=$((attempt_counter+1))
         sleep 2
     done
+
+    echo "${version#*v}"
+}
+
+function main {
+    local version=${PKG_VAGRANT_VERSION:-$(get_github_latest_tag hashicorp/vagrant)}
 
     if ! command -v vagrant || [ "$(vagrant --version | awk '{ print $2}')" != "${version#*v}" ]; then
         echo "INFO: Installing vagrant $version version..."
