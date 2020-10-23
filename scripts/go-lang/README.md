@@ -35,4 +35,3 @@ source /etc/profile.d/path.sh
 
 - [QAT enablement on OKD](https://github.com/electrocucaracha/okd)
 - [GW Tester Demo](https://github.com/electrocucaracha/gw-tester)
-- [Kubernetes Reference Deployment](https://github.com/electrocucaracha/krd)
