@@ -29,3 +29,6 @@ info "Validating virsh installation..."
 if ! command -v virsh; then
     error "Libvirt command line wasn't installed"
 fi
+
+info "Validating virsh execution..."
+virsh list
