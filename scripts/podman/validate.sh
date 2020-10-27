@@ -16,10 +16,6 @@ function info {
     _print_msg "INFO" "$1"
 }
 
-function warn {
-    _print_msg "WARN" "$1"
-}
-
 function error {
     _print_msg "ERROR" "$1"
     exit 1
@@ -82,7 +78,7 @@ fi
 
 info "Validating podman remote execution..."
 if ! sudo podman --remote info; then
-    warn "Podman service wasn't started"
+    error "Podman service wasn't started"
 fi
 
 info "Validate pod creation"

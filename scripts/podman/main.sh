@@ -136,6 +136,7 @@ function main {
     $INSTALLER_CMD podman
     if [ "${ID,,}" == "centos" ] && [ "${VERSION_ID}" == "7" ]; then
         sudo sed -i 's/mountopt = .*/mountopt = ""/' /etc/containers/storage.conf
+        echo "WARN: Podman service is not supported in CentOS 7"
     else
         sudo systemctl enable podman
         sudo systemctl start podman
