@@ -46,21 +46,6 @@ function get_version {
     echo "${version#*v}"
 }
 
-sudo tee /etc/cni/net.d/00-podman-bridge.conf << EOF
-{
-    "cniVersion": "0.4.0",
-    "name": "podman",
-    "type": "bridge",
-    "bridge": "cni0",
-    "isDefaultGateway": true,
-    "ipMasq": true,
-    "ipam": {
-        "type": "host-local",
-        "subnet": "10.10.0.0/24"
-    }
-}
-EOF
-
 info "Validating podman installation..."
 if ! command -v podman; then
     error "podman command line wasn't installed"
@@ -81,6 +66,9 @@ if ! sudo podman --remote info; then
     error "Podman service wasn't started"
 fi
 
+info "Validate fetch image"
+podman pull busybox
+
 info "Validate pod creation"
 pushd "$(mktemp -d)"
 cat << EOF > pod.yml
@@ -95,16 +83,48 @@ spec:
       command: ["sleep"]
       args: ["infity"]
 EOF
-if ! sudo podman play kube pod.yml; then
+if ! podman play kube pod.yml; then
     error "Podman can't create a pod using a yaml file"
 fi
 popd
 
-if ! sudo podman pod list | grep -q single-pod; then
+if ! podman pod list | grep -q single-pod; then
     error "Podman doens't list the pod created thru yaml file"
 fi
+podman pod stop single-pod
+podman pod rm single-pod
 
 info "Validating crun exclusive features"
-if ! sudo podman run --rm --pids-limit 1 busybox echo "it works"; then
+if ! sudo podman run --rm --pids-limit 1 --net=none busybox echo "it works"; then
     error "crun pids limit doesn't work"
 fi
+
+info "Validating root execution with root container execution"
+sudo podman run --rm -d --name rootoutside-rootinside --net=none busybox sleep infinity
+if ! pgrep -u "$(id -u root)" | grep -q "$(sudo podman inspect rootoutside-rootinside --format "{{.State.Pid}}")"; then
+    error "Running root container has different root user than host"
+fi
+sudo podman stop rootoutside-rootinside
+
+info "Validating root execution with rootless container execution"
+id -u sync &>/dev/null || sudo useradd -u 4 sync
+sudo podman run --rm -d --user sync --name rootoutside-userinside --net=none busybox sleep infinity
+if ! pgrep -u "$(id -u sync)" | grep -q "$(sudo podman inspect rootoutside-userinside --format "{{.State.Pid}}")"; then
+    error "Running root container has different sync user than host"
+fi
+sudo podman stop rootoutside-userinside
+
+info "Validating non-root execution with root container execution"
+podman run --rm -d --name useroutside-rootinside busybox sleep infinity
+if ! pgrep -u "$(id -u)" | grep -q "$(podman inspect useroutside-rootinside --format "{{.State.Pid}}")"; then
+    error "Running non-root container has different $USER user than host"
+fi
+podman stop useroutside-rootinside
+
+info "Validating non-root execution with rootless container execution"
+podman run --rm -d --user sync --name useroutside-userinside busybox sleep infinity
+# shellcheck disable=SC2009
+if [ "$(ps -eo uname:20,pid,cmd | grep "$(podman inspect useroutside-userinside --format "{{.State.Pid}}")" | awk '{ print $1}')" == "$USER" ]; then
+    error "Running non-root container has same $USER user than host"
+fi
+podman stop useroutside-userinside

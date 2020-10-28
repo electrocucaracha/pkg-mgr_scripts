@@ -11,10 +11,10 @@ run as root or in rootless mode.
 | Name       | Version    | Supported |
 |:-----------|:----------:|:---------:|
 | Ubuntu     | 16.04      | [ ]       |
-| Ubuntu     | 18.04      | [x]       |
+| Ubuntu     | 18.04      | [ ]       |
 | Ubuntu     | 20.04      | [x]       |
-| CentOS     | 7          | [x]       |
-| CentOS     | 8          | [x]       |
+| CentOS     | 7          | [ ]       |
+| CentOS     | 8          | [ ]       |
 | OpenSUSE   | Tumbleweed | [x]       |
 | ClearLinux |            | [ ]       |
 
@@ -31,3 +31,4 @@ curl -fsSL http://bit.ly/install_pkg | PKG=podman bash
 
 ## Used by
 
+- [Kubernetes Ingress Demo](https://github.com/electrocucaracha/k8s-Ingress-demo)

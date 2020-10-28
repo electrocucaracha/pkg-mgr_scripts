@@ -100,7 +100,7 @@ function main {
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+="-q "
             fi
-            INSTALLER_CMD+="install -y --no-recommends "
+            INSTALLER_CMD+="install -y --no-recommends"
         ;;
         ubuntu|debian)
             if _vercmp "${VERSION_ID}" '<=' "16.04"; then
@@ -111,7 +111,7 @@ function main {
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+="-q=3 "
             fi
-            INSTALLER_CMD+=" --no-install-recommends install"
+            INSTALLER_CMD+=" install"
             echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
             curl -sL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
             sudo apt-get update
@@ -138,8 +138,11 @@ function main {
         sudo sed -i 's/mountopt = .*/mountopt = ""/' /etc/containers/storage.conf
         echo "WARN: Podman service is not supported in CentOS 7"
     else
-        sudo systemctl enable podman
-        sudo systemctl start podman
+        sudo systemctl enable podman.socket
+        sudo systemctl start podman.socket
+        systemctl --user enable podman.socket
+        systemctl --user start podman.socket
+        sudo loginctl enable-linger "$USER"
     fi
 
     if _vercmp "${crun_version}" '<' "0.15"; then
