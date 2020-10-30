@@ -31,9 +31,9 @@ function get_version {
     max_attempts=5
 
     until [ "$version" ]; do
-        release="$(curl -s "https://api.github.com/repos/containers/crun/releases/latest")"
-        if [ "$release" ]; then
-            version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/containers/crun/releases/latest")
+        if [ "$url_effective" ]; then
+            echo "${url_effective##*/}"
             break
         elif [ ${attempt_counter} -eq ${max_attempts} ];then
             echo "Max attempts reached"
@@ -42,8 +42,6 @@ function get_version {
         attempt_counter=$((attempt_counter+1))
         sleep 2
     done
-
-    echo "${version#*v}"
 }
 
 info "Validating podman installation..."

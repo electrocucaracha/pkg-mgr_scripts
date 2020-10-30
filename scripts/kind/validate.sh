@@ -27,13 +27,13 @@ function _print_msg {
 
 function get_version {
     local version=${PKG_KIND_VERSION:-}
-
     attempt_counter=0
     max_attempts=5
+
     until [ "$version" ]; do
-        release="$(curl -s https://api.github.com/repos/kubernetes-sigs/kind/releases/latest)"
-        if [ "$release" ]; then
-            version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/kubernetes-sigs/kind/releases/latest")
+        if [ "$url_effective" ]; then
+            version="${url_effective##*/}"
             break
         elif [ ${attempt_counter} -eq ${max_attempts} ];then
             echo "Max attempts reached"

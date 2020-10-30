@@ -32,13 +32,13 @@ fi
 
 function get_version {
     local version=${PKG_CNI_PLUGINS_VERSION:-}
-
     attempt_counter=0
     max_attempts=5
+
     until [ "$version" ]; do
-        release="$(curl -s https://api.github.com/repos/containernetworking/plugins/releases/latest)"
-        if [ "$release" ]; then
-            version="$(echo "$release" | grep -Po '"tag_name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/containernetworking/plugins/releases/latest")
+        if [ "$url_effective" ]; then
+            version="${url_effective##*/}"
             break
         elif [ ${attempt_counter} -eq ${max_attempts} ];then
             echo "Max attempts reached"

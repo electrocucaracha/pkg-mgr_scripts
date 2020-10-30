@@ -27,13 +27,13 @@ function _print_msg {
 
 function get_version {
     local version=${PKG_TERRAFORM_VERSION:-}
-
     attempt_counter=0
     max_attempts=5
+
     until [ "$version" ]; do
-        release="$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest)"
-        if [ "$release" ]; then
-            version="$(echo "$release" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/hashicorp/terraform/releases/latest")
+        if [ "$url_effective" ]; then
+            version="${url_effective##*/v}"
             break
         elif [ ${attempt_counter} -eq ${max_attempts} ];then
             echo "Max attempts reached"
@@ -42,7 +42,7 @@ function get_version {
         attempt_counter=$((attempt_counter+1))
         sleep 2
     done
-    echo "v${version#*v}"
+    echo "v${version}"
 }
 
 info "Validating terraform installation..."
