@@ -49,6 +49,44 @@ function get_github_latest_release {
     echo "${version#v}"
 }
 
+# _vercmp() - Function that compares two versions
+function _vercmp {
+    local v1=$1
+    local op=$2
+    local v2=$3
+    local result
+
+    # sort the two numbers with sort's "-V" argument.  Based on if v2
+    # swapped places with v1, we can determine ordering.
+    result=$(echo -e "$v1\n$v2" | sort -V | head -1)
+
+    case $op in
+        "==")
+            [ "$v1" = "$v2" ]
+            return
+            ;;
+        ">")
+            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+            return
+            ;;
+        "<")
+            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+            return
+            ;;
+        ">=")
+            [ "$result" = "$v2" ]
+            return
+            ;;
+        "<=")
+            [ "$result" = "$v1" ]
+            return
+            ;;
+        *)
+            die $LINENO "unrecognised op: $op"
+            ;;
+    esac
+}
+
 function main {
     local version=${PKG_TERRAFORM_VERSION:-$(get_github_latest_release hashicorp/terraform)}
 
@@ -95,7 +133,11 @@ function main {
         fi
         sudo mkdir -p /usr/local/bin/
         sudo mv terraform /usr/local/bin/
-        mkdir -p ~/.terraform.d/plugins
+        if _vercmp "$version" '<' "0.13"; then
+            mkdir -p ~/.terraform.d/plugins
+        else
+            mkdir -p ~/.local/share/terraform/plugins/registry.terraform.io/
+        fi
         popd > /dev/null
     fi
 }
