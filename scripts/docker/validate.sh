@@ -19,6 +19,10 @@ function info {
     _print_msg "INFO" "$1"
 }
 
+function warn {
+    _print_msg "WARN" "$1"
+}
+
 function error {
     _print_msg "ERROR" "$1"
     exit 1
@@ -81,4 +85,9 @@ if ! command -v jq; then
 fi
 if [ "$(curl -s -X GET http://localhost:5000/v2/_catalog | jq -r '.repositories | contains(["bash"])')" != "true" ]; then
     error "Bash docker image wasn't stored in a local registry"
+fi
+
+info "Validate Registry client installation"
+if [ "$(sudo docker regctl image ratelimit "$docker_image" | jq -r '.Limit')" != "500" ]; then
+    warn "regctl wasn't installed properly"
 fi

@@ -15,7 +15,43 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+function get_cpu_arch {
+    case "$(uname -m)" in
+        x86_64)
+            echo "amd64"
+        ;;
+        armv8*|aarch64*)
+            echo "arm64"
+        ;;
+        armv*)
+            echo "armv7"
+        ;;
+    esac
+}
+
+function get_github_latest_release {
+    version=""
+    attempt_counter=0
+    max_attempts=5
+
+    until [ "$version" ]; do
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest")
+        if [ "$url_effective" ]; then
+            version="${url_effective##*/}"
+            break
+        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+            echo "Max attempts reached"
+            exit 1
+        fi
+        attempt_counter=$((attempt_counter+1))
+        sleep 2
+    done
+    echo "${version#v}"
+}
+
 function main {
+    local version=${PKG_REGCLIENT_VERSION:-$(get_github_latest_release regclient/regclient)}
+
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     if ! command -v docker; then
@@ -132,6 +168,31 @@ EOF
         sleep 2
     done
     # curl -fsSL https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh | bash
+
+    # Install client interface for the registry API
+    if ! command -v regctl; then
+        echo "INFO: Installing regctl $version version..."
+        binary="regctl-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch)"
+        url="https://github.com/regclient/regclient/releases/download/v${version}/$binary"
+        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+            curl -Lo ./regctl "$url"
+            curl -Lo ./docker-regclient "https://raw.githubusercontent.com/regclient/regclient/v${version}/docker-plugin/docker-regclient"
+        else
+            curl -Lo ./regctl "$url" 2> /dev/null
+            curl -Lo ./docker-regclient "https://raw.githubusercontent.com/regclient/regclient/v${version}/docker-plugin/docker-regclient" 2> /dev/null
+        fi
+        chmod +x ./regctl
+        sudo mv ./regctl /usr/bin/regctl
+
+        sed -i "s/version=.*/version=\"${version}\"/" docker-regclient
+        chmod +x ./docker-regclient
+        if [ -d /usr/libexec/docker/cli-plugins/ ]; then
+            sudo cp ./docker-regclient /usr/libexec/docker/cli-plugins/docker-regctl
+        fi
+        mkdir -p "${HOME}/.docker/cli-plugins/"
+        mv ./docker-regclient "${HOME}/.docker/cli-plugins/docker-regctl"
+    fi
+
 }
 
 main

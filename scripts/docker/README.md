@@ -34,6 +34,7 @@ curl -fsSL http://bit.ly/install_pkg | PKG=docker bash
 | PKG_DOCKER_INSECURE_REGISTRIES   |                                                                       | Determines the insecure registries to configure                                     |
 | PKG_DOCKER_DEFAULT_ADDRESS_POOLS | {"base":"172.80.0.0/16","size":24},{"base":"172.90.0.0/16","size":24} | Defines the subnet network that Docker will pick to local scope networks            |
 | PKG_DOCKER_REGISTRY_MIRRORS      |                                                                       | Defines a list of Docker registries                                                 |
+| PKG_REGCLIENT_VERSION            |                                                                       | Specificies the [regclient](https://github.com/regclient/regclient) version         |
 
 ## Used by
 
