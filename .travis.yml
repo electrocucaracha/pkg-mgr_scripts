@@ -28,8 +28,9 @@ env:
 jobs:
   include:
     - name: Lint validation
+      language: python
       install:
-        - curl -fsSL http://bit.ly/install_pkg | PKG="tox" bash
+        - pip install tox
       script:
         - tox -e lint
         - bash -c 'shopt -s globstar; shellcheck -x **/*.sh'
