@@ -11,9 +11,11 @@
 set -o errexit
 set -o pipefail
 
-vagrant_version=2.2.10
-export PKG_GOLANG_VERSION=1.15.3
-export PKG_VAGRANT_VERSION=2.2.10
+vagrant_version=2.2.14
+
+# Setup CI versions
+export PKG_GOLANG_VERSION=1.15.4
+export PKG_VAGRANT_VERSION=2.2.14
 
 function info {
     echo "$(date +%H:%M:%S) - INFO: $1"
