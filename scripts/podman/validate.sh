@@ -104,8 +104,18 @@ if ! pgrep -u "$(id -u root)" | grep -q "$(sudo podman inspect rootoutside-rooti
 fi
 sudo podman stop rootoutside-rootinside
 
-info "Validating root execution with rootless container execution"
+info "Ensuring that sync user has UID=4"
 id -u sync &>/dev/null || sudo useradd -u 4 sync
+if [ "$(id -un -- 4)" != "sync" ]; then
+    sudo userdel --remove --force "$(id -un -- 4)"
+    if id sync &>/dev/null; then
+        sudo usermod -u 4 sync
+    else
+        sudo useradd -u 4 sync
+    fi
+fi
+
+info "Validating root execution with rootless container execution"
 sudo podman run --rm -d --user sync --name rootoutside-userinside --net=none busybox sleep infinity
 if ! pgrep -u "$(id -u sync)" | grep -q "$(sudo podman inspect rootoutside-userinside --format "{{.State.Pid}}")"; then
     error "Running root container has different sync user than host"

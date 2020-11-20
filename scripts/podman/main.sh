@@ -139,15 +139,16 @@ function main {
     else
         sudo systemctl enable podman.socket
         sudo systemctl start podman.socket
-        systemctl --user enable podman.socket
-        systemctl --user start podman.socket
-        sudo loginctl enable-linger "$USER"
+        if systemctl --user daemon-reload >/dev/null 2>&1; then
+            systemctl --user enable podman.socket
+            systemctl --user start podman.socket
+            sudo loginctl enable-linger "$USER"
+        fi
     fi
 
+    crun_binary="crun-${crun_version}-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch)"
     if _vercmp "${crun_version}" '<' "0.15"; then
         crun_binary="crun-${crun_version}-static-$(uname -m)"
-    else
-        crun_binary="crun-${crun_version}-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch)"
     fi
     crun_url="https://github.com/containers/crun/releases/download/${crun_version}/$crun_binary"
     if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
