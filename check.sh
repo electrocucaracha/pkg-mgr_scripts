@@ -39,6 +39,7 @@ case ${ID,,} in
     ;;
 esac
 vagrant plugin install vagrant-libvirt
+vagrant plugin install vagrant-reload
 
 info "Starting Integration tests - ${VAGRANT_NAME:-ubuntu_xenial}"
 newgrp libvirt <<EONG
