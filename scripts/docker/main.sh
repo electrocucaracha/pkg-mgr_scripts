@@ -57,34 +57,46 @@ function main {
     if ! command -v docker; then
         echo "Installing docker service..."
 
+        INSTALLER_CMD="sudo -H -E "
         case ${ID,,} in
             clear-linux-os)
-                if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-                    sudo -E swupd bundle-add containers-basic
-                else
-                    sudo -E swupd bundle-add --quiet containers-basic
+                INSTALLER_CMD+="swupd bundle-add"
+                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                    INSTALLER_CMD+=" --quiet"
                 fi
+                $INSTALLER_CMD containers-basic
             ;;
             *suse*)
-                ZYPPER_CMD="sudo -H -E zypper"
+                INSTALLER_CMD+="zypper"
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                    ZYPPER_CMD+=" -q"
+                    INSTALLER_CMD+=" -q"
                 fi
-                sudo zypper --gpg-auto-import-keys refresh
-                $ZYPPER_CMD install -y --no-recommends docker
+                $INSTALLER_CMD --gpg-auto-import-keys refresh
+                $INSTALLER_CMD install -y --no-recommends docker
+                for mod in ip_tables iptable_mangle iptable_nat iptable_filter; do
+                    sudo modprobe "$mod"
+                done
             ;;
             rhel|centos|fedora)
-                PKG_MANAGER=$(command -v dnf || command -v yum)
-                if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-                    sudo -H -E "${PKG_MANAGER}" -y install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
-                else
-                    sudo -H -E "${PKG_MANAGER}" -y install --quiet --errorlevel=0 https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+                INSTALLER_CMD+="$(command -v dnf || command -v yum) -y install"
+                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                    INSTALLER_CMD+=" --quiet --errorlevel=0"
                 fi
+                if [[ "$VERSION_ID" == "7" ]]; then
+                    echo "user.max_user_namespaces = 28633" | sudo tee /etc/sysctl.d/51-rootless.conf
+                    sudo sysctl --system
+                fi
+                $INSTALLER_CMD https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
                 curl -fsSL https://get.docker.com/ | sh
                 sudo sed -i "s/FirewallBackend=.*/FirewallBackend=iptables/g" /etc/firewalld/firewalld.conf
                 sudo systemctl restart firewalld
             ;;
             ubuntu|debian)
+                INSTALLER_CMD+="apt-get -y "
+                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                    INSTALLER_CMD+="-q=3 "
+                fi
+                $INSTALLER_CMD --no-install-recommends install uidmap
                 curl -fsSL https://get.docker.com/ | sh
             ;;
         esac
@@ -168,6 +180,17 @@ EOF
         sleep 2
     done
     # curl -fsSL https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh | bash
+
+    # Install Rootless Docker
+    curl -fsSL https://get.docker.com/rootless | FORCE_ROOTLESS_INSTALL=1 sh
+    if systemctl --user daemon-reload >/dev/null 2>&1; then
+        systemctl --user start docker
+        systemctl --user enable docker
+        sudo loginctl enable-linger "$(whoami)"
+    else
+        ~/bin/dockerd-rootless.sh --experimental --storage-driver vfs &
+    fi
+    docker context create rootless --description "for rootless mode" --docker "host=unix://$XDG_RUNTIME_DIR/docker.sock"
 
     # Install client interface for the registry API
     if ! command -v regctl; then

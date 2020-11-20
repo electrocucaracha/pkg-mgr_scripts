@@ -13,7 +13,7 @@ set -o errexit
 set -o pipefail
 
 mgmt_nic=$(ip route | grep "^192.168.121.0/24\|10.0.2.0/24" | head -n1 | awk '{ print $3 }')
-mgmt_ip=$(ip addr | awk "/${mgmt_nic}\$/ { sub(/\/[0-9]*/, \"\","' $2); print $2; exit}')
+mgmt_ip=$(ip addr show "${mgmt_nic}" | awk "/${mgmt_nic}\$/ { sub(/\/[0-9]*/, \"\","' $2); print $2; exit}')
 
 function info {
     _print_msg "INFO" "$1"
@@ -88,6 +88,58 @@ if [ "$(curl -s -X GET http://localhost:5000/v2/_catalog | jq -r '.repositories 
 fi
 
 info "Validate Registry client installation"
-if [ "$(sudo docker regctl image ratelimit "$docker_image" | jq -r '.Limit')" != "500" ]; then
+if [ "$(sudo docker regctl image ratelimit "$docker_image" | jq -r '.Set')" != "true" ]; then
     warn "regctl wasn't installed properly"
 fi
+
+info "Validating root execution with root container execution"
+sudo docker run --rm -d --name rootoutside-rootinside --net=none busybox sleep infinity
+if ! pgrep -u "$(id -u root)" | grep -q "$(sudo docker inspect rootoutside-rootinside --format "{{.State.Pid}}")"; then
+    error "Running root container has different root user than host"
+fi
+sudo docker stop rootoutside-rootinside
+
+info "Ensuring that sync user has UID=4"
+id -u sync &>/dev/null || sudo useradd -u 4 sync
+if [ "$(id -un -- 4)" != "sync" ]; then
+    sudo userdel --remove --force "$(id -un -- 4)"
+    if id sync &>/dev/null; then
+        sudo usermod -u 4 sync
+    else
+        sudo useradd -u 4 sync
+    fi
+fi
+info "Validating root execution with rootless container execution"
+sudo docker run --rm -d --user sync --name rootoutside-userinside --net=none busybox sleep infinity
+if ! pgrep -u "$(id -u sync)" | grep -q "$(sudo docker inspect rootoutside-userinside --format "{{.State.Pid}}")"; then
+    error "Running root container has different sync user than host"
+fi
+sudo docker stop rootoutside-userinside
+
+info "Saving busybox image"
+sudo docker image save -o ~/busybox.tar busybox
+sudo chown "$USER": ~/busybox.tar
+
+info "Switching to rootless context"
+docker context use rootless
+
+info "Loading busybox image"
+docker image load -i ~/busybox.tar
+
+info "Validating non-root execution with root container execution"
+docker run --rm -d --name useroutside-rootinside busybox sleep infinity
+if ! pgrep -u "$(id -u)" | grep -q "$(docker inspect useroutside-rootinside --format "{{.State.Pid}}")"; then
+    error "Running non-root container has different $USER user than host"
+fi
+docker stop useroutside-rootinside
+
+info "Validating non-root execution with rootless container execution"
+docker run --rm -d --user sync --name useroutside-userinside busybox sleep infinity
+# shellcheck disable=SC2009
+if [ "$(ps -eo uname:20,pid,cmd | grep "$(docker inspect useroutside-userinside --format "{{.State.Pid}}")" | awk '{ print $1}')" == "$USER" ]; then
+    error "Running non-root container has same $USER user than host"
+fi
+docker stop useroutside-userinside
+
+info "Switching to default context"
+docker context use default
