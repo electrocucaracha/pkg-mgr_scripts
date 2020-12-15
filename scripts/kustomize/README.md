@@ -34,7 +34,7 @@ curl -fsSL http://bit.ly/install_pkg | PKG=kustomize bash
 
 | Name                  | Default | Description                                     |
 |:----------------------|:--------|:------------------------------------------------|
-| PKG_KUSTOMIZE_VERSION |         | Specifies the Kustomize version to be installed |
+| PKG_KUSTOMIZE_VERSION | 3.8.8   | Specifies the Kustomize version to be installed |
 
 ## Used by
 
