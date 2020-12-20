@@ -175,11 +175,17 @@ EOF
     sudo curl -s https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
 
     printf "Waiting for docker service..."
-    until sudo docker info; do
+    until sudo docker info > /dev/null; do
         printf "."
         sleep 2
     done
-    # curl -fsSL https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh | bash
+    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        sudo docker info
+        if command -v ctr; then
+            sudo ctr plugins ls
+        fi
+        #curl -fsSL https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh | bash
+    fi
 
     # Install Rootless Docker
     curl -fsSL https://get.docker.com/rootless | FORCE_ROOTLESS_INSTALL=1 sh
