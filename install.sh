@@ -70,6 +70,7 @@ function main {
     pkg_mgr_supported[libassuan-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
     pkg_mgr_supported[mkpasswd]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"mkpasswd\",\"RedHat\": \"expect\",\"ClearLinux\": \"sysadmin-basic\"}"
     pkg_mgr_supported[python-devel]="{\"Suse\": \"python-devel\",\"Debian\": \"python-dev\",\"RedHat\": \"python3-devel python2-devel\",\"ClearLinux\": \"python-basic\"}"
+    pkg_mgr_supported[qemu-utils]="{\"Suse\": \"qemu-tools\",\"Debian\": \"qemu-utils\",\"RedHat\": \"qemu-utils\",\"ClearLinux\": \"clr-installer\"}"
     pkg_mgr_supported[ruby-devel]="{\"Suse\": \"ruby-devel\",\"Debian\": \"ruby-dev\",\"RedHat\": \"ruby-devel\",\"ClearLinux\": \"ruby-basic\"}"
     pkg_mgr_supported[sysfsutils]="{\"Suse\": \"sysfsutils\",\"Debian\": \"sysfsutils\",\"RedHat\": \"sysfsutils\",\"ClearLinux\": \"openstack-common\"}"
     pkg_mgr_supported[tito]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"tito\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
