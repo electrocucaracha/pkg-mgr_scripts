@@ -111,7 +111,13 @@ function main {
     sudo rm -f /usr/bin/python
     sudo ln -s "/usr/bin/python${major_python_version}" /usr/bin/python
     if ! command -v pip || _vercmp "$(pip -V | awk '{print $2}')" '<' "$min_pip_version"; then
-        curl -sL https://bootstrap.pypa.io/get-pip.py | sudo python
+        if _vercmp "$(python -V | awk '{print $2}')" '<' "3"; then
+            curl -sL https://bootstrap.pypa.io/2.7/get-pip.py | sudo python
+        elif _vercmp "$(python -V | awk '{print $2}')" '<' "3.6"; then
+            curl -sL https://bootstrap.pypa.io/3.5/get-pip.py | sudo python
+        else
+            curl -sL https://bootstrap.pypa.io/get-pip.py | sudo python
+        fi
     fi
 }
 
