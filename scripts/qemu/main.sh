@@ -100,6 +100,8 @@ function main {
             curl https://pyenv.run | bash
             export PATH="$HOME/.pyenv/bin:$PATH"
             eval "$(pyenv init -)"
+            # pyenv uses /tmp folder to download binaries and tarballs
+            sudo rm -rf /tmp/*
             pyenv install 3.8.5
             pyenv global 3.8.5
         ;;
@@ -135,7 +137,8 @@ function main {
         ;;
     esac
 
-    pushd "$(mktemp -d)" > /dev/null
+    mkdir ~/tmp/
+    pushd ~/tmp  > /dev/null
     if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
         curl -o qemu.tar.tz "https://download.qemu.org/$qemu_tarball"
     else
@@ -152,6 +155,7 @@ function main {
     fi
     sudo make install
     popd > /dev/null
+    rm -rf qemu*
     popd > /dev/null
 }
 
