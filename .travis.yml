@@ -17,7 +17,7 @@ cache:
   directories:
     - /home/travis/.vagrant.d/boxes
 script:
-  - ./check.sh
+  - SUDO_VAGRANT_CMD=true ./check.sh
 env:
   - VAGRANT_NAME=ubuntu_xenial
   - VAGRANT_NAME=centos_7

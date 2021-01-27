@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
       sudo ip link set veth0 up
 
       cd /vagrant
-      ./main.sh > ~/main.log 2>&1
+      ./main.sh | tee ~/main.log 2>&1
     SHELL
   end
   config.vm.provision 'shell', privileged: false, inline: <<-SHELL

@@ -70,7 +70,7 @@ SHELL
       fi
 
       cd /vagrant
-      ./main.sh > ~/main.log 2>&1
+      ./main.sh | tee ~/main.log 2>&1
       ./validate.sh | tee ~/validate.log
       echo "Tests completed!!!"
     SHELL
