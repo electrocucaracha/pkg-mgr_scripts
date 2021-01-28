@@ -120,11 +120,13 @@ function main {
             fi
         ;;
     esac
+    echo "INFO: Installing libvirt packages ($pkgs)..."
     # shellcheck disable=SC2086
     sudo -H -E $INSTALLER_CMD $pkgs
     sudo usermod -a -G $libvirt_group "$USER"
 
     # Start libvirt service
+    echo "INFO: Starting libvirt service..."
     if ! systemctl is-enabled --quiet libvirtd; then
         sudo systemctl enable libvirtd
     fi

@@ -30,5 +30,13 @@ if ! command -v virsh; then
     error "Libvirt command line wasn't installed"
 fi
 
+info "Validating libvirt service"
+if ! systemctl is-enabled --quiet libvirtd; then
+    error "Libvirt service is not enabled"
+fi
+if ! systemctl is-active --quiet libvirtd; then
+    error "Libvirt service is not active"
+fi
+
 info "Validating virsh execution..."
 virsh list
