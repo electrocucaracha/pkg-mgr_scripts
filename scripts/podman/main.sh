@@ -132,20 +132,24 @@ function main {
             fi
         ;;
     esac
+    echo "INFO: Installing podman..."
     $INSTALLER_CMD podman
     if [ "${ID,,}" == "centos" ] && [ "${VERSION_ID}" == "7" ]; then
         sudo sed -i 's/mountopt = .*/mountopt = ""/' /etc/containers/storage.conf
         echo "WARN: Podman service is not supported in CentOS 7"
     else
+        echo "INFO: Starting podman service..."
         sudo systemctl enable podman.socket
-        sudo systemctl start podman.socket
+        sudo systemctl start podman.socket --now
         if systemctl --user daemon-reload >/dev/null 2>&1; then
+            echo "INFO: Enabling rootless podman service..."
             systemctl --user enable podman.socket
             systemctl --user start podman.socket
             sudo loginctl enable-linger "$USER"
         fi
     fi
 
+    echo "INFO: Installing crun..."
     crun_binary="crun-${crun_version}-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch)"
     if _vercmp "${crun_version}" '<' "0.15"; then
         crun_binary="crun-${crun_version}-static-$(uname -m)"

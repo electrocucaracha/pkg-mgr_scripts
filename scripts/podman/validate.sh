@@ -59,6 +59,14 @@ if [ "$(crun --version | awk 'NR==1{ print $3}')" != "$(get_version)" ]; then
     error "crun version installed is different that expected"
 fi
 
+info "Validating podman service..."
+if ! systemctl is-enabled --quiet podman.socket; then
+    error "Podman is not enabled"
+fi
+if ! systemctl is-active --quiet podman.socket; then
+    error "Podman is not active"
+fi
+
 info "Validating podman remote execution..."
 if ! sudo podman --remote info; then
     error "Podman service wasn't started"
