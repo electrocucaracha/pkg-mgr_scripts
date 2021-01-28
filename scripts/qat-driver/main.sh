@@ -133,9 +133,11 @@ EOF
             return
         ;;
     esac
+    echo "INFO: Installing building packages ($pkgs)"
     # shellcheck disable=SC2086
     sudo -H -E $INSTALLER_CMD $pkgs
 
+    echo "INFO: Removing old QAT Kernel modules"
     for mod in $(lsmod | grep "^intel_qat" | awk '{print $4}'); do
         sudo rmmod "$mod"
     done
@@ -153,6 +155,7 @@ blacklist intel_qat
 EOF
 
     if [ ! -d /tmp/qat ]; then
+        echo "INFO: Getting QAT driver's Tarball"
         curl -o "$qat_driver_tarball" "https://01.org/sites/default/files/downloads/${qat_driver_tarball}"
         sudo mkdir -p /tmp/qat
         sudo tar -C /tmp/qat -xzf "$qat_driver_tarball"
@@ -161,10 +164,12 @@ EOF
     pushd /tmp/qat
     sudo ./configure
     for action in clean uninstall install; do
+        echo "INFO: Performing $action make action"
         sudo make $action
     done
     popd
 
+    echo "INFO: Starting QAT service"
     sudo systemctl --now enable qat_service
     sudo systemctl start qat_service
 }
