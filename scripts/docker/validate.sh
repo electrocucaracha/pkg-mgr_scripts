@@ -109,6 +109,20 @@ if [ "$(id -un -- 4)" != "sync" ]; then
         sudo useradd -u 4 sync
     fi
 fi
+info "Setting rootless context"
+if systemctl --user daemon-reload >/dev/null 2>&1; then
+    systemctl --user start docker
+    systemctl --user enable docker
+    sudo loginctl enable-linger "$(whoami)"
+else
+    nohup bash -c "$HOME/bin/dockerd-rootless.sh --experimental --storage-driver vfs" > /tmp/dockerd-rootless.log 2>&1 &
+    trap "kill -s SIGTERM \$(cat /run/user/1000/docker.pid)" EXIT
+    until grep -q "Daemon has completed initialization" /tmp/dockerd-rootless.log; do
+        sleep 2
+    done
+fi
+docker context create rootless --description "for rootless mode" --docker "host=unix://$XDG_RUNTIME_DIR/docker.sock"
+
 info "Validating root execution with rootless container execution"
 sudo docker run --rm -d --user sync --name rootoutside-userinside --net=none busybox sleep infinity
 if ! pgrep -u "$(id -u sync)" | grep -q "$(sudo docker inspect rootoutside-userinside --format "{{.State.Pid}}")"; then

@@ -189,14 +189,6 @@ EOF
 
     # Install Rootless Docker
     curl -fsSL https://get.docker.com/rootless | FORCE_ROOTLESS_INSTALL=1 sh
-    if systemctl --user daemon-reload >/dev/null 2>&1; then
-        systemctl --user start docker
-        systemctl --user enable docker
-        sudo loginctl enable-linger "$(whoami)"
-    else
-        ~/bin/dockerd-rootless.sh --experimental --storage-driver vfs &
-    fi
-    docker context create rootless --description "for rootless mode" --docker "host=unix://$XDG_RUNTIME_DIR/docker.sock"
 
     # Install client interface for the registry API
     if ! command -v regctl; then
@@ -221,7 +213,6 @@ EOF
         mkdir -p "${HOME}/.docker/cli-plugins/"
         mv ./docker-regclient "${HOME}/.docker/cli-plugins/docker-regctl"
     fi
-
 }
 
 main
