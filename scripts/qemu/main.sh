@@ -77,6 +77,7 @@ function main {
         return
     fi
 
+    echo "INFO: Installing building packages"
     configure_flags="--target-list="$(uname -m)-softmmu" --enable-libpmem --enable-kvm"
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
@@ -145,6 +146,8 @@ function main {
         curl -o qemu.tar.tz "https://download.qemu.org/$qemu_tarball" 2> /dev/null
     fi
     tar xf qemu.tar.tz
+
+    echo "INFO: Building QEMU source code"
     pushd "qemu-${version}" > /dev/null
     # shellcheck disable=SC2086
     ./configure $configure_flags
@@ -153,6 +156,7 @@ function main {
     else
         make > /dev/null
     fi
+    echo "INFO: Installing QEMU $version version"
     sudo make install
     popd > /dev/null
     rm -rf qemu*
