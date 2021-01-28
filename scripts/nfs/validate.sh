@@ -25,10 +25,18 @@ function _print_msg {
     echo "$1: $2"
 }
 
-info "Validating NFS service installation..."
+info "Validating NFS service..."
 if ! systemctl is-enabled --quiet nfs-server; then
     error "NFS server is not enabled"
 fi
 if ! systemctl is-active --quiet nfs-server; then
     error "NFS server is not active"
+fi
+
+info "Validating RPC-stat service..."
+if ! systemctl is-enabled --quiet rpc-statd; then
+    error "RPC-stat is not enabled"
+fi
+if ! systemctl is-active --quiet rpc-statd; then
+    error "RPC-stat server is not active"
 fi

@@ -71,9 +71,11 @@ function main {
         ;;
     esac
     export PKG
+    echo "INFO: Installing NFS packages ($PKG)..."
     curl -fsSL http://bit.ly/install_pkg | PKG_UPDATE=true bash
 
     for service in rpc-statd nfs-server; do
+        echo "INFO: Starting $service service..."
         if ! systemctl is-enabled --quiet "$service"; then
             sudo systemctl enable "$service"
         fi
@@ -82,6 +84,7 @@ function main {
 
     if command -v firewall-cmd && systemctl is-active --quiet firewalld; then
         for svc in nfs rpc-bind mountd; do
+            echo "INFO: Enabiling $svc service in FirewallD service..."
             sudo firewall-cmd --permanent --add-service="${svc}" --zone=trusted
         done
         sudo firewall-cmd --set-default-zone=trusted
