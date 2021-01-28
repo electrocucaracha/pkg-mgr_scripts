@@ -29,6 +29,26 @@ function get_cpu_arch {
     esac
 }
 
+function get_github_latest_release {
+    version=""
+    attempt_counter=0
+    max_attempts=5
+
+    until [ "$version" ]; do
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest")
+        if [ "$url_effective" ]; then
+            version="${url_effective##*/}"
+            break
+        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+            echo "Max attempts reached"
+            exit 1
+        fi
+        attempt_counter=$((attempt_counter+1))
+        sleep 2
+    done
+    echo "${version#v}"
+}
+
 # _vercmp() - Function that compares two versions
 function _vercmp {
     local v1=$1
@@ -68,7 +88,8 @@ function _vercmp {
 }
 
 function main {
-    local version=${PKG_QEMU_VERSION:-5.1.0}
+    local ninja_version=${PKG_NINJA_VERSION:-$(get_github_latest_release ninja-build/ninja)}
+    local version=${PKG_QEMU_VERSION:-5.2.0}
     local qemu_tarball="qemu-${version}.tar.xz"
     local pmdk_version=${PKG_PMDK_VERSION:-1.4}
     local pmdk_url="https://github.com/pmem/pmdk/releases/download/$pmdk_version/pmdk-${pmdk_version}-"
@@ -97,7 +118,7 @@ function main {
                 done
                 popd > /dev/null
             fi
-            sudo -H -E zypper install -y --no-recommends git gcc make bzip2 glib2-devel libpixman-1-0-devel diffutils zlib-devel libbz2-devel libopenssl-devel ncurses-devel readline-devel sqlite3 sqlite3-devel tack xz-devel
+            sudo -H -E zypper install -y --no-recommends git gcc make bzip2 glib2-devel libpixman-1-0-devel diffutils zlib-devel libbz2-devel libopenssl-devel ncurses-devel readline-devel sqlite3 sqlite3-devel tack xz-devel unzip
             curl https://pyenv.run | bash
             export PATH="$HOME/.pyenv/bin:$PATH"
             eval "$(pyenv init -)"
@@ -129,26 +150,40 @@ function main {
             sudo -H -E apt-get -y install software-properties-common
             sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
             sudo apt-get update
-            sudo -H -E apt-get -y install --no-install-recommends python3.7 gcc make libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libpmem-dev libnuma-dev
+            sudo -H -E apt-get -y install --no-install-recommends python3.7 gcc make libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libpmem-dev libnuma-dev unzip
+            sudo rm -f /usr/bin/python3
+            sudo ln -s /usr/bin/python3.7 /usr/bin/python3
         ;;
         rhel|centos|fedora)
             configure_flags+=" --enable-numa"
             PKG_MANAGER=$(command -v dnf || command -v yum)
-            sudo -H -E "${PKG_MANAGER}" -y install python36 gcc make glib2-devel pixman-devel zlib-devel libpmem-devel numactl-devel bzip2
+            sudo -H -E "${PKG_MANAGER}" -y install python36 gcc make glib2-devel pixman-devel zlib-devel libpmem-devel numactl-devel bzip2 unzip
         ;;
     esac
-
-    mkdir ~/tmp/
-    pushd ~/tmp  > /dev/null
-    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-        curl -o qemu.tar.tz "https://download.qemu.org/$qemu_tarball"
-    else
-        curl -o qemu.tar.tz "https://download.qemu.org/$qemu_tarball" 2> /dev/null
+    if ! command -v ninja || _vercmp "$(ninja --version)" '<' "1.7"; then
+        echo "INFO: Installing Ninja build $ninja_version version"
+        url="https://github.com/ninja-build/ninja/releases/download/v${ninja_version#*v}/ninja-$(uname | tr '[:upper:]' '[:lower:]').zip"
+        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+            curl -o /tmp/ninja.zip -L "$url"
+            unzip /tmp/ninja.zip
+        else
+            curl -o /tmp/ninja.zip -L "$url" 2>/dev/null
+            unzip -qq /tmp/ninja.zip
+        fi
+        sudo mv ninja /usr/bin
     fi
-    tar xf qemu.tar.tz
+
+    mkdir -p ~/tmp/qemu
+    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        curl -o /tmp/qemu.tar.tz "https://download.qemu.org/$qemu_tarball"
+    else
+        curl -o /tmp/qemu.tar.tz "https://download.qemu.org/$qemu_tarball" 2> /dev/null
+    fi
+    trap "rm -rf ~/tmp/" EXIT
+    tar xf /tmp/qemu.tar.tz -C ~/tmp/qemu --strip-components=1
 
     echo "INFO: Building QEMU source code"
-    pushd "qemu-${version}" > /dev/null
+    pushd ~/tmp/qemu > /dev/null
     # shellcheck disable=SC2086
     ./configure $configure_flags
     if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
@@ -158,8 +193,6 @@ function main {
     fi
     echo "INFO: Installing QEMU $version version"
     sudo make install
-    popd > /dev/null
-    rm -rf qemu*
     popd > /dev/null
 }
 

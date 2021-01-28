@@ -30,10 +30,11 @@ curl -fsSL http://bit.ly/install_pkg | PKG=qemu bash
 ```
 ### Environment variables
 
-| Name             | Default | Description                                |
-|:-----------------|:--------|:-------------------------------------------|
-| PKG_QEMU_VERSION | 5.1.0   | Specifies the QEMU version to be installed |
-| PKG_PMDK_VERSION | 1.4     | Specifies the PMDK version to be installed |
+| Name              | Default | Description                                 |
+|:------------------|:--------|:--------------------------------------------|
+| PKG_QEMU_VERSION  | 5.2.0   | Specifies the QEMU version to be installed  |
+| PKG_PMDK_VERSION  | 1.4     | Specifies the PMDK version to be installed  |
+| PKG_NINJA_VERSION |         | Specifies the Ninja version to be installed |
 
 ## Used by
 
