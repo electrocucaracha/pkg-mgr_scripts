@@ -22,6 +22,7 @@ function main {
         return
     fi
 
+    echo "INFO: Installing VirtualBox $version version..."
     pushd "$(mktemp -d)" 2> /dev/null
     pkgs="VirtualBox-$version dkms"
     curl -o oracle_vbox.asc https://www.virtualbox.org/download/oracle_vbox.asc
