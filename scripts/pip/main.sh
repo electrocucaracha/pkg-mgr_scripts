@@ -58,6 +58,7 @@ function main {
     local min_pip_version="20"
 
     if ! command -v python  || _vercmp "$(python -V 2>&1 | awk '{print $2}')" '<' "$major_python_version"; then
+        echo "INFO: Installing python $major_python_version version..."
         # shellcheck disable=SC1091
         source /etc/os-release || source /usr/lib/os-release
         case ${ID,,} in
@@ -98,19 +99,25 @@ function main {
                 INSTALLER_CMD+=" install"
                 $INSTALLER_CMD python36 yum-utils python2
                 for file in yum yum-config-manager; do
+                    echo "INFO: Setting $file to use python 2"
                     if [ -f "/usr/bin/$file" ]; then
                         sudo sed -i "s|#\!/usr/bin/python|#!$(command -v python2)|g" "/usr/bin/$file"
                     fi
                 done
                 if [ -f /usr/libexec/urlgrabber-ext-down ]; then
+                    echo "INFO: Setting urlgrabber-ext-down script to use python 2"
                     sudo sed -i "s|#\! /usr/bin/python|#!$(command -v python2)|g" /usr/libexec/urlgrabber-ext-down
                 fi
             ;;
         esac
     fi
+
+    echo "INFO: Setting python $major_python_version as default option"
     sudo rm -f /usr/bin/python
     sudo ln -s "/usr/bin/python${major_python_version}" /usr/bin/python
+
     if ! command -v pip || _vercmp "$(pip -V | awk '{print $2}')" '<' "$min_pip_version"; then
+        echo "INFO: Installing PIP $min_pip_version version"
         if _vercmp "$(python -V | awk '{print $2}')" '<' "3"; then
             curl -sL https://bootstrap.pypa.io/2.7/get-pip.py | sudo python
         elif _vercmp "$(python -V | awk '{print $2}')" '<' "3.6"; then
