@@ -50,6 +50,8 @@ Vagrant.configure("2") do |config|
   if File.exist?(File.dirname(__FILE__) + '/_requirements.sh')
     config.vm.provision 'shell', path: "#{$vagrant_root}/_requirements.sh"
   end
+
+  # Helm 3 Version (Default)
   config.vm.provision 'shell', privileged: false do |sh|
     sh.env = {
       'PKG_DEBUG': "#{$pkg_debug}",
@@ -68,6 +70,27 @@ Vagrant.configure("2") do |config|
     set -o errexit
     cd /vagrant
     ./validate.sh | tee ~/validate.log
+    sudo rm -rf $(command -v helm)
+  SHELL
+  config.vm.provision 'shell', privileged: false do |sh|
+    sh.env = {
+      'PKG_DEBUG': "#{$pkg_debug}",
+      'PKG_HELM_VERSION': "2",
+    }
+    sh.inline = <<-SHELL
+      set -o errexit
+      if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+          set -o xtrace
+      fi
+
+      cd /vagrant
+      ./main.sh | tee --append ~/main.log 2>&1
+    SHELL
+  end
+  config.vm.provision 'shell', privileged: false, inline: <<-SHELL
+    set -o errexit
+    cd /vagrant
+    ./validate.sh | tee --append ~/validate.log
     echo "Tests completed!!!"
   SHELL
 

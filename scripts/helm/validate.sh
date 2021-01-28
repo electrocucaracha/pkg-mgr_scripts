@@ -30,6 +30,23 @@ if ! command -v helm; then
     error "Helm command line wasn't installed"
 fi
 
+helm_version=$(helm version 2>/dev/null | awk -F '"' '{print substr($2,2); exit}' || true)
+info "Validating helm $helm_version version"
+if [[ "$helm_version" == "2"* ]]; then
+    info "Validating helm service"
+    if ! systemctl is-enabled --quiet helm-serve; then
+        error "Helm service is not enabled"
+    fi
+    if ! systemctl is-active --quiet helm-serve; then
+        error "Helm service is not active"
+    fi
+
+    info "Validating helm local repo"
+    if ! sudo su helm -c "helm repo list" | grep -q "^local"; then
+        error "Helm repository list doesn't include local"
+    fi
+fi
+
 info "Validating autocomplete functions"
 if declare -F | grep -q "_helm"; then
     error "Helm autocomplete install failed"
