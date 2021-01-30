@@ -11,28 +11,10 @@
 set -o errexit
 set -o pipefail
 
-vagrant_version=2.2.14
-mgmt_nic="$(ip route get 1.1.1.1 | awk 'NR==1 { print $5 }')"
-ratio=$((1024*1024)) # MB
-export CPUS=${CPUS:-2}
-export MEMORY=${MEMORY:-6144}
-export VAGRANT_NAME=${VAGRANT_NAME:-ubuntu_xenial}
-
-# Setup CI versions
-export PKG_GOLANG_VERSION=1.15.4
-export PKG_VAGRANT_VERSION=2.2.14
-
-source _utils.sh
-
-function exit_trap {
-    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log
-    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log
-}
-
-int_rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
-
 if ! command -v vagrant; then
-    info "Install Integration dependencies - $VAGRANT_NAME"
+    vagrant_version=2.2.14
+
+    echo "Install Integration dependencies - $VAGRANT_NAME"
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
@@ -49,57 +31,39 @@ if ! command -v vagrant; then
     vagrant plugin install vagrant-reload
 fi
 
-vagrant_cmd=""
-if [ "${SUDO_VAGRANT_CMD:-false}" == "true" ]; then
-    vagrant_cmd="sudo -E"
-fi
-vagrant_cmd+=" $(command -v vagrant)"
+source _utils.sh
+source _common.sh
 
-vagrant_up_cmd="$vagrant_cmd up --no-destroy-on-error $VAGRANT_NAME"
-vagrant_destroy_cmd="$vagrant_cmd destroy -f $VAGRANT_NAME"
-
-$vagrant_destroy_cmd > /dev/null
-trap exit_trap ERR
+int_rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
+int_start=$(date +%s)
 
 info "Starting Integration tests - $VAGRANT_NAME"
 
-# Main install function test
-$vagrant_up_cmd | tee "/tmp/check_$VAGRANT_NAME.log"
+# Start parallel tests
+nohup ./run_long_tests.sh > "/tmp/long_test_$VAGRANT_NAME.log" 2>&1 &
+pid="$!"
+
+# Start main install test
 $vagrant_destroy_cmd > /dev/null
+$vagrant_up_cmd | tee "/tmp/check_main_$VAGRANT_NAME.log"
+$vagrant_destroy_cmd > /dev/null
+
+trap exit_trap ERR
 
 # shellcheck disable=SC2044
 for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
     pushd "$(dirname "$vagrantfile")" > /dev/null
-    if [ -f os-blacklist.conf ] && grep "$VAGRANT_NAME" os-blacklist.conf > /dev/null; then
-        info "Skipping $(basename "$(pwd)") test for $VAGRANT_NAME"
-        popd > /dev/null
-        continue
+    if [[ "$parallel_tests" != *"$(basename "$(pwd)")"* ]]; then
+        run_test
     fi
-    $vagrant_destroy_cmd > /dev/null
-    rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
-
-    info "Starting $(basename "$(pwd)") test for $VAGRANT_NAME"
-    start=$(date +%s)
-    $vagrant_up_cmd >> "/tmp/check_$VAGRANT_NAME.log"
-
-    # Verify validation errors
-    if $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log | grep "ERROR"; then
-        info "Found an error during the validation of $(basename "$(pwd)") in $VAGRANT_NAME"
-        $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log
-        exit 1
-    fi
-    rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
-    info "$(basename "$(pwd)") test completed for $VAGRANT_NAME"
-
-    echo "=== Summary ==="
-    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log | grep "^INFO" | sed 's/^INFO: //'
-    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log | grep "^INFO" | sed 's/^INFO: //'
-    printf "%s secs - Duration time for %s in %s\n" "$(($(date +%s)-start))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
-    printf "%'.f MB downloaded - Network Usage for %s in %s\n"  "$(((rx_bytes_after-rx_bytes_before)/ratio))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
-
-    $vagrant_destroy_cmd > /dev/null
     popd > /dev/null
 done
+
+wait "$pid"
+
+cat "/tmp/long_test_$VAGRANT_NAME.log"
+
 info "Integration tests completed - $VAGRANT_NAME"
 int_rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
 printf "%'.f MB total downloaded\n"  "$(((int_rx_bytes_after-int_rx_bytes_before)/ratio))"
+printf "%s secs\n" "$(($(date +%s)-int_start))"
