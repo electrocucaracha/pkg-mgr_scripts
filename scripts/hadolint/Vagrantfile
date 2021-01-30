@@ -16,7 +16,7 @@ end
 $no_proxy += ",10.0.2.15"
 $socks_proxy = ENV['socks_proxy'] || ENV['SOCKS_PROXY'] || ""
 $debug = ENV['PKG_DEBUG'] || "true"
-$version = ENV['PKG_KIND_VERSION']
+$version = ENV['PKG_HADOLINT_VERSION']
 
 File.exists?("/usr/share/qemu/OVMF.fd") ? loader = "/usr/share/qemu/OVMF.fd" : loader = File.join(File.dirname(__FILE__), "/../../OVMF.fd")
 if not File.exists?(loader)
@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision 'shell', privileged: false do |sh|
     sh.env = {
       'PKG_DEBUG': "#{$debug}",
-      'PKG_KIND_VERSION': "#{$version}",
+      'PKG_HADOLINT_VERSION': "#{$version}",
     }
     sh.inline = <<-SHELL
       set -o errexit
@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision 'shell', privileged: false do |sh|
     sh.env = {
-      'PKG_KIND_VERSION': "#{$version}",
+      'PKG_HADOLINT_VERSION': "#{$version}",
     }
     sh.inline = <<-SHELL
       set -o errexit

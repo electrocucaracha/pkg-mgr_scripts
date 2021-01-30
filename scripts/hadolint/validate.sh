@@ -59,6 +59,6 @@ RUN apk add --no-cache tini=0.19.0
 ENTRYPOINT ["/sbin/tini", "--"]
 EOF
 if ! hadolint Dockerfile; then
-    error "Docker build action doesn't work"
+    error "Hadolint validation failed"
 fi
 popd
