@@ -22,6 +22,11 @@ function warn {
     _print_msg "WARN" "$1"
 }
 
+function error {
+    _print_msg "ERROR" "$1"
+    exit 1
+}
+
 function _print_msg {
     echo "$(date +%H:%M:%S) - $1: $2"
 }
@@ -45,9 +50,7 @@ function run_test {
 
     # Verify validation errors
     if $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log | grep "ERROR"; then
-        info "Found an error during the validation of $(basename "$(pwd)") in $VAGRANT_NAME"
-        $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log
-        exit 1
+        error "Found an error during the validation of $(basename "$(pwd)") in $VAGRANT_NAME"
     fi
     rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
     info "$(basename "$(pwd)") test completed for $VAGRANT_NAME"
