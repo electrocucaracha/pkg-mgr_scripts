@@ -115,6 +115,8 @@ if systemctl --user daemon-reload >/dev/null 2>&1; then
     systemctl --user enable docker
     sudo loginctl enable-linger "$(whoami)"
 else
+    # Only Ubuntu based distros support overlay filesystems in rootless mode.
+    # https://medium.com/@tonistiigi/experimenting-with-rootless-docker-416c9ad8c0d6
     nohup bash -c "$HOME/bin/dockerd-rootless.sh --experimental --storage-driver vfs" > /tmp/dockerd-rootless.log 2>&1 &
     trap "kill -s SIGTERM \$(cat /run/user/1000/docker.pid)" EXIT
     until grep -q "Daemon has completed initialization" /tmp/dockerd-rootless.log; do

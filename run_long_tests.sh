@@ -10,6 +10,9 @@
 
 set -o errexit
 set -o pipefail
+if [[ "${DEBUG:-false}" == "true" ]]; then
+    set -o xtrace
+fi
 
 source _utils.sh
 source _common.sh

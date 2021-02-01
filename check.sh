@@ -10,6 +10,9 @@
 
 set -o errexit
 set -o pipefail
+if [[ "${DEBUG:-false}" == "true" ]]; then
+    set -o xtrace
+fi
 
 if ! command -v vagrant; then
     vagrant_version=2.2.14
@@ -59,7 +62,7 @@ for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
     popd > /dev/null
 done
 
-wait "$pid"
+wait "$pid" || true
 
 cat "/tmp/long_test_$VAGRANT_NAME.log"
 

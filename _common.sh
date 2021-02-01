@@ -8,6 +8,10 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+if [[ "${DEBUG:-false}" == "true" ]]; then
+    set -o xtrace
+fi
+
 parallel_tests=$(cat parallel-tests.txt)
 mgmt_nic="$(ip route get 1.1.1.1 | awk 'NR==1 { print $5 }')"
 ratio=$((1024*1024)) # MB
