@@ -79,13 +79,24 @@ function main {
                     INSTALLER_CMD+="-q=3 "
                 fi
                 INSTALLER_CMD+=" --no-install-recommends install"
-                # shellcheck disable=SC2086
-                sudo -H -E $INSTALLER_CMD software-properties-common
-                sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
-                sudo apt-get update
-                pkgs="python3.7 python3-setuptools python-setuptools"
-                if _vercmp "${VERSION_ID}" '<=' "18.04"; then
-                    pkgs+=" python-minimal"
+                if [ "${ID,,}" == "ubuntu" ]; then
+                    # shellcheck disable=SC2086
+                    sudo -H -E $INSTALLER_CMD software-properties-common
+                    sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
+                    sudo apt-get update
+                    pkgs="python3.7 python3-setuptools python-setuptools"
+                    if _vercmp "${VERSION_ID}" '<=' "18.04"; then
+                        pkgs+=" python-minimal"
+                    fi
+                else
+                    pkgs="python3-setuptools python-setuptools"
+                    if [ "${VERSION_ID}" == "10" ]; then
+                        pkgs+=" python3.7"
+                    elif [ "${VERSION_ID}" == "9" ]; then
+                        pkgs+=" python3.5"
+                    else
+                        pkgs+=" python3.4"
+                    fi
                 fi
                 # shellcheck disable=SC2086
                 sudo -H -E $INSTALLER_CMD $pkgs
@@ -121,7 +132,7 @@ function main {
         if _vercmp "$(python -V | awk '{print $2}')" '<' "3"; then
             curl -sL https://bootstrap.pypa.io/2.7/get-pip.py | sudo python
         elif _vercmp "$(python -V | awk '{print $2}')" '<' "3.6"; then
-            curl -sL https://bootstrap.pypa.io/3.5/get-pip.py | sudo python
+            curl -sL "https://bootstrap.pypa.io/$(python -V | awk '{print $2}' | cut -d'.' -f1,2)/get-pip.py" | sudo python
         else
             curl -sL https://bootstrap.pypa.io/get-pip.py | sudo python
         fi

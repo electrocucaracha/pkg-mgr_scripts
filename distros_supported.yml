@@ -22,3 +22,9 @@ linux:
     name: generic/ubuntu2004
   - alias: opensuse
     name: opensuse/Tumbleweed.x86_64
+  - alias: debian_jessie
+    name: generic/debian8
+  - alias: debian_stretch
+    name: generic/debian9
+  - alias: debian_buster
+    name: generic/debian10

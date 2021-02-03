@@ -18,6 +18,9 @@ Python Package Index (PyPI).
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
 | ClearLinux |            | [ ]       |
+| Debian     | 8          | [ ]       |
+| Debian     | 9          | [x]       |
+| Debian     | 10         | [x]       |
 
 ## How to use it
 
@@ -32,5 +35,5 @@ curl -fsSL http://bit.ly/install_pkg | PKG=pip bash
 
 ## Used by
 
-- [OpenStack Multi-Node Deployment] (https://github.com/electrocucaracha/openstack-multinode)
+- [OpenStack Multi-Node Deployment](https://github.com/electrocucaracha/openstack-multinode)
 - [CentOS Mirror Server](https://github.com/electrocucaracha/centos-mirror)
