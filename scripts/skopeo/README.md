@@ -30,3 +30,4 @@ curl -fsSL http://bit.ly/install_pkg | PKG=skopeo bash
 ## Used by
 
 - [Release Engineering](https://github.com/electrocucaracha/releng)
+- [Bare Metal as a Service](https://github.com/electrocucaracha/bmaas)

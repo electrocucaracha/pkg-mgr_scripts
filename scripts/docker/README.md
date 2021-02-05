@@ -49,3 +49,4 @@ curl -fsSL http://bit.ly/install_pkg | PKG=docker bash
 - [Kubernetes NonPreemptingPriority gate feature demo](https://github.com/electrocucaracha/k8s-NonPreemptingPriority-demo)
 - [CentOS Mirror Server](https://github.com/electrocucaracha/centos-mirror)
 - [QAT enablement on OKD](https://github.com/electrocucaracha/okd)
+- [Bare Metal as a Service](https://github.com/electrocucaracha/bmaas)
