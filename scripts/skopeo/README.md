@@ -25,6 +25,7 @@ with OCI images as well as the original Docker v2 images.
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=skopeo bash
 ```
+
 ### Environment variables
 
 ## Used by
