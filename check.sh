@@ -31,11 +31,10 @@ if ! command -v vagrant; then
         ;;
     esac
     vagrant plugin install vagrant-libvirt --plugin-version 0.2.1
-    vagrant plugin install vagrant-reload
 fi
 
-source _utils.sh
-source _common.sh
+source ./_utils.sh
+source ./_common.sh
 
 int_rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
 int_start=$(date +%s)

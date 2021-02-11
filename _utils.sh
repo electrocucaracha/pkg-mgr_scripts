@@ -15,7 +15,7 @@ if [[ "${DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-source _common.sh
+source ./_common.sh
 
 function info {
     _print_msg "INFO" "$1"
