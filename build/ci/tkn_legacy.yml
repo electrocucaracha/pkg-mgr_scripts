@@ -1,0 +1,157 @@
+---
+# SPDX-license-identifier: Apache-2.0
+##############################################################################
+# Copyright (c)
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Apache License, Version 2.0
+# which accompanies this distribution, and is available at
+# http://www.apache.org/licenses/LICENSE-2.0
+##############################################################################
+
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: check-task
+spec:
+  params:
+    - name: vagrant_name
+      description: the vagrant box image to be used (centos_7,centos_8,ubuntu_xenial,ubuntu_bionic,ubuntu_focal,opensuse)
+      default: ubuntu_xenial
+      type: string
+  resources:
+    inputs:
+      - name: repo
+        type: git
+        targetPath: src
+  steps:
+    - name: check
+      image: electrocucaracha/vind
+      script: |
+        source /libvirtd-lib.sh
+        start_libvirtd
+        cd src
+        ./check.sh
+      securityContext:
+        privileged: true
+      env:
+        - name: SUDO_VAGRANT_CMD
+          value: "true"
+        - name: VAGRANT_NAME
+          value: "$(params.vagrant_name)"
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: pkg-mgr-scripts-git
+spec:
+  type: git
+  params:
+    - name: revision
+      value: master
+    - name: url
+      value: https://github.com/electrocucaracha/pkg-mgr_scripts/
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pkg-mgr-scripts
+spec:
+  resources:
+    - name: src
+      type: git
+  tasks:
+    - name: tox-linting
+      taskRef:
+        name: linter-task
+      params:
+        - name: linter_tool
+          value: tox
+      resources:
+        inputs:
+          - name: repo
+            resource: src
+    - name: shellcheck-linting
+      taskRef:
+        name: linter-task
+      params:
+        - name: linter_tool
+          value: shellcheck
+      resources:
+        inputs:
+          - name: repo
+            resource: src
+    - name: check-ubuntu-xenial
+      taskRef:
+        name: check-task
+      params:
+        - name: vagrant_name
+          value: ubuntu_xenial
+      resources:
+        inputs:
+          - name: repo
+            resource: src
+      runAfter:
+        - tox-linting
+        - shellcheck-linting
+    - name: check-centos-7
+      taskRef:
+        name: check-task
+      params:
+        - name: vagrant_name
+          value: centos_7
+      resources:
+        inputs:
+          - name: repo
+            resource: src
+      runAfter:
+        - tox-linting
+        - shellcheck-linting
+    - name: check-opensuse
+      taskRef:
+        name: check-task
+      params:
+        - name: vagrant_name
+          value: opensuse
+      resources:
+        inputs:
+          - name: repo
+            resource: src
+      runAfter:
+        - tox-linting
+        - shellcheck-linting
+    - name: check-ubuntu-bionic
+      taskRef:
+        name: check-task
+      params:
+        - name: vagrant_name
+          value: ubuntu_bionic
+      resources:
+        inputs:
+          - name: repo
+            resource: src
+      runAfter:
+        - check-ubuntu-xenial
+    - name: check-centos-8
+      taskRef:
+        name: check-task
+      params:
+        - name: vagrant_name
+          value: centos_8
+      resources:
+        inputs:
+          - name: repo
+            resource: src
+      runAfter:
+        - check-centos-7
+    - name: check-ubuntu-focal
+      taskRef:
+        name: check-task
+      params:
+        - name: vagrant_name
+          value: ubuntu_focal
+      resources:
+        inputs:
+          - name: repo
+            resource: src
+      runAfter:
+        - check-ubuntu-bionic
