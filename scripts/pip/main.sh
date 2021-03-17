@@ -130,7 +130,7 @@ function main {
     if ! command -v pip || _vercmp "$(pip -V | awk '{print $2}')" '<' "$min_pip_version"; then
         echo "INFO: Installing PIP $min_pip_version version"
         if _vercmp "$(python -V | awk '{print $2}')" '<' "3"; then
-            curl -sL https://bootstrap.pypa.io/2.7/get-pip.py | sudo python
+            curl -sL https://bootstrap.pypa.io/pip/2.7/get-pip.py | sudo python
         elif _vercmp "$(python -V | awk '{print $2}')" '<' "3.6"; then
             curl -sL "https://bootstrap.pypa.io/$(python -V | awk '{print $2}' | cut -d'.' -f1,2)/get-pip.py" | sudo python
         else
