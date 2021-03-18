@@ -54,7 +54,7 @@ function main {
     local cni_folder=${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}
 
 
-    if [ ! -d "$cni_folder" ]; then
+    if [ ! -d "$cni_folder" ] || [ -z "$(ls -A "$cni_folder")" ]; then
         echo "INFO: Installing CNI plugins $version version..."
         pushd "$(mktemp -d)" > /dev/null
         sudo mkdir -p "$cni_folder"
