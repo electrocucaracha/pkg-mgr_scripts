@@ -78,10 +78,6 @@ function main {
             return
         ;;
         ubuntu|debian)
-            if _vercmp "${VERSION_ID}" '>=' "20.04"; then
-                echo "WARN: QAT driver is not supported in Ubuntu $VERSION_ID"
-                return
-            fi
             INSTALLER_CMD="apt-get -y --no-install-recommends"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" -q=3"
@@ -103,6 +99,9 @@ function main {
             pkgs="kernel-devel-$(uname -r) pciutils libudev-devel gcc openssl-devel"
             if [[ "${VERSION_ID}" == *7* ]]; then
                 pkgs+=" yum-plugin-fastestmirror"
+            else
+                echo "WARN: QAT driver is not supported in CentOS $VERSION_ID"
+                return
             fi
         ;;
         clear-linux-os)
