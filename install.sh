@@ -14,6 +14,44 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+# _vercmp() - Function that compares two versions
+function _vercmp {
+    local v1=$1
+    local op=$2
+    local v2=$3
+    local result
+
+    # sort the two numbers with sort's "-V" argument.  Based on if v2
+    # swapped places with v1, we can determine ordering.
+    result=$(echo -e "$v1\n$v2" | sort -V | head -1)
+
+    case $op in
+        "==")
+            [ "$v1" = "$v2" ]
+            return
+            ;;
+        ">")
+            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+            return
+            ;;
+        "<")
+            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+            return
+            ;;
+        ">=")
+            [ "$result" = "$v2" ]
+            return
+            ;;
+        "<=")
+            [ "$result" = "$v1" ]
+            return
+            ;;
+        *)
+            die $LINENO "unrecognised op: $op"
+            ;;
+    esac
+}
+
 function _check_requirements {
     if ! sudo -n "true"; then
         echo ""
@@ -164,7 +202,13 @@ function main {
                         fi
                         PATH="$PATH:/usr/local/bin/"
                         export PATH
-                        PIP_CMD="sudo -E $(command -v pip) install --no-cache-dir --no-warn-script-location"
+                        PIP_CMD="sudo -E $(command -v pip) install"
+                        if _vercmp "$(pip -V | awk '{print $2}')" '>' "7"; then
+                            PIP_CMD+=" --no-cache-dir"
+                        fi
+                        if _vercmp "$(pip -V | awk '{print $2}')" '>' "10"; then
+                            PIP_CMD+=" --no-warn-script-location"
+                        fi
                         if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                             PIP_CMD+=" --quiet"
                         fi
