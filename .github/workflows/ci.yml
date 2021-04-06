@@ -20,11 +20,10 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        os: [ubuntu_xenial, centos_7, opensuse, centos_8, ubuntu_bionic, ubuntu_focal]
+        os: [ubuntu_xenial, opensuse, centos_8, ubuntu_bionic, ubuntu_focal]
       fail-fast: false
     env:
       SUDO_VAGRANT_CMD: true
-      RUN_KVM_TESTS: false
       VAGRANT_NAME: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2

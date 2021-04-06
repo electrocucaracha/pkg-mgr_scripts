@@ -17,7 +17,7 @@ cache:
   directories:
     - /home/travis/.vagrant.d/boxes
 script:
-  - SUDO_VAGRANT_CMD=true ./check.sh
+  - RUN_LONG_TESTS=true SUDO_VAGRANT_CMD=true ./check.sh
 env:
   - VAGRANT_NAME=ubuntu_xenial
   - VAGRANT_NAME=centos_7
@@ -25,3 +25,12 @@ env:
   - VAGRANT_NAME=centos_8
   - VAGRANT_NAME=ubuntu_bionic
   - VAGRANT_NAME=ubuntu_focal
+jobs:
+  include:
+    - name: CentOS 7 - Short tests
+      script:
+        - ./check.sh
+      env:
+        - SUDO_VAGRANT_CMD=true
+        - PKG_DRIVER=kvm
+        - VAGRANT_NAME=centos_7

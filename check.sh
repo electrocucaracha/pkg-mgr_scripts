@@ -37,14 +37,14 @@ fi
 source ./_utils.sh
 source ./_common.sh
 
-kvm_tests=$(cat kvm-tests.txt)
+kvm_tests=$(cat long-tests.txt)
 int_rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
 int_start=$(date +%s)
 
 info "Starting Integration tests - $VAGRANT_NAME"
 
-# KVM Tests
-if [[ "${RUN_KVM_TESTS:-true}" == "true" ]]; then
+# Long Tests
+if [[ "${RUN_LONG_TESTS:-false}" == "true" ]]; then
     # Start main install test
     $vagrant_destroy_cmd > /dev/null
     $vagrant_up_cmd | tee "/tmp/check_main_$VAGRANT_NAME.log"
