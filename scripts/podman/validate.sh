@@ -55,7 +55,7 @@ if ! command -v crun; then
 fi
 
 info "Checking crun version"
-if [ "$(crun --version | awk 'NR==1{ print $3}')" != "$(get_version)" ]; then
+if [ "$(crun --version | awk 'NR==1{sub(/-.*/,""); print $3}')" != "$(get_version)" ]; then
     error "crun version installed is different that expected"
 fi
 
