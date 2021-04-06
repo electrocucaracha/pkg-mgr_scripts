@@ -30,7 +30,8 @@ if ! command -v vagrant; then
             sudo dpkg -i vagrant.deb
         ;;
     esac
-    vagrant plugin install vagrant-libvirt --plugin-version 0.2.1
+    vagrant plugin install vagrant-libvirt
+    vagrant plugin install vagrant-reload
 fi
 
 source ./_utils.sh
