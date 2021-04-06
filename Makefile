@@ -7,14 +7,22 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-PWD := $(shell pwd)
+DOCKER_CMD ?= $(shell which docker 2> /dev/null || which podman 2> /dev/null || echo docker)
 
-docker:
+build:
 	@docker-compose build --compress --force-rm
-	@docker image prune --force
+	sudo -E $(DOCKER_CMD) image prune --force
 deploy: undeploy
 	@docker-compose up --force-recreate --detach --no-build
 logs:
 	@docker-compose logs --follow
 undeploy:
 	@docker-compose down --remove-orphans
+
+.PHONY: lint
+lint:
+	sudo -E $(DOCKER_CMD) run --rm -v $$(pwd):/tmp/lint \
+	-e RUN_LOCAL=true \
+	-e LINTER_RULES_PATH=/ \
+	github/super-linter
+	tox -e lint

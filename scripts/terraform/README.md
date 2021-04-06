@@ -10,7 +10,7 @@ Terraform supports a number of cloud infrastructure providers such as
 Amazon Web Services, IBM Cloud (formerly Bluemix), Google Cloud
 Platform, DigitalOcean, Linode, Microsoft Azure, Oracle Cloud
 Infrastructure, OVH, or VMware vSphere as well as OpenNebula and
-OpenStack. 
+OpenStack.
 
 ## Operating System Support Matrix
 

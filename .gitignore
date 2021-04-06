@@ -4,3 +4,4 @@ OVMF.fd
 .vscode/
 *.db
 coverage.*
+super-linter.log

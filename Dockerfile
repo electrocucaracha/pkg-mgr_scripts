@@ -1,5 +1,4 @@
-FROM electrocucaracha/pkg_mgr
-MAINTAINER Victor Morales <electrocucaracha@gmail.com>
+FROM electrocucaracha/pkg_mgr:v0.0.1
 
 ENV PKG_DEBUG "false"
 ENV PKG_SQL_ENGINE "sqlite"

@@ -2,6 +2,8 @@
 [![Build Status](https://travis-ci.org/electrocucaracha/pkg-mgr_scripts.png)](https://travis-ci.org/electrocucaracha/pkg-mgr_scripts)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Docker Pulls](https://img.shields.io/docker/pulls/electrocucaracha/pkg_mgr-init.svg)](https://img.shields.io/docker/pulls/electrocucaracha/pkg_mgr-init)
+[![GitHub Super-Linter](https://github.com/electrocucaracha/pkg-mgr_scripts/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+![visitors](https://visitor-badge.glitch.me/badge?page_id=electrocucaracha.pkg-mgr_scripts)
 
 This project pretends to centralize and facilitate the process to
 install and configure some Linux projects on major different Linux
@@ -23,11 +25,15 @@ the differences between different Linux distributions. For example, in
 order to install and configure Docker service the following
 instruction is needed:
 
-    curl -fsSL http://bit.ly/install_pkg | PKG="docker docker-compose" bash
+```bash
+curl -fsSL http://bit.ly/install_pkg | PKG="docker docker-compose" bash
+```
 
 `bit.ly/install_pkg` redirects to the install script in this repository and the invocation above is equivalent to:
 
-    curl -fsSL https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/install.sh | PKG="docker docker-compose" bash
+```bash
+curl -fsSL https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/install.sh | PKG="docker docker-compose" bash
+```
 
 ### Program environment variables
 

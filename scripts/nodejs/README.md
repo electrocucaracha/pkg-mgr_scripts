@@ -10,7 +10,7 @@ server-side to produce dynamic web page content before the page is
 sent to the user's web browser. Consequently, Node.js represents a
 "JavaScript everywhere" paradigm, unifying web-application development
 around a single programming language, rather than different languages
-for server-side and client-side scripts. 
+for server-side and client-side scripts.
 
 ## Operating System Support Matrix
 
