@@ -12,13 +12,12 @@ if [[ "${DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-parallel_tests=$(cat parallel-tests.txt)
 mgmt_nic="$(ip route get 1.1.1.1 | awk 'NR==1 { print $5 }')"
 ratio=$((1024*1024)) # MB
 export CPUS=${CPUS:-1}
 export MEMORY=${MEMORY:-3072}
 export VAGRANT_NAME=${VAGRANT_NAME:-ubuntu_xenial}
-export parallel_tests mgmt_nic ratio
+export mgmt_nic ratio
 
 vagrant_cmd=""
 if [ "${SUDO_VAGRANT_CMD:-false}" == "true" ]; then

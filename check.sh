@@ -15,7 +15,7 @@ if [[ "${DEBUG:-false}" == "true" ]]; then
 fi
 
 if ! command -v vagrant; then
-    vagrant_version=2.2.14
+    vagrant_version=2.2.15
 
     echo "Install Integration dependencies - $VAGRANT_NAME"
     # shellcheck disable=SC1091
@@ -36,34 +36,41 @@ fi
 source ./_utils.sh
 source ./_common.sh
 
+kvm_tests=$(cat kvm-tests.txt)
 int_rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
 int_start=$(date +%s)
 
 info "Starting Integration tests - $VAGRANT_NAME"
 
-# Start parallel tests
-nohup ./run_long_tests.sh > "/tmp/long_test_$VAGRANT_NAME.log" 2>&1 &
-pid="$!"
+# KVM Tests
+if [[ "${RUN_KVM_TESTS:-true}" == "true" ]]; then
+    # Start main install test
+    $vagrant_destroy_cmd > /dev/null
+    $vagrant_up_cmd | tee "/tmp/check_main_$VAGRANT_NAME.log"
+    $vagrant_destroy_cmd > /dev/null
 
-# Start main install test
-$vagrant_destroy_cmd > /dev/null
-$vagrant_up_cmd | tee "/tmp/check_main_$VAGRANT_NAME.log"
-$vagrant_destroy_cmd > /dev/null
+    trap exit_trap ERR
 
-trap exit_trap ERR
+    # shellcheck disable=SC2044
+    for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
+        pushd "$(dirname "$vagrantfile")" > /dev/null
+        if [[ "$kvm_tests" == *"$(basename "$(pwd)")"* ]]; then
+            run_test
+        fi
+        popd > /dev/null
+    done
+else
+    trap exit_trap ERR
 
-# shellcheck disable=SC2044
-for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
-    pushd "$(dirname "$vagrantfile")" > /dev/null
-    if [[ "$parallel_tests" != *"$(basename "$(pwd)")"* ]]; then
-        run_test
-    fi
-    popd > /dev/null
-done
-
-wait "$pid" || true
-
-cat "/tmp/long_test_$VAGRANT_NAME.log"
+    # shellcheck disable=SC2044
+    for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
+        pushd "$(dirname "$vagrantfile")" > /dev/null
+        if [[ "$kvm_tests" != *"$(basename "$(pwd)")"* ]]; then
+            run_test
+        fi
+        popd > /dev/null
+    done
+fi
 
 info "Integration tests completed - $VAGRANT_NAME"
 int_rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")

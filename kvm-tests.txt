@@ -1,4 +1,6 @@
 docker
+libvirt
 podman
 qat-driver
 qemu
+virtualbox
