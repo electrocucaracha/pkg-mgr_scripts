@@ -48,6 +48,8 @@ function run_test {
     rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
 
     info "Starting $(basename "$(pwd)") test for $VAGRANT_NAME"
+    bash -c 'while true; do echo "$(date +%H:%M:%S) - INFO: Running $(basename "$(pwd)") test"; sleep 60; done' 2>&1 &
+    pid="$!"
     start=$(date +%s)
     $vagrant_up_cmd > "/tmp/check_$(basename "$(pwd)")_$VAGRANT_NAME.log"
 
@@ -56,6 +58,7 @@ function run_test {
         error "Found an error during the validation of $(basename "$(pwd)") in $VAGRANT_NAME"
     fi
     rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
+    kill -9 "$pid"
     info "$(basename "$(pwd)") test completed for $VAGRANT_NAME"
 
     echo "=== Summary ==="
