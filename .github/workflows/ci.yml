@@ -19,6 +19,7 @@ jobs:
   check-qemu-workloads:
     runs-on: ubuntu-18.04
     strategy:
+      max-parallel: 1
       matrix:
         os: [ubuntu_xenial, opensuse, centos_8, ubuntu_bionic, ubuntu_focal]
       fail-fast: false
