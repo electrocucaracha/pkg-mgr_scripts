@@ -132,7 +132,7 @@ function main {
         if _vercmp "$(python -V | awk '{print $2}')" '<' "3"; then
             curl -sL https://bootstrap.pypa.io/pip/2.7/get-pip.py | sudo python
         elif _vercmp "$(python -V | awk '{print $2}')" '<' "3.6"; then
-            curl -sL "https://bootstrap.pypa.io/$(python -V | awk '{print $2}' | cut -d'.' -f1,2)/get-pip.py" | sudo python
+            curl -sL "https://bootstrap.pypa.io/pip/$(python -V | awk '{print $2}' | cut -d'.' -f1,2)/get-pip.py" | sudo python
         else
             curl -sL https://bootstrap.pypa.io/get-pip.py | sudo python
         fi
