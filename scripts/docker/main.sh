@@ -182,7 +182,7 @@ EOF
     if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
         sudo docker info
         if command -v ctr; then
-            sudo ctr plugins ls
+            sudo -E "$(command -v ctr)" plugins ls
         fi
         #curl -fsSL https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh | bash
     fi
@@ -211,6 +211,8 @@ EOF
             sudo cp ./docker-regclient /usr/libexec/docker/cli-plugins/docker-regctl
         fi
         mkdir -p "${HOME}/.docker/cli-plugins/"
+        sudo mkdir -p /root/.docker/cli-plugins/
+        sudo cp ./docker-regclient /root/.docker/cli-plugins/docker-regctl
         mv ./docker-regclient "${HOME}/.docker/cli-plugins/docker-regctl"
     fi
 }
