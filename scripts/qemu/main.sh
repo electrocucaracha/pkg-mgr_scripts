@@ -89,7 +89,7 @@ function _vercmp {
 
 function main {
     local ninja_version=${PKG_NINJA_VERSION:-$(get_github_latest_release ninja-build/ninja)}
-    local version=${PKG_QEMU_VERSION:-5.2.0}
+    local version=${PKG_QEMU_VERSION:-6.0.0-rc2}
     local qemu_tarball="qemu-${version}.tar.xz"
     local pmdk_version=${PKG_PMDK_VERSION:-1.4}
     local pmdk_url="https://github.com/pmem/pmdk/releases/download/$pmdk_version/pmdk-${pmdk_version}-"
