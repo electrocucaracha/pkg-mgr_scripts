@@ -8,7 +8,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-name: Check QEMU workloads
+name: Check Ubuntu Xenial workloads
 # yamllint disable-line rule:truthy
 on:
   push:
@@ -18,14 +18,9 @@ on:
 jobs:
   check-qemu-workloads:
     runs-on: ubuntu-18.04
-    strategy:
-      max-parallel: 1
-      matrix:
-        os: [ubuntu_xenial, opensuse, centos_8, ubuntu_bionic, ubuntu_focal]
-      fail-fast: false
     env:
       SUDO_VAGRANT_CMD: true
-      VAGRANT_NAME: ${{ matrix.os }}
+      VAGRANT_NAME: ubuntu_xenial
     steps:
       - uses: actions/checkout@v2
       - run: ./check.sh
