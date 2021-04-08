@@ -182,7 +182,7 @@ EOF
     if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
         sudo docker info
         if command -v ctr; then
-            sudo -E "$(command -v ctr)" plugins ls
+            sudo -E "$(command -v ctr)" --address "$(sudo find / -name containerd.sock  | head -n 1)" plugins ls
         fi
         #curl -fsSL https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh | bash
     fi
