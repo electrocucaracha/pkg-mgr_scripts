@@ -134,6 +134,12 @@ function main {
     esac
     echo "INFO: Installing podman..."
     $INSTALLER_CMD podman
+
+    # NOTE: metacopy=on is available since 4.19 and was backported to RHEL 4.18 kernel
+    if _vercmp "$(name -r | awk -F '-' '{print $1}')" '<' "4.19"; then
+        sudo sed -i "s/^mountopt =.*/mountopt = \"nodev\"/" /etc/containers/storage.conf
+    fi
+
     if [ "${ID,,}" == "centos" ] && [ "${VERSION_ID}" == "7" ]; then
         sudo sed -i 's/mountopt = .*/mountopt = ""/' /etc/containers/storage.conf
         echo "WARN: Podman service is not supported in CentOS 7"
