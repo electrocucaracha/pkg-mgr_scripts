@@ -46,9 +46,7 @@ info "Starting Integration tests - $VAGRANT_NAME"
 # Long Tests
 if [[ "${RUN_LONG_TESTS:-false}" == "true" ]]; then
     # Start main install test
-    $vagrant_destroy_cmd > /dev/null
-    $vagrant_up_cmd | tee "/tmp/check_main_$VAGRANT_NAME.log"
-    $vagrant_destroy_cmd > /dev/null
+    run_test
 
     trap exit_trap ERR
 
