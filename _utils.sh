@@ -40,6 +40,18 @@ function exit_trap {
 }
 
 function run_test {
+    eval _run_test &
+    child=$!
+    trap -- "" SIGTERM
+    (
+        sleep "$TIMEOUT"
+        _print_msg "ERROR" "Timeout was reached after $TIMEOUT seconds"
+        kill $child 2> /dev/null
+    ) &
+    wait $child
+}
+
+function _run_test {
     if [ -f os-blacklist.conf ] && grep "$VAGRANT_NAME" os-blacklist.conf > /dev/null; then
         info "Skipping $(basename "$(pwd)") test for $VAGRANT_NAME"
         return
@@ -58,7 +70,7 @@ function run_test {
         error "Found an error during the validation of $(basename "$(pwd)") in $VAGRANT_NAME"
     fi
     rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
-    kill -9 "$pid"
+    kill "$pid" 2> /dev/null
     info "$(basename "$(pwd)") test completed for $VAGRANT_NAME"
 
     echo "=== Summary ==="

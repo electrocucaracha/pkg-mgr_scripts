@@ -16,6 +16,7 @@ mgmt_nic="$(ip route get 1.1.1.1 | awk 'NR==1 { print $5 }')"
 ratio=$((1024*1024)) # MB
 export CPUS=${CPUS:-1}
 export MEMORY=${MEMORY:-3072}
+export TIMEOUT=${TIMEOUT:-900}
 export VAGRANT_NAME=${VAGRANT_NAME:-ubuntu_xenial}
 export mgmt_nic ratio
 
