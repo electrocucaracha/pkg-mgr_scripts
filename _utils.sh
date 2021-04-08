@@ -67,6 +67,7 @@ function _run_test {
 
     # Verify validation errors
     if $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log | grep "ERROR"; then
+        cat "/tmp/check_$(basename "$(pwd)")_$VAGRANT_NAME.log"
         error "Found an error during the validation of $(basename "$(pwd)") in $VAGRANT_NAME"
     fi
     rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
