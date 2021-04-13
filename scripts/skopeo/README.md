@@ -1,6 +1,6 @@
 # skopeo
 
-![Logo](../../docs/img/skopeo.svg)
+![Logo](../../docs/img/skopeo.png)
 
 skopeo is a command line utility that performs various operations on
 container images and image repositories. It does not require the user

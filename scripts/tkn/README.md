@@ -1,6 +1,6 @@
 # Tekton Pipeline CLI
 
-![Logo](../../docs/img/tkn.svg)
+![Logo](../../docs/img/tkn.png)
 
 Tekton is a powerful and flexible open-source framework for creating
 CI/CD systems, allowing developers to build, test, and deploy across

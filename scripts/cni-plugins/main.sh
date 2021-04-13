@@ -53,7 +53,6 @@ function main {
     local version=${PKG_CNI_PLUGINS_VERSION:-$(get_github_latest_release containernetworking/plugins)}
     local cni_folder=${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}
 
-
     if [ ! -d "$cni_folder" ] || [ -z "$(ls -A "$cni_folder")" ]; then
         echo "INFO: Installing CNI plugins $version version..."
         pushd "$(mktemp -d)" > /dev/null

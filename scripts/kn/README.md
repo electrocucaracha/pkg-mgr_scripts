@@ -1,6 +1,6 @@
 # Knative client
 
-![Logo](../../docs/img/knative.png)
+![Logo](../../docs/img/kn.png)
 
 Knative is an open source community project which adds components for deploying,
 running, and managing serverless, cloud-native applications to Kubernetes. The

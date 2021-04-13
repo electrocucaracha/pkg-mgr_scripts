@@ -62,7 +62,7 @@ function main {
             curl -Lo ./kind "$url" 2> /dev/null
         fi
         chmod +x ./kind
-        sudo mkdir -p  /usr/local/bin/
+        sudo mkdir -p /usr/local/bin/
         sudo mv ./kind /usr/local/bin/kind
         export PATH=$PATH:/usr/local/bin/
     fi
