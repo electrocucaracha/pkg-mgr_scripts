@@ -20,6 +20,7 @@ function main {
 
     echo "INFO: Installing helm $version version..."
     if [ "$version" == "2" ]; then
+        export DESIRED_VERSION="v2.17.0"
         echo "INFO: Running get_helm.sh remote script"
         curl -L https://git.io/get_helm.sh | HELM_INSTALL_DIR=/usr/bin bash
 
