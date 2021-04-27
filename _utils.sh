@@ -40,15 +40,27 @@ function exit_trap {
 }
 
 function run_test {
-    eval _run_test &
-    child=$!
-    trap -- "" SIGTERM
+    # Run in a subshell to avoid job control messages
     (
-        sleep "$TIMEOUT"
-        _print_msg "ERROR" "Timeout was reached after $TIMEOUT seconds"
-        kill $child 2> /dev/null
-    ) &
-    wait $child
+        eval _run_test &
+        child=$!
+        # Avoid default notification in non-interactive shell for SIGTERM
+        trap -- "" SIGTERM
+        (
+            sleep "$TIMEOUT"
+            if kill $child 2> /dev/null; then
+                warn "Timeout was reached after $TIMEOUT seconds ($(basename "$(pwd)"))"
+            fi
+        ) &
+        wait $child
+    )
+}
+
+function print_running {
+    while true; do
+        info "Running $(basename "$(pwd)") test"
+        sleep 60
+    done
 }
 
 function _run_test {
@@ -60,9 +72,9 @@ function _run_test {
     rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
 
     info "Starting $(basename "$(pwd)") test for $VAGRANT_NAME"
-    bash -c 'while true; do echo "$(date +%H:%M:%S) - INFO: Running $(basename "$(pwd)") test"; sleep 60; done' 2>&1 &
-    pid="$!"
     start=$(date +%s)
+    print_running 2>&1 &
+    pid=$!
     $vagrant_up_cmd > "/tmp/check_$(basename "$(pwd)")_$VAGRANT_NAME.log"
 
     # Verify validation errors

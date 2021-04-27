@@ -21,6 +21,9 @@ jobs:
     env:
       SUDO_VAGRANT_CMD: true
       VAGRANT_NAME: ubuntu_xenial
+      CPUS: 2
+      MEMORY: 6144
+      TIMEOUT: 1200
     steps:
       - uses: actions/checkout@v2
       - run: ./check.sh

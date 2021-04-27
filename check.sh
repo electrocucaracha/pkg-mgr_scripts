@@ -14,6 +14,23 @@ if [[ "${DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+function run_integration_tests {
+    kvm_tests=$(cat long-tests.txt)
+    local run_long_tests="${RUN_LONG_TESTS:-false}"
+
+    # Start main install test
+    [[ "$run_long_tests" == "true" ]] && run_test
+
+    # shellcheck disable=SC2044
+    for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
+        pushd "$(dirname "$vagrantfile")" > /dev/null
+        if [[ ( "$run_long_tests" = "true" && "$kvm_tests" == *"$(basename "$(pwd)")"* ) || ( "$run_long_tests" = "false" &&  "$kvm_tests" != *"$(basename "$(pwd)")"* ) ]]; then
+            run_test
+        fi
+        popd > /dev/null
+    done
+}
+
 if ! command -v vagrant; then
     vagrant_version=2.2.15
 
@@ -37,39 +54,14 @@ fi
 source ./_utils.sh
 source ./_common.sh
 
-kvm_tests=$(cat long-tests.txt)
+trap exit_trap ERR
+trap 'pkill --signal SIGKILL sleep' EXIT
+
 int_rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
 int_start=$(date +%s)
 
 info "Starting Integration tests - $VAGRANT_NAME"
-
-# Long Tests
-if [[ "${RUN_LONG_TESTS:-false}" == "true" ]]; then
-    # Start main install test
-    run_test
-
-    trap exit_trap ERR
-
-    # shellcheck disable=SC2044
-    for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
-        pushd "$(dirname "$vagrantfile")" > /dev/null
-        if [[ "$kvm_tests" == *"$(basename "$(pwd)")"* ]]; then
-            run_test
-        fi
-        popd > /dev/null
-    done
-else
-    trap exit_trap ERR
-
-    # shellcheck disable=SC2044
-    for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
-        pushd "$(dirname "$vagrantfile")" > /dev/null
-        if [[ "$kvm_tests" != *"$(basename "$(pwd)")"* ]]; then
-            run_test
-        fi
-        popd > /dev/null
-    done
-fi
+run_integration_tests
 
 info "Integration tests completed - $VAGRANT_NAME"
 int_rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")

@@ -17,20 +17,16 @@ cache:
   directories:
     - /home/travis/.vagrant.d/boxes
 script:
-  - RUN_LONG_TESTS=true SUDO_VAGRANT_CMD=true ./check.sh
+  - CPUS=2 MEMORY=6144 PKG_DRIVER=kvm SUDO_VAGRANT_CMD=true ./check.sh
 env:
-  - VAGRANT_NAME=ubuntu_xenial
-  - VAGRANT_NAME=centos_7
-  - VAGRANT_NAME=opensuse
   - VAGRANT_NAME=centos_8
-  - VAGRANT_NAME=ubuntu_bionic
+  - VAGRANT_NAME=centos_7
+  - VAGRANT_NAME=ubuntu_xenial RUN_LONG_TESTS=true
+  - VAGRANT_NAME=ubuntu_bionic RUN_LONG_TESTS=true
+  - VAGRANT_NAME=ubuntu_focal RUN_LONG_TESTS=true
+  - VAGRANT_NAME=opensuse
+  - VAGRANT_NAME=opensuse RUN_LONG_TESTS=true TIMEOUT=1800
+  - VAGRANT_NAME=centos_7 RUN_LONG_TESTS=true
+  - VAGRANT_NAME=centos_8 RUN_LONG_TESTS=true
   - VAGRANT_NAME=ubuntu_focal
-jobs:
-  include:
-    - name: CentOS 7 - Short tests
-      script:
-        - ./check.sh
-      env:
-        - SUDO_VAGRANT_CMD=true
-        - PKG_DRIVER=kvm
-        - VAGRANT_NAME=centos_7
+  - VAGRANT_NAME=ubuntu_bionic
