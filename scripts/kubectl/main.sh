@@ -31,6 +31,7 @@ function get_cpu_arch {
 
 function main {
     local version=${PKG_KUBECTL_VERSION:-$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)}
+    krew_plugins_list=${PKG_KREW_PLUGINS_LIST:-tree,access-matrix,access-matrix,score,sniff,view-utilization}
 
     if ! command -v kubectl || [[ "$(kubectl version --short --client | awk '{print $3}')" != "$version" ]]; then
         echo "INFO: Installing kubectl $version version..."
@@ -98,7 +99,9 @@ function main {
         esac
     fi
     kubectl krew update
-    kubectl krew install tree
+    for plugin in ${krew_plugins_list//,/ }; do
+        kubectl krew install "$plugin"
+    done
 }
 
 main
