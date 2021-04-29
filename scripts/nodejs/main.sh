@@ -25,36 +25,45 @@ function main {
     echo "INFO: Installing nodejs..."
 
     INSTALLER_CMD="sudo -H -E "
-    url="https://"
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
+        *suse*)
+            INSTALLER_CMD+="zypper "
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+="-q "
+            fi
+            INSTALLER_CMD+="install -y --no-recommends nodejs15"
+        ;;
         ubuntu|debian)
-            url+="deb"
+            url="https://deb"
             INSTALLER_CMD+="apt-get -y "
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+="-q=3 "
             fi
-            INSTALLER_CMD+=" --no-install-recommends install"
+            INSTALLER_CMD+=" --no-install-recommends install nodejs"
 
             curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
             echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
         ;;
         rhel|centos|fedora)
-            url+="rpm"
+            url="https://rpm"
             INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" --quiet --errorlevel=0"
             fi
-            INSTALLER_CMD+=" install"
+            INSTALLER_CMD+=" install nodejs"
 
             curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
         ;;
     esac
-    url+=".nodesource.com/setup_${version}.x"
+    if [ "${url:-}" != "" ]; then
+        url+=".nodesource.com/setup_${version}.x"
+        curl -fsSL "$url" | sudo -E bash -
+    fi
 
-    curl -fsSL "$url" | sudo -E bash -
-    $INSTALLER_CMD nodejs yarn
+    INSTALLER_CMD+=" yarn"
+    $INSTALLER_CMD
 }
 
 main
