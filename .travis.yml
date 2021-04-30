@@ -13,9 +13,6 @@ os: linux
 git:
   depth: 1
 dist: bionic
-cache:
-  directories:
-    - /home/travis/.vagrant.d/boxes
 script:
   - CPUS=2 MEMORY=6144 PKG_DRIVER=kvm SUDO_VAGRANT_CMD=true ./check.sh
 env:
