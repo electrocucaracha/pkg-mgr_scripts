@@ -44,6 +44,69 @@ function get_version {
     done
 }
 
+function get_cpu_arch {
+    case "$(uname -m)" in
+        x86_64)
+            echo "amd64"
+        ;;
+        armv8*|aarch64*)
+            echo "arm64"
+        ;;
+        armv*)
+            echo "armv7"
+        ;;
+    esac
+}
+
+function setup_ftrace {
+    ftrace_analyzer_version="0.1.3"
+    ftrace_folder_path="/usr/local/bin"
+    ftrace_analyzer_path="$ftrace_folder_path/oci-ftrace-syscall-analyzer"
+
+    curl -sL "https://github.com/KentaTada/oci-ftrace-syscall-analyzer/releases/download/v$ftrace_analyzer_version/oci-ftrace-syscall-analyzer-$(get_cpu_arch).tar.gz" | sudo tar -xz -C "$ftrace_folder_path"
+    sudo chmod a+x "$ftrace_analyzer_path"
+    sudo setcap CAP_DAC_OVERRIDE+ep /"$ftrace_analyzer_path"
+    sudo mkdir -p /etc/containers/oci/hooks.d/
+    sudo tee <<EOF /etc/containers/oci/hooks.d/ftrace-syscall-analyzer-prehook.json > /dev/null
+    {
+            "version": "1.0.0",
+            "hook": {
+                    "path": "$ftrace_analyzer_path",
+                    "args": [
+                            "record"
+                    ]
+            },
+            "when": {
+                    "annotations": {
+                            "oci-ftrace-syscall-analyzer/trace": "true"
+                    }
+            },
+            "stages": ["prestart"]
+    }
+EOF
+    sudo tee <<EOF /etc/containers/oci/hooks.d/ftrace-syscall-analyzer-posthook.json > /dev/null
+    {
+            "version": "1.0.0",
+            "hook": {
+                    "path": "$ftrace_analyzer_path",
+                    "args": [
+                            "report",
+                            "--seccomp-profile",
+                            "/tmp/seccomp.json",
+                            "--output",
+                            "/tmp/ftrace_syscalls_dump.log"
+                    ]
+            },
+            "when": {
+                    "annotations": {
+                            "oci-ftrace-syscall-analyzer/trace": "true"
+                    }
+            },
+            "stages": ["poststop"]
+    }
+EOF
+}
+
 info "Validating podman installation..."
 if ! command -v podman; then
     error "podman command line wasn't installed"
@@ -73,9 +136,10 @@ if ! sudo podman --remote info; then
 fi
 
 info "Validate fetch image"
-podman pull busybox
+podman pull quay.io/quay/busybox:latest
 
 info "Validate pod creation"
+podman pod rm single-pod --ignore
 pushd "$(mktemp -d)"
 cat << EOF > pod.yml
 apiVersion: v1
@@ -85,7 +149,7 @@ metadata:
 spec:
   containers:
     - name: test
-      image: busybox
+      image: quay.io/quay/busybox:latest
       command: ["sleep"]
       args: ["infity"]
 EOF
@@ -101,12 +165,12 @@ podman pod stop single-pod
 podman pod rm single-pod
 
 info "Validating crun exclusive features"
-if ! sudo podman run --rm --pids-limit 1 --net=none busybox echo "it works"; then
+if ! sudo podman run --rm --pids-limit 1 --net=none quay.io/quay/busybox:latest echo "it works"; then
     error "crun pids limit doesn't work"
 fi
 
 info "Validating root execution with root container execution"
-sudo podman run --rm -d --name rootoutside-rootinside --net=none busybox sleep infinity
+sudo podman run --rm -d --name rootoutside-rootinside --net=none quay.io/quay/busybox:latest sleep infinity
 if ! pgrep -u "$(id -u root)" | grep -q "$(sudo podman inspect rootoutside-rootinside --format "{{.State.Pid}}")"; then
     error "Running root container has different root user than host"
 fi
@@ -124,23 +188,26 @@ if [ "$(id -un -- 4)" != "sync" ]; then
 fi
 
 info "Validating root execution with rootless container execution"
-sudo podman run --rm -d --user sync --name rootoutside-userinside --net=none busybox sleep infinity
+sudo podman run --rm -d --user sync --name rootoutside-userinside --net=none quay.io/quay/busybox:latest sleep infinity
 if ! pgrep -u "$(id -u sync)" | grep -q "$(sudo podman inspect rootoutside-userinside --format "{{.State.Pid}}")"; then
     error "Running root container has different sync user than host"
 fi
 sudo podman stop rootoutside-userinside
 
 info "Validating non-root execution with root container execution"
-podman run --rm -d --name useroutside-rootinside busybox sleep infinity
+podman run --rm -d --name useroutside-rootinside quay.io/quay/busybox:latest sleep infinity
 if ! pgrep -u "$(id -u)" | grep -q "$(podman inspect useroutside-rootinside --format "{{.State.Pid}}")"; then
     error "Running non-root container has different $USER user than host"
 fi
 podman stop useroutside-rootinside
 
 info "Validating non-root execution with rootless container execution"
-podman run --rm -d --user sync --name useroutside-userinside busybox sleep infinity
+podman run --rm -d --user sync --name useroutside-userinside quay.io/quay/busybox:latest sleep infinity
 # shellcheck disable=SC2009
 if [ "$(ps -eo uname:20,pid,cmd | grep "$(podman inspect useroutside-userinside --format "{{.State.Pid}}")" | awk '{ print $1}')" == "$USER" ]; then
     error "Running non-root container has same $USER user than host"
 fi
 podman stop useroutside-userinside
+
+setup_ftrace
+podman --hooks-dir /etc/containers/oci/hooks.d/ run --annotation oci-ftrace-syscall-analyzer/trace="true" quay.io/quay/busybox:latest ls
