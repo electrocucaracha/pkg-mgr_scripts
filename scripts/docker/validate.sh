@@ -42,7 +42,7 @@ if declare -F | grep -q "_docker"; then
     error "Docker autocomplete functions weren't installed"
 fi
 
-docker_image="alpine"
+docker_image="quay.io/openshifttest/alpine:latest"
 for image in "$mgmt_ip:5000/bash:test" "$docker_image"; do
     docker_id=$(sudo docker images "$image" -q)
     if [[ -n "$docker_id" ]]; then
@@ -58,12 +58,12 @@ info "Validating Docker pulling process with $docker_image image"
 if ! sudo docker pull "$docker_image"; then
     error "Docker pull action doesn't work"
 fi
-sudo docker run busybox nslookup google.com
+sudo docker run --rm "$docker_image" nslookup google.com
 
 info "Validating Docker building process with $docker_image image"
 pushd "$(mktemp -d)"
 cat << EOF > Dockerfile
-FROM alpine
+FROM $docker_image
 RUN apk update && apk add bash
 EOF
 if ! sudo docker build --no-cache -t "$mgmt_ip:5000/bash:test" . ; then
@@ -93,7 +93,7 @@ if [ "$(sudo docker regctl image ratelimit "$docker_image" | jq -r '.Set')" != "
 fi
 
 info "Validating root execution with root container execution"
-sudo docker run --rm -d --name rootoutside-rootinside --net=none busybox sleep infinity
+sudo docker run --rm -d --name rootoutside-rootinside --net=none "$docker_image" sleep infinity
 if ! pgrep -u "$(id -u root)" | grep -q "$(sudo docker inspect rootoutside-rootinside --format "{{.State.Pid}}")"; then
     error "Running root container has different root user than host"
 fi
@@ -126,31 +126,31 @@ fi
 docker context create rootless --description "for rootless mode" --docker "host=unix://$XDG_RUNTIME_DIR/docker.sock"
 
 info "Validating root execution with rootless container execution"
-sudo docker run --rm -d --user sync --name rootoutside-userinside --net=none busybox sleep infinity
+sudo docker run --rm -d --user sync --name rootoutside-userinside --net=none "$docker_image" sleep infinity
 if ! pgrep -u "$(id -u sync)" | grep -q "$(sudo docker inspect rootoutside-userinside --format "{{.State.Pid}}")"; then
     error "Running root container has different sync user than host"
 fi
 sudo docker stop rootoutside-userinside
 
-info "Saving busybox image"
-sudo docker image save -o ~/busybox.tar busybox
-sudo chown "$USER": ~/busybox.tar
+info "Saving $docker_image image"
+sudo docker image save -o ~/docker.tar "$docker_image"
+sudo chown "$USER": ~/docker.tar
 
 info "Switching to rootless context"
 docker context use rootless
 
-info "Loading busybox image"
-docker image load -i ~/busybox.tar
+info "Loading $docker_image image"
+docker image load -i ~/docker.tar
 
 info "Validating non-root execution with root container execution"
-docker run --rm -d --name useroutside-rootinside busybox sleep infinity
+docker run --rm -d --name useroutside-rootinside "$docker_image" sleep infinity
 if ! pgrep -u "$(id -u)" | grep -q "$(docker inspect useroutside-rootinside --format "{{.State.Pid}}")"; then
     error "Running non-root container has different $USER user than host"
 fi
 docker stop useroutside-rootinside
 
 info "Validating non-root execution with rootless container execution"
-docker run --rm -d --user sync --name useroutside-userinside busybox sleep infinity
+docker run --rm -d --user sync --name useroutside-userinside "$docker_image" sleep infinity
 # shellcheck disable=SC2009
 if [ "$(ps -eo uname:20,pid,cmd | grep "$(docker inspect useroutside-userinside --format "{{.State.Pid}}")" | awk '{ print $1}')" == "$USER" ]; then
     error "Running non-root container has same $USER user than host"
