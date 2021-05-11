@@ -18,6 +18,16 @@ fi
 function main {
     local version=${PKG_HELM_VERSION:-3}
 
+    if ! command -v openssl; then
+        # shellcheck disable=SC1091
+        source /etc/os-release || source /usr/lib/os-release
+        case ${ID,,} in
+            *suse*)
+                sudo zypper -q install -y --no-recommends openssl
+            ;;
+        esac
+    fi
+
     echo "INFO: Installing helm $version version..."
     if [ "$version" == "2" ]; then
         export DESIRED_VERSION="v2.17.0"
