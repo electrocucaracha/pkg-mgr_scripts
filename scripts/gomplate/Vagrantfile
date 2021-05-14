@@ -14,6 +14,7 @@ $no_proxy = ENV['NO_PROXY'] || ENV['no_proxy'] || "127.0.0.1,localhost"
 end
 $debug = ENV['PKG_DEBUG'] || "true"
 $driver = ENV['PKG_DRIVER'] || "qemu"
+$version = ENV['PKG_GOMPLATE_VERSION']
 
 File.exists?("/usr/share/qemu/OVMF.fd") ? loader = "/usr/share/qemu/OVMF.fd" : loader = File.join(File.dirname(__FILE__), "/../../OVMF.fd")
 if not File.exists?(loader)
@@ -51,6 +52,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision 'shell', privileged: false do |sh|
     sh.env = {
       'PKG_DEBUG': "#{$debug}",
+      'PKG_GOMPLATE_VERSION': "#{$version}",
     }
     sh.inline = <<-SHELL
       set -o errexit
