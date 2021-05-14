@@ -75,6 +75,10 @@ function main {
                 echo "WARN: skopeo is not supported in Ubuntu $VERSION_ID"
                 return
             fi
+            if _vercmp "${VERSION_ID}" '<' "20.04" && [ "$(uname -m )" != "x86_64" ]; then
+                echo "WARN: skopeo doesn't support  non x86_64 architectures in Ubuntu $VERSION_ID"
+                return
+            fi
             INSTALLER_CMD+="apt-get -y "
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+="-q=3 "
