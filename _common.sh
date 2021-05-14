@@ -12,6 +12,8 @@ if [[ "${DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+source pinned_versions.env
+
 mgmt_nic="$(ip route get 1.1.1.1 | awk 'NR==1 { print $5 }')"
 ratio=$((1024*1024)) # MB
 export CPUS=${CPUS:-1}
@@ -28,7 +30,3 @@ vagrant_cmd+=" $(command -v vagrant)"
 vagrant_up_cmd="$vagrant_cmd up --no-destroy-on-error $VAGRANT_NAME"
 vagrant_destroy_cmd="$vagrant_cmd destroy -f $VAGRANT_NAME"
 export vagrant_cmd vagrant_up_cmd vagrant_destroy_cmd
-
-# Setup CI versions
-export PKG_GOLANG_VERSION=1.15.4
-export PKG_VAGRANT_VERSION=2.2.14
