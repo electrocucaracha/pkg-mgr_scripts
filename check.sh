@@ -32,7 +32,7 @@ function run_integration_tests {
 }
 
 if ! command -v vagrant; then
-    vagrant_version=2.2.15
+    vagrant_version=2.2.16
 
     echo "Install Integration dependencies - $VAGRANT_NAME"
     # shellcheck disable=SC1091
