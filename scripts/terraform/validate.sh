@@ -49,8 +49,16 @@ info "Validating terraform installation..."
 if ! command -v terraform; then
     error "Terraform command line wasn't installed"
 fi
+if ! command -v terraform-docs; then
+    error "Terraform Documentation command line wasn't installed"
+fi
 
 info "Checking terraform version"
 if [ "$(terraform version | awk 'NR==1{ print $2}')" != "$(get_version)" ]; then
     error "Terraform version installed is different that expected"
+fi
+
+info "Validating autocomplete functions"
+if declare -F | grep -q "_terraform-docs"; then
+    error "terraform-docs autocomplete install failed"
 fi

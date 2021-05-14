@@ -89,8 +89,9 @@ function _vercmp {
 
 function main {
     local version=${PKG_TERRAFORM_VERSION:-$(get_github_latest_release hashicorp/terraform)}
+    local docs_version=${PKG_TERRAFORM_DOCS_VERSION:-$(get_github_latest_release terraform-docs/terraform-docs)}
 
-    if ! command -v terraform || [ "$(terraform version | awk '{ print $2}')" != "$version" ]; then
+    if ! command -v terraform || [ "$(terraform version | awk 'NR==1{print $2}')" != "v${version#*v}" ]; then
         echo "INFO: Installing terraform $version version..."
         pushd "$(mktemp -d)" > /dev/null
         if ! command -v unzip; then
@@ -139,6 +140,24 @@ function main {
             mkdir -p ~/.local/share/terraform/plugins/registry.terraform.io/
         fi
         popd > /dev/null
+    fi
+    if ! command -v terraform-docs || [ "$(terraform-docs version | awk '{ print $3}')" != "${docs_version#*v}" ]; then
+        echo "INFO: Installing terraform-docs $docs_version version..."
+
+        tarball="terraform-docs-v${docs_version#*v}-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch).tar.gz"
+        url="https://github.com/terraform-docs/terraform-docs/releases/download/v${docs_version#*v}/$tarball"
+        pushd "$(mktemp -d)" > /dev/null
+        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+            curl -L -o terraform-docs.tgz "$url"
+            tar -xzvf terraform-docs.tgz
+        else
+            curl -L -o terraform-docs.tgz "$url" 2>/dev/null
+            tar -xzf terraform-docs.tgz
+        fi
+        chmod +x terraform-docs
+        sudo mv terraform-docs /usr/local/bin/
+        popd > /dev/null
+        terraform-docs completion bash | sudo tee /etc/bash_completion.d/terraform-docs > /dev/null
     fi
 }
 

@@ -31,9 +31,10 @@ curl -fsSL http://bit.ly/install_pkg | PKG=terraform bash
 ```
 ### Environment variables
 
-| Name                  | Default | Description                                     |
-|:----------------------|:--------|:------------------------------------------------|
-| PKG_TERRAFORM_VERSION |         | Specifies the Terraform version to be installed |
+| Name                       | Default | Description                                          |
+|:---------------------------|:--------|:-----------------------------------------------------|
+| PKG_TERRAFORM_VERSION      |         | Specifies the Terraform version to be installed      |
+| PKG_TERRAFORM_DOCS_VERSION |         | Specifies the Terraform docs version to be installed |
 
 ## Used by
 
