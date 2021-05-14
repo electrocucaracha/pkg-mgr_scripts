@@ -50,7 +50,7 @@ function get_github_latest_release {
 }
 
 function main {
-    local version=${GOMPLATE_VERSION:-$(get_github_latest_release hairyhenderson/gomplate)}
+    local version=${PKG_GOMPLATE_VERSION:-$(get_github_latest_release hairyhenderson/gomplate)}
 
     if ! command -v gomplate || [[ "$(gomplate --version | awk '{print $3}')" != "$version" ]]; then
         echo "INFO: Installing gomplate $version version..."

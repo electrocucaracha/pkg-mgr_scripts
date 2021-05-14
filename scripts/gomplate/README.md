@@ -25,8 +25,8 @@ curl -fsSL http://bit.ly/install_pkg | PKG=gomplate bash
 
 ### Environment variables
 
-| Name             | Default | Description                                    |
-|:-----------------|:--------|:-----------------------------------------------|
-| GOMPLATE_VERSION |         | Specifies the gomplate version to be installed |
+| Name                 | Default | Description                                    |
+|:---------------------|:--------|:-----------------------------------------------|
+| PKG_GOMPLATE_VERSION |         | Specifies the gomplate version to be installed |
 
 ## Used by
