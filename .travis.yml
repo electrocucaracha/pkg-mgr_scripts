@@ -25,5 +25,6 @@ env:
   - VAGRANT_NAME=opensuse RUN_LONG_TESTS=true TIMEOUT=1800
   - VAGRANT_NAME=centos_7 RUN_LONG_TESTS=true
   - VAGRANT_NAME=centos_8 RUN_LONG_TESTS=true
+  - VAGRANT_NAME=ubuntu_xenial
   - VAGRANT_NAME=ubuntu_focal
   - VAGRANT_NAME=ubuntu_bionic
