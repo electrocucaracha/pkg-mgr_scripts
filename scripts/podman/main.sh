@@ -136,7 +136,7 @@ function main {
     $INSTALLER_CMD podman
 
     # NOTE: metacopy=on is available since 4.19 and was backported to RHEL 4.18 kernel
-    if _vercmp "$(name -r | awk -F '-' '{print $1}')" '<' "4.19"; then
+    if _vercmp "$(uname -r | awk -F '-' '{print $1}')" '<' "4.19"; then
         sudo sed -i "s/^mountopt =.*/mountopt = \"nodev\"/" /etc/containers/storage.conf
     fi
 

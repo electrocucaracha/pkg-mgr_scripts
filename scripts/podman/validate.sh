@@ -42,6 +42,8 @@ function get_version {
         attempt_counter=$((attempt_counter+1))
         sleep 2
     done
+
+    echo "${version##*/}"
 }
 
 function get_cpu_arch {
