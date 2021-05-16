@@ -33,7 +33,7 @@ function main {
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+="-q "
             fi
-            INSTALLER_CMD+="install -y --no-recommends nodejs15"
+            INSTALLER_CMD+="install -y --no-recommends nodejs16"
         ;;
         ubuntu|debian)
             url="https://deb"
