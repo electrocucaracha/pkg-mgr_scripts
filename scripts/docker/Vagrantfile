@@ -72,9 +72,6 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision 'shell', privileged: false, inline: <<-SHELL
     set -o errexit
-    if ! command -v jq; then
-        curl -fsSL http://bit.ly/install_pkg | PKG="jq" bash
-    fi
     cd /vagrant
     ./validate.sh | tee ~/validate.log
     echo "Tests completed!!!"
