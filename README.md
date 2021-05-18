@@ -62,5 +62,12 @@ curl -fsSL http://bit.ly/install_pkg | PKG="$(bindep node -b)" bash
 lstopo-no-graphics
 ```
 
+Or use the [wrapper script][3] provided to run in a single command
+
+```bash
+curl -fsSL http://bit.ly/install_bin | PKG_BINDEP_PROFILE=node bash
+```
+
 [1]: https://docs.openstack.org/infra/bindep/
 [2]: https://www.open-mpi.org/projects/hwloc/
+[3]: bindep_install.sh
