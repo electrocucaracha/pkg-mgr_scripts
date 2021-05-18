@@ -54,25 +54,27 @@ function _vercmp {
 }
 
 function main {
+    echo "INFO: Installing NFS packages..."
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
-        *suse*|ubuntu|debian)
-            PKG="nfs-kernel-server"
+        *suse*)
+            sudo -H -E zypper install -y --no-recommends nfs-kernel-server
+        ;;
+        ubuntu|debian)
+            sudo -H -E apt-get -y install --no-install-recommends nfs-kernel-server
         ;;
         rhel|centos|fedora)
-            PKG="nfs-utils"
+            INSTALLER_CMD="sudo -H -E $(command -v dnf || command -v yum) -y install nfs-utils"
             if _vercmp "${VERSION_ID}" '<=' "7"; then
-                PKG+=" nfs-utils-lib"
+                INSTALLER_CMD+=" nfs-utils-lib"
             fi
+            $INSTALLER_CMD
         ;;
         clear-linux-os)
-            PKG="nfs-utils"
+            sudo -H -E swupd bundle-add nfs-utils
         ;;
     esac
-    export PKG
-    echo "INFO: Installing NFS packages ($PKG)..."
-    curl -fsSL http://bit.ly/install_pkg | PKG_UPDATE=true bash
 
     for service in rpc-statd nfs-server; do
         echo "INFO: Starting $service service..."
