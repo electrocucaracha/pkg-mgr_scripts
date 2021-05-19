@@ -25,11 +25,6 @@ function _print_msg {
     echo "$1: $2"
 }
 
-info "Validating CNI plugin folder creation..."
-if [ ! -d "${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}" ]; then
-    error "CNI plugins folder wasn't created"
-fi
-
 function get_version {
     local version=${PKG_CNI_PLUGINS_VERSION:-}
     attempt_counter=0
@@ -49,6 +44,11 @@ function get_version {
     done
     echo "v${version#*v}"
 }
+
+info "Validating CNI plugin folder creation..."
+if [ ! -d "${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}" ]; then
+    error "CNI plugins folder wasn't created"
+fi
 
 info "Validating CNI plugin binaries installation..."
 cni_version="$(get_version)"
