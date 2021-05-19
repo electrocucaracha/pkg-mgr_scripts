@@ -14,6 +14,7 @@ $no_proxy = ENV['NO_PROXY'] || ENV['no_proxy'] || "127.0.0.1,localhost"
 end
 $debug = ENV['PKG_DEBUG'] || "true"
 $driver = ENV['PKG_DRIVER'] || "qemu"
+$version = ENV['PKG_KREW_VERSION']
 
 File.exists?("/usr/share/qemu/OVMF.fd") ? loader = "/usr/share/qemu/OVMF.fd" : loader = File.join(File.dirname(__FILE__), "/../../OVMF.fd")
 if not File.exists?(loader)
@@ -51,6 +52,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision 'shell', privileged: false do |sh|
     sh.env = {
       'PKG_DEBUG': "#{$debug}",
+      'PKG_KREW_VERSION': "#{$version}",
     }
     sh.inline = <<-SHELL
       set -o errexit
@@ -62,12 +64,17 @@ Vagrant.configure("2") do |config|
       ./main.sh | tee ~/main.log 2>&1
     SHELL
   end
-  config.vm.provision 'shell', privileged: false, inline: <<-SHELL
-    set -o errexit
-    cd /vagrant
-    ./validate.sh | tee ~/validate.log
-    echo "Tests completed!!!"
-  SHELL
+  config.vm.provision 'shell', privileged: false do |sh|
+    sh.env = {
+      'PKG_KREW_VERSION': "#{$version}",
+    }
+    sh.inline = <<-SHELL
+      set -o errexit
+      cd /vagrant
+      ./validate.sh | tee ~/validate.log
+      echo "Tests completed!!!"
+    SHELL
+  end
 
   [:virtualbox, :libvirt].each do |provider|
   config.vm.provider provider do |p|

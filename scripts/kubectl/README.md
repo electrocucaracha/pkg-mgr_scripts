@@ -42,6 +42,7 @@ curl -fsSL http://bit.ly/install_pkg | PKG=kubectl bash
 | Name                  | Default                                         | Description                                   |
 |:----------------------|:------------------------------------------------|:----------------------------------------------|
 | PKG_KUBECTL_VERSION   |                                                 | Specifies the Kubectl version to be installed |
+| PKG_KREW_VERSION      |                                                 | Specifies the Krew version to be installed    |
 | PKG_KREW_PLUGINS_LIST | tree,access-matrix,score,sniff,view-utilization | List of Krew plugins to be installed          |
 
 ## Used by
