@@ -16,7 +16,7 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
 fi
 
 function main {
-    local version=${PKG_KUSTOMIZE_VERSION:-3.8.8}
+    local version=${PKG_KUSTOMIZE_VERSION:-4.1.2}
 
     if ! command -v kustomize || [ "$(kustomize version | grep -o -P '(?<={Version:kustomize/v).*(?= GitCommit:)')" != "${version#*v}" ]; then
         echo "INFO: Installing kustomize ${version#*v} version..."
