@@ -15,15 +15,15 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function main {
-    local version=${PKG_GOLANG_VERSION:-}
-
+function get_go_latest_version {
+    version=""
     attempt_counter=0
     max_attempts=5
+
     until [ "$version" ]; do
         stable_version="$(curl -s https://golang.org/VERSION?m=text)"
         if [ "$stable_version" ]; then
-            version="${stable_version#go}"
+            echo "${stable_version#go}"
             break
         elif [ ${attempt_counter} -eq ${max_attempts} ];then
             echo "Max attempts reached"
@@ -32,6 +32,11 @@ function main {
         attempt_counter=$((attempt_counter+1))
         sleep 2
     done
+}
+
+function main {
+    local version=${PKG_GOLANG_VERSION:-$(get_go_latest_version)}
+
     OS="$(uname | tr '[:upper:]' '[:lower:]')"
     ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
     tarball=go$version.$OS-$ARCH.tar.gz
