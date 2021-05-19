@@ -15,20 +15,6 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -193,7 +179,10 @@ EOF
     # Install client interface for the registry API
     if ! command -v regctl; then
         echo "INFO: Installing regctl $version version..."
-        binary="regctl-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch)"
+
+        OS="$(uname | tr '[:upper:]' '[:lower:]')"
+        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+        binary="regctl-$OS-$ARCH"
         url="https://github.com/regclient/regclient/releases/download/v${version}/$binary"
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -Lo ./regctl "$url"

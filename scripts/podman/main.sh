@@ -53,20 +53,6 @@ function _vercmp {
     esac
 }
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -156,7 +142,9 @@ function main {
     fi
 
     echo "INFO: Installing crun..."
-    crun_binary="crun-${crun_version}-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch)"
+    OS="$(uname | tr '[:upper:]' '[:lower:]')"
+    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+    crun_binary="crun-${crun_version}-$OS-$ARCH"
     if _vercmp "${crun_version}" '<' "0.15"; then
         crun_binary="crun-${crun_version}-static-$(uname -m)"
     fi

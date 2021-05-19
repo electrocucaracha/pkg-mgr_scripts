@@ -15,20 +15,6 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -53,9 +39,12 @@ function main {
     local version=${PKG_KIND_VERSION:-$(get_github_latest_release kubernetes-sigs/kind)}
 
     if ! command -v kind || [[ "v$(kind --version | awk '{print $3}')" != "$version" ]]; then
-        echo "INFO: Installing kind $version version..."
-        binary="kind-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch)"
+        OS="$(uname | tr '[:upper:]' '[:lower:]')"
+        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+        binary="kind-$OS-$ARCH"
         url="https://github.com/kubernetes-sigs/kind/releases/download/v${version}/$binary"
+
+        echo "INFO: Installing kind $version version..."
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -Lo ./kind "$url"
         else

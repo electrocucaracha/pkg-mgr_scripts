@@ -15,20 +15,6 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function get_github_latest_tag {
     version=""
     attempt_counter=0
@@ -99,7 +85,9 @@ function main {
                 fi
             ;;
             clear-linux-os)
-                vagrant_pkg="vagrant_${version}_$(uname | awk '{print tolower($0)}')_$(get_cpu_arch).zip"
+                OS="$(uname | tr '[:upper:]' '[:lower:]')"
+                ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+                vagrant_pkg="vagrant_${version}_${OS}_${ARCH}.zip"
                 if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                     curl -o "$vagrant_pkg" "$vagrant_url_pkg/$vagrant_pkg"
                     if ! command -v unzip; then

@@ -15,20 +15,6 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function get_github_latest_tag {
     version=""
     attempt_counter=0
@@ -56,7 +42,9 @@ function main {
     if ! command -v kn || [[ "v$(kn version | awk 'NR==1{print $2}')" != "$version" ]]; then
         echo "INFO: Installing Knative client $version version..."
 
-        binary="kn-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch)"
+        OS="$(uname | tr '[:upper:]' '[:lower:]')"
+        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+        binary="kn-$OS-$ARCH"
         url="https://github.com/knative/client/releases/download/v${version}/$binary"
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -Lo ./kn "$url"

@@ -15,27 +15,15 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function main {
     local version=${PKG_KUSTOMIZE_VERSION:-3.8.8}
 
     if ! command -v kustomize || [ "$(kustomize version | grep -o -P '(?<={Version:kustomize/v).*(?= GitCommit:)')" != "${version#*v}" ]; then
         echo "INFO: Installing kustomize ${version#*v} version..."
 
-        url="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${version#*v}/kustomize_v${version#*v}_$(uname | tr '[:upper:]' '[:lower:]')_$(get_cpu_arch).tar.gz"
+        OS="$(uname | tr '[:upper:]' '[:lower:]')"
+        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+        url="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${version#*v}/kustomize_v${version#*v}_${OS}_$ARCH.tar.gz"
         pushd "$(mktemp -d)" > /dev/null
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -sL -o kustomize.tgz "$url"

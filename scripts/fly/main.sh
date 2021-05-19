@@ -15,20 +15,6 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -54,7 +40,10 @@ function main {
 
     if ! command -v fly || [[ "$(fly --version)" != "$version" ]]; then
         echo "INFO: Installing fly $version version..."
-        tarball="fly-$version-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch).tgz"
+
+        OS="$(uname | tr '[:upper:]' '[:lower:]')"
+        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+        tarball="fly-$version-$OS-$ARCH.tgz"
         url="https://github.com/concourse/concourse/releases/download/v$version/$tarball"
         pushd "$(mktemp -d)" > /dev/null
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then

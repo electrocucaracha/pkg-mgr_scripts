@@ -15,20 +15,6 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -55,9 +41,12 @@ function main {
 
     if [ ! -d "$cni_folder" ] || [ -z "$(ls -A "$cni_folder")" ]; then
         echo "INFO: Installing CNI plugins $version version..."
+
         pushd "$(mktemp -d)" > /dev/null
         sudo mkdir -p "$cni_folder"
-        tarball="cni-plugins-$(uname | awk '{print tolower($0)}')-$(get_cpu_arch)-v${version}.tgz"
+        OS="$(uname | tr '[:upper:]' '[:lower:]')"
+        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+        tarball="cni-plugins-$OS-$ARCH-v${version}.tgz"
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -Lo cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v${version}/${tarball}"
             sudo tar xvf cni-plugins.tgz -C "$cni_folder"

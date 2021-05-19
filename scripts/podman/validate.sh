@@ -46,26 +46,13 @@ function get_version {
     echo "${version##*/}"
 }
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function setup_ftrace {
     ftrace_analyzer_version="0.1.3"
     ftrace_folder_path="/usr/local/bin"
     ftrace_analyzer_path="$ftrace_folder_path/oci-ftrace-syscall-analyzer"
 
-    curl -sL "https://github.com/KentaTada/oci-ftrace-syscall-analyzer/releases/download/v$ftrace_analyzer_version/oci-ftrace-syscall-analyzer-$(get_cpu_arch).tar.gz" | sudo tar -xz -C "$ftrace_folder_path"
+    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+    curl -sL "https://github.com/KentaTada/oci-ftrace-syscall-analyzer/releases/download/v$ftrace_analyzer_version/oci-ftrace-syscall-analyzer-$ARCH.tar.gz" | sudo tar -xz -C "$ftrace_folder_path"
     sudo chmod a+x "$ftrace_analyzer_path"
     sudo setcap CAP_DAC_OVERRIDE+ep /"$ftrace_analyzer_path"
     sudo mkdir -p /etc/containers/oci/hooks.d/

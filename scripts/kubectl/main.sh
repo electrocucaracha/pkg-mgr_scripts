@@ -15,32 +15,20 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function main {
     local version=${PKG_KUBECTL_VERSION:-$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)}
     krew_plugins_list=${PKG_KREW_PLUGINS_LIST:-tree,access-matrix,score,sniff,view-utilization}
+    OS="$(uname | tr '[:upper:]' '[:lower:]')"
+    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
 
     if ! command -v kubectl || [[ "$(kubectl version --short --client | awk '{print $3}')" != "$version" ]]; then
         echo "INFO: Installing kubectl $version version..."
 
         pushd "$(mktemp -d)" > /dev/null
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$(get_cpu_arch)/kubectl"
+            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/$OS/$ARCH/kubectl"
         else
-            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/linux/$(get_cpu_arch)/kubectl" 2> /dev/null
+            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/$OS/$ARCH/kubectl" 2> /dev/null
         fi
         chmod +x kubectl
         mkdir -p ~/{.local,}/bin
@@ -62,7 +50,7 @@ function main {
             curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}" 2> /dev/null
             tar -xzf krew.tar.gz
         fi
-        ./krew-"$(uname | tr '[:upper:]' '[:lower:]')_$(get_cpu_arch)" install --manifest=krew.yaml --archive=krew.tar.gz
+        ./krew-"${OS}_$ARCH" install --manifest=krew.yaml --archive=krew.tar.gz
 
         sudo mkdir -p /etc/profile.d/
         # shellcheck disable=SC2016

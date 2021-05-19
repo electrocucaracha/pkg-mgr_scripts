@@ -15,20 +15,6 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function get_cpu_arch {
-    case "$(uname -m)" in
-        x86_64)
-            echo "amd64"
-        ;;
-        armv8*|aarch64*)
-            echo "arm64"
-        ;;
-        armv*)
-            echo "armv7"
-        ;;
-    esac
-}
-
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -91,6 +77,9 @@ function main {
     local version=${PKG_TERRAFORM_VERSION:-$(get_github_latest_release hashicorp/terraform)}
     local docs_version=${PKG_TERRAFORM_DOCS_VERSION:-$(get_github_latest_release terraform-docs/terraform-docs)}
 
+    OS="$(uname | tr '[:upper:]' '[:lower:]')"
+    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+
     if ! command -v terraform || [ "$(terraform version | awk 'NR==1{print $2}')" != "v${version#*v}" ]; then
         echo "INFO: Installing terraform $version version..."
         pushd "$(mktemp -d)" > /dev/null
@@ -123,7 +112,7 @@ function main {
             esac
             $INSTALLER_CMD unzip
         fi
-        zip_file="terraform_${version#*v}_$(uname | tr '[:upper:]' '[:lower:]')_$(get_cpu_arch).zip"
+        zip_file="terraform_${version#*v}_${OS}_$ARCH.zip"
         url="https://releases.hashicorp.com/terraform/${version#*v}/$zip_file"
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -o terraform.zip "$url"
@@ -144,7 +133,7 @@ function main {
     if ! command -v terraform-docs || [ "$(terraform-docs version | awk '{ print $3}')" != "${docs_version#*v}" ]; then
         echo "INFO: Installing terraform-docs $docs_version version..."
 
-        tarball="terraform-docs-v${docs_version#*v}-$(uname | tr '[:upper:]' '[:lower:]')-$(get_cpu_arch).tar.gz"
+        tarball="terraform-docs-v${docs_version#*v}-$OS-$ARCH.tar.gz"
         url="https://github.com/terraform-docs/terraform-docs/releases/download/v${docs_version#*v}/$tarball"
         pushd "$(mktemp -d)" > /dev/null
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
