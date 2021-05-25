@@ -35,6 +35,27 @@ function get_github_latest_release {
     echo "${version#v}"
 }
 
+function get_github_latest_tag {
+    version=""
+    attempt_counter=0
+    max_attempts=5
+
+    until [ "$version" ]; do
+        tags="$(curl -s "https://api.github.com/repos/$1/tags")"
+        if [ "$tags" ]; then
+            version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+            break
+        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+            echo "Max attempts reached"
+            exit 1
+        fi
+        attempt_counter=$((attempt_counter+1))
+        sleep 2
+    done
+
+    echo "${version#*v}"
+}
+
 # _vercmp() - Function that compares two versions
 function _vercmp {
     local v1=$1
@@ -75,12 +96,12 @@ function _vercmp {
 
 function main {
     local ninja_version=${PKG_NINJA_VERSION:-$(get_github_latest_release ninja-build/ninja)}
-    local version=${PKG_QEMU_VERSION:-6.0.0}
+    local version=${PKG_QEMU_VERSION:-$(get_github_latest_tag qemu/qemu)}
     local qemu_tarball="qemu-${version}.tar.xz"
     local pmdk_version=${PKG_PMDK_VERSION:-1.4}
     local pmdk_url="https://github.com/pmem/pmdk/releases/download/$pmdk_version/pmdk-${pmdk_version}-"
 
-    if command -v qemu-img; then
+    if command -v qemu-img && [[ "$(qemu-img --version | awk 'NR==1{print $3}')" == "$version" ]]; then
         return
     fi
 
