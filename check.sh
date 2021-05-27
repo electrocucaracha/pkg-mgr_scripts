@@ -55,15 +55,25 @@ source ./_utils.sh
 source ./_common.sh
 
 trap exit_trap ERR
-trap 'pkill --signal SIGKILL sleep' EXIT
 
-int_rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
+if [[ "$(uname)" == *"Darwin"* ]]; then
+    trap 'pkill -s KILL sleep' EXIT
+fi
+if [[ "$(uname)" == *"Linux"* ]]; then
+    trap 'pkill --signal SIGKILL sleep' EXIT
+fi
+
+if [ -f "/sys/class/net/$mgmt_nic/statistics/rx_bytes" ]; then
+    int_rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
+fi
 int_start=$(date +%s)
 
 info "Starting Integration tests - $VAGRANT_NAME"
 run_integration_tests
 
 info "Integration tests completed - $VAGRANT_NAME"
-int_rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
-printf "%'.f MB total downloaded\n"  "$(((int_rx_bytes_after-int_rx_bytes_before)/ratio))"
+if [ -f "/sys/class/net/$mgmt_nic/statistics/rx_bytes" ]; then
+    int_rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
+    printf "%'.f MB total downloaded\n"  "$(((int_rx_bytes_after-int_rx_bytes_before)/ratio))"
+fi
 printf "%s secs\n" "$(($(date +%s)-int_start))"

@@ -1,0 +1,47 @@
+---
+# SPDX-license-identifier: Apache-2.0
+##############################################################################
+# Copyright (c) 2021
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Apache License, Version 2.0
+# which accompanies this distribution, and is available at
+# http://www.apache.org/licenses/LICENSE-2.0
+##############################################################################
+
+name: Check All
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  check:
+    runs-on: macos-10.15
+    strategy:
+      matrix:
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse]
+        long: [true, false]
+    env:
+      VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
+      CPUS: 2
+      MEMORY: 6144
+      VAGRANT_NAME: ${{ matrix.name }}
+      RUN_LONG_TESTS: ${{ matrix.long }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Vagrant boxes
+        uses: actions/cache@v2
+        with:
+          path: ~/.vagrant.d/boxes
+          key: ${{ runner.os }}-vagrant-${{ hashFiles('Vagrantfile') }}
+          restore-keys: |
+            ${{ runner.os }}-vagrant-
+      - name: Install Vagrant Reload plugin
+        run: vagrant plugin install vagrant-reload
+      - name: Install proctools and iproute2mac
+        run: brew install proctools iproute2mac
+      - name: Replace shorten links
+        run: find . -type f -iname "*sh" -exec sed -i '.bak' 's|http://bit.ly/install_pkg|https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/install.sh|g' {} \;
+      - name: Run integration tests
+        run: ./check.sh

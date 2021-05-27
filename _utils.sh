@@ -69,7 +69,9 @@ function _run_test {
         return
     fi
     $vagrant_destroy_cmd > /dev/null
-    rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
+    if [ -f "/sys/class/net/$mgmt_nic/statistics/rx_bytes" ]; then
+        rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
+    fi
 
     info "Starting $(basename "$(pwd)") test for $VAGRANT_NAME"
     start=$(date +%s)
@@ -82,7 +84,9 @@ function _run_test {
         cat "/tmp/check_$(basename "$(pwd)")_$VAGRANT_NAME.log"
         error "Found an error during the validation of $(basename "$(pwd)") in $VAGRANT_NAME"
     fi
-    rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
+    if [ -f "/sys/class/net/$mgmt_nic/statistics/rx_bytes" ]; then
+        rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
+    fi
     kill "$pid" 2> /dev/null
     info "$(basename "$(pwd)") test completed for $VAGRANT_NAME"
 
@@ -90,7 +94,9 @@ function _run_test {
     $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log | grep "^INFO" | sed 's/^INFO: //'
     $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log | grep "^INFO" | sed 's/^INFO: //'
     printf "%s secs - Duration time for %s in %s\n" "$(($(date +%s)-start))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
-    printf "%'.f MB downloaded - Network Usage for %s in %s\n"  "$(((rx_bytes_after-rx_bytes_before)/ratio))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
+    if [ -n "${rx_bytes_before:-}" ] && [ -n "${rx_bytes_after:-}" ]; then
+        printf "%'.f MB downloaded - Network Usage for %s in %s\n"  "$(((rx_bytes_after-rx_bytes_before)/ratio))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
+    fi
 
     $vagrant_destroy_cmd > /dev/null
 }

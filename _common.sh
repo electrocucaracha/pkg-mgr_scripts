@@ -18,15 +18,11 @@ mgmt_nic="$(ip route get 1.1.1.1 | awk 'NR==1 { print $5 }')"
 ratio=$((1024*1024)) # MB
 export CPUS=${CPUS:-1}
 export MEMORY=${MEMORY:-3072}
-export TIMEOUT=${TIMEOUT:-900}
+export TIMEOUT=${TIMEOUT:-1800}
 export VAGRANT_NAME=${VAGRANT_NAME:-ubuntu_xenial}
 export mgmt_nic ratio
 
-vagrant_cmd=""
-if [ "${SUDO_VAGRANT_CMD:-false}" == "true" ]; then
-    vagrant_cmd="sudo -E"
-fi
-vagrant_cmd+=" $(command -v vagrant)"
+vagrant_cmd="$(command -v vagrant)"
 vagrant_up_cmd="$vagrant_cmd up --no-destroy-on-error $VAGRANT_NAME"
 vagrant_destroy_cmd="$vagrant_cmd destroy -f $VAGRANT_NAME"
 export vagrant_cmd vagrant_up_cmd vagrant_destroy_cmd

@@ -1,5 +1,4 @@
 # cURL package installer
-[![Build Status](https://travis-ci.org/electrocucaracha/pkg-mgr_scripts.png)](https://travis-ci.org/electrocucaracha/pkg-mgr_scripts)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Docker Pulls](https://img.shields.io/docker/pulls/electrocucaracha/pkg_mgr-init.svg)](https://img.shields.io/docker/pulls/electrocucaracha/pkg_mgr-init)
 [![GitHub Super-Linter](https://github.com/electrocucaracha/pkg-mgr_scripts/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
