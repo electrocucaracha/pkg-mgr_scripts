@@ -21,11 +21,11 @@ jobs:
     strategy:
       matrix:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse]
-        profile: [integration, cloud, devops, drivers, lang, utils, virt]
+        profile: [main, cloud, devops, drivers, lang, utils, virt]
     env:
       VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
       CPUS: 2
-      MEMORY: 6144
+      MEMORY: 12288
       VAGRANT_NAME: ${{ matrix.name }}
       PROFILE: ${{ matrix.profile }}
     steps:
