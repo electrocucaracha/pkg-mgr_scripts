@@ -18,7 +18,6 @@ with OCI images as well as the original Docker v2 images.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
-| ClearLinux |            | [ ]       |
 
 ## How to use it
 

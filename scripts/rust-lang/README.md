@@ -18,7 +18,6 @@ collection, and reference counting is optional.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
-| ClearLinux |            | [x]       |
 
 ## How to use it
 

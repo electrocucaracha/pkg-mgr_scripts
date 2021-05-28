@@ -22,7 +22,6 @@ for server-side and client-side scripts.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [ ]       |
-| ClearLinux |            | [ ]       |
 
 ## How to use it
 

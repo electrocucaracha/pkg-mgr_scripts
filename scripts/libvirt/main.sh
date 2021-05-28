@@ -99,14 +99,6 @@ function main {
             pkgs+=" libvirt libvirt-devel"
             sudo "$PKG_MANAGER" updateinfo --assumeyes
         ;;
-        clear-linux-os)
-            INSTALLER_CMD="swupd bundle-add"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" --quiet"
-            fi
-            pkgs+=" kvm-host devpkg-libvirt"
-            sudo swupd update --download
-        ;;
         *)
             # MacOS
             if command -v sw_vers; then

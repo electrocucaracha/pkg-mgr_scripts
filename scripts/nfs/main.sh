@@ -71,9 +71,6 @@ function main {
             fi
             $INSTALLER_CMD
         ;;
-        clear-linux-os)
-            sudo -H -E swupd bundle-add nfs-utils
-        ;;
     esac
 
     for service in rpc-statd nfs-server; do

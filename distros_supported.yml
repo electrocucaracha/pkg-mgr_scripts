@@ -8,8 +8,6 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 linux:
-  - alias: clearlinux
-    name: AntonioMeireles/ClearLinux
   - alias: centos_7
     name: generic/centos7
   - alias: centos_8

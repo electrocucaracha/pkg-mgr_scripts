@@ -134,10 +134,6 @@ function main {
             pyenv install 3.8.5
             pyenv global 3.8.5
         ;;
-        clearlinux)
-            sudo -H -E swupd bundle-add kvm-host
-            return
-        ;;
         ubuntu|debian)
             configure_flags+=" --enable-numa"
             if _vercmp "${VERSION_ID}" '<=' "16.04"; then

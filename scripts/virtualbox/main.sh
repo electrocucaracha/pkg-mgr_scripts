@@ -70,10 +70,6 @@ function main {
             sudo usermod -aG vboxusers "$USER"
             sudo /sbin/vboxconfig
         ;;
-        clear-linux-os)
-            echo "WARN: The VirtualBox provider isn't supported by ClearLinux yet."
-            return
-        ;;
     esac
     popd 2> /dev/null
 }

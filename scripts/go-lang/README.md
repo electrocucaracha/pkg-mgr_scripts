@@ -17,7 +17,6 @@ garbage collection, structural typing, and CSP-style concurrency.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
-| ClearLinux |            | [ ]       |
 
 ## How to use it
 

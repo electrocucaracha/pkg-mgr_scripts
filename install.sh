@@ -84,9 +84,6 @@ function update_repos {
             fi
             sudo "$PKG_MANAGER" updateinfo --assumeyes
         ;;
-        clear-linux-os)
-            sudo swupd update --download
-        ;;
     esac
 }
 
@@ -175,13 +172,6 @@ function main {
             fi
             INSTALLER_CMD+=" install"
             PKG_OS_FAMILY="RedHat"
-        ;;
-        clear-linux-os)
-            INSTALLER_CMD="swupd bundle-add"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" --quiet"
-            fi
-            PKG_OS_FAMILY="ClearLinux"
         ;;
     esac
 

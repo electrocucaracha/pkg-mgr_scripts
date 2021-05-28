@@ -14,11 +14,6 @@ $no_proxy = ENV['NO_PROXY'] || ENV['no_proxy'] || "127.0.0.1,localhost"
 end
 $debug = ENV['PKG_DEBUG'] || "true"
 
-File.exists?("/usr/share/qemu/OVMF.fd") ? loader = "/usr/share/qemu/OVMF.fd" : loader = File.join(File.dirname(__FILE__), "OVMF.fd")
-if not File.exists?(loader)
-  system('curl -O https://download.clearlinux.org/image/OVMF.fd')
-end
-
 distros = YAML.load_file(File.dirname(__FILE__) + '/distros_supported.yml')
 
 Vagrant.configure("2") do |config|
@@ -34,11 +29,6 @@ Vagrant.configure("2") do |config|
         node.vm.box_version = distro["version"]
       end
       node.vm.box_check_update = false
-      if distro["alias"] == "clearlinux"
-        node.vm.provider 'libvirt' do |v|
-          v.loader = loader
-        end
-      end
     end
   end
 

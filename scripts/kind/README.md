@@ -16,7 +16,6 @@ itself, but may be used for local development or CI.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
-| ClearLinux |            | [x]       |
 
 ## How to use it
 
