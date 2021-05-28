@@ -15,16 +15,16 @@ if [[ "${DEBUG:-false}" == "true" ]]; then
 fi
 
 function run_integration_tests {
-    kvm_tests=$(cat long-tests.txt)
-    local run_long_tests="${RUN_LONG_TESTS:-false}"
+    local profile="${PROFILE:-main}"
 
     # Start main install test
-    [[ "$run_long_tests" == "true" ]] && run_test
+    [[ "$profile" == "main" ]] && run_test
 
     # shellcheck disable=SC2044
     for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
         pushd "$(dirname "$vagrantfile")" > /dev/null
-        if [[ ( "$run_long_tests" = "true" && "$kvm_tests" == *"$(basename "$(pwd)")"* ) || ( "$run_long_tests" = "false" &&  "$kvm_tests" != *"$(basename "$(pwd)")"* ) ]]; then
+        tests="profile_$profile"
+        if [[ ( "${profiles}" == *"$profile"* && "${!tests}" == *"$(basename "$(pwd)")"* ) || ( "$profile" = "main" && "$ci_tests" != *"$(basename "$(pwd)")"* ) ]]; then
             run_test
         fi
         popd > /dev/null
