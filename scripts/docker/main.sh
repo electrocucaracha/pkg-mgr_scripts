@@ -45,13 +45,6 @@ function main {
 
         INSTALLER_CMD="sudo -H -E "
         case ${ID,,} in
-            clear-linux-os)
-                INSTALLER_CMD+="swupd bundle-add"
-                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                    INSTALLER_CMD+=" --quiet"
-                fi
-                $INSTALLER_CMD containers-basic
-            ;;
             *suse*)
                 INSTALLER_CMD+="zypper"
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then

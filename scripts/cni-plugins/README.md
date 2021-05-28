@@ -20,7 +20,6 @@ support and the specification is simple to implement.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
-| ClearLinux |            | [x]       |
 
 ## How to use it
 

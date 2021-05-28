@@ -15,7 +15,6 @@ control processing.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [ ]       |
-| ClearLinux |            | [x]       |
 
 ## How to use it
 

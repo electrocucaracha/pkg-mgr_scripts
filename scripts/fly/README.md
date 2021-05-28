@@ -12,7 +12,6 @@ A command line interface that runs a build in a container with ATC.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
-| ClearLinux |            | [x]       |
 
 ## How to use it
 

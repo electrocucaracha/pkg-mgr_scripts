@@ -84,9 +84,6 @@ function update_repos {
             fi
             sudo "$PKG_MANAGER" updateinfo --assumeyes
         ;;
-        clear-linux-os)
-            sudo swupd update --download
-        ;;
     esac
 }
 
@@ -97,55 +94,55 @@ function main {
 
     declare -A pkg_mgr_supported
 
-    pkg_mgr_supported[bind-utils]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"bind-utils\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[bridge-utils]="{\"Suse\": \"bridge-utils\",\"Debian\": \"bridge-utils\",\"RedHat\": \"bridge-utils\",\"ClearLinux\": \"network-basic\"}"
-    pkg_mgr_supported[dnsmasq]="{\"Suse\": \"dnsmasq\",\"Debian\": \"dnsmasq-base\",\"RedHat\": \"dnsmasq\",\"ClearLinux\": \"dhcp-server\"}"
-    pkg_mgr_supported[ebtables]="{\"Suse\": \"ebtables\",\"Debian\": \"ebtables\",\"RedHat\": \"ebtables\",\"ClearLinux\": \"network-basic\"}"
-    pkg_mgr_supported[gpgme]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"gpgme\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[gpgme-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"gpgme-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[krb5-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"libkrb5-dev\",\"RedHat\": \"krb5-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[libassuan]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[libassuan-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan-devel\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[mkpasswd]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"mkpasswd\",\"RedHat\": \"expect\",\"ClearLinux\": \"sysadmin-basic\"}"
-    pkg_mgr_supported[python-devel]="{\"Suse\": \"python-devel\",\"Debian\": \"python-dev\",\"RedHat\": \"python3-devel python2-devel\",\"ClearLinux\": \"python-basic\"}"
-    pkg_mgr_supported[qemu-utils]="{\"Suse\": \"qemu-tools\",\"Debian\": \"qemu-utils\",\"RedHat\": \"qemu-utils\",\"ClearLinux\": \"clr-installer\"}"
-    pkg_mgr_supported[ruby-devel]="{\"Suse\": \"ruby-devel\",\"Debian\": \"ruby-dev\",\"RedHat\": \"ruby-devel\",\"ClearLinux\": \"ruby-basic\"}"
-    pkg_mgr_supported[sysfsutils]="{\"Suse\": \"sysfsutils\",\"Debian\": \"sysfsutils\",\"RedHat\": \"sysfsutils\",\"ClearLinux\": \"openstack-common\"}"
-    pkg_mgr_supported[tito]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"tito\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
+    pkg_mgr_supported[bind-utils]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"bind-utils\"}"
+    pkg_mgr_supported[bridge-utils]="{\"Suse\": \"bridge-utils\",\"Debian\": \"bridge-utils\",\"RedHat\": \"bridge-utils\"}"
+    pkg_mgr_supported[dnsmasq]="{\"Suse\": \"dnsmasq\",\"Debian\": \"dnsmasq-base\",\"RedHat\": \"dnsmasq\"}"
+    pkg_mgr_supported[ebtables]="{\"Suse\": \"ebtables\",\"Debian\": \"ebtables\",\"RedHat\": \"ebtables\"}"
+    pkg_mgr_supported[gpgme]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"gpgme\"}"
+    pkg_mgr_supported[gpgme-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"gpgme-devel\"}"
+    pkg_mgr_supported[krb5-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"libkrb5-dev\",\"RedHat\": \"krb5-devel\"}"
+    pkg_mgr_supported[libassuan]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan\"}"
+    pkg_mgr_supported[libassuan-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan-devel\"}"
+    pkg_mgr_supported[mkpasswd]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"mkpasswd\",\"RedHat\": \"expect\"}"
+    pkg_mgr_supported[python-devel]="{\"Suse\": \"python-devel\",\"Debian\": \"python-dev\",\"RedHat\": \"python3-devel python2-devel\"}"
+    pkg_mgr_supported[qemu-utils]="{\"Suse\": \"qemu-tools\",\"Debian\": \"qemu-utils\",\"RedHat\": \"qemu-utils\"}"
+    pkg_mgr_supported[ruby-devel]="{\"Suse\": \"ruby-devel\",\"Debian\": \"ruby-dev\",\"RedHat\": \"ruby-devel\"}"
+    pkg_mgr_supported[sysfsutils]="{\"Suse\": \"sysfsutils\",\"Debian\": \"sysfsutils\",\"RedHat\": \"sysfsutils\"}"
+    pkg_mgr_supported[tito]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"tito\"}"
 
     # cURL Package Manager Supported
-    pkg_mgr_supported[cni-plugins]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[crystal-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[docker]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[fly]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[go-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[gomplate]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[hadolint]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[helm]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[kind]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[kn]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[kubectl]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[kustomize]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[libvirt]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[nfs]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[nodejs]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[pip]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[podman]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[qat-driver]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[qemu]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[rust-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[skopeo]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
-    pkg_mgr_supported[terraform]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[tkn]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[vagrant]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_SUPPORTED\"}"
-    pkg_mgr_supported[virtualbox]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\",\"ClearLinux\": \"$PKG_MGR_UNSUPPORTED\"}"
+    pkg_mgr_supported[cni-plugins]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[crystal-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[docker]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[fly]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[go-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[gomplate]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[hadolint]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[helm]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[kind]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[kn]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[kubectl]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[kustomize]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[libvirt]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[nfs]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[nodejs]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[pip]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[podman]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[qat-driver]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[qemu]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[rust-lang]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[skopeo]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[terraform]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[tkn]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[vagrant]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
+    pkg_mgr_supported[virtualbox]="{\"Suse\": \"$PKG_MGR_SUPPORTED\",\"Debian\": \"$PKG_MGR_SUPPORTED\",\"RedHat\": \"$PKG_MGR_SUPPORTED\"}"
 
     # PIP required
-    pkg_mgr_supported[ansible]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
-    pkg_mgr_supported[bindep]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
-    pkg_mgr_supported[docker-compose]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
-    pkg_mgr_supported[pipx]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
-    pkg_mgr_supported[tox]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\",\"ClearLinux\": \"$PKG_MGR_PIP_REQUIRED\"}"
+    pkg_mgr_supported[ansible]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\"}"
+    pkg_mgr_supported[bindep]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\"}"
+    pkg_mgr_supported[docker-compose]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\"}"
+    pkg_mgr_supported[pipx]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\"}"
+    pkg_mgr_supported[tox]="{\"Suse\": \"$PKG_MGR_PIP_REQUIRED\",\"Debian\": \"$PKG_MGR_PIP_REQUIRED\",\"RedHat\": \"$PKG_MGR_PIP_REQUIRED\"}"
 
     _check_requirements
 
@@ -175,13 +172,6 @@ function main {
             fi
             INSTALLER_CMD+=" install"
             PKG_OS_FAMILY="RedHat"
-        ;;
-        clear-linux-os)
-            INSTALLER_CMD="swupd bundle-add"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" --quiet"
-            fi
-            PKG_OS_FAMILY="ClearLinux"
         ;;
     esac
 

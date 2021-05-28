@@ -17,7 +17,6 @@ project provides a common line interface for interacting with Tekton.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
-| ClearLinux |            | [x]       |
 
 ## How to use it
 

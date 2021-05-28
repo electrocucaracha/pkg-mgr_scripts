@@ -15,7 +15,6 @@ x86 virtualization.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
-| ClearLinux |            | [ ]       |
 
 ## How to use it
 

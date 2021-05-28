@@ -56,10 +56,6 @@ function main {
             fi
             INSTALLER_CMD+=" install"
         ;;
-        clear-linux-os)
-            echo "WARN: The Crystal programming isn't supported by ClearLinux yet."
-            return
-        ;;
     esac
     # shellcheck disable=SC2086
     sudo -H -E $INSTALLER_CMD $pkgs

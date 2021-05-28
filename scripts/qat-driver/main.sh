@@ -104,33 +104,6 @@ function main {
                 return
             fi
         ;;
-        clear-linux-os)
-            INSTALLER_CMD="swupd bundle-add"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" --quiet"
-            fi
-            pkgs="linux-firmware-qat"
-            sudo swupd update --download
-            sudo tee /etc/systemd/system/qat_service.service << EOF
-[Unit]
-Description=Intel QuickAssist Technology service
-
-[Service]
-Type=forking
-Restart=no
-TimeoutSec=5min
-IgnoreSIGPIPE=no
-KillMode=process
-GuessMainPID=no
-RemainAfterExit=yes
-ExecStart=/etc/init.d/qat_service start
-ExecStop=/etc/init.d/qat_service stop
-
-[Install]
-WantedBy=multi-user.target
-EOF
-            return
-        ;;
     esac
     echo "INFO: Installing building packages ($pkgs)"
     # shellcheck disable=SC2086

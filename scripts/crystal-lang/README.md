@@ -18,7 +18,6 @@ global type inference algorithm.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
-| ClearLinux |            | [ ]       |
 
 ## How to use it
 

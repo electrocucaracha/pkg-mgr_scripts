@@ -84,28 +84,6 @@ function main {
                     sudo -H -E "${PKG_MANAGER}" -y install --quiet --errorlevel=0 "$vagrant_pkg"
                 fi
             ;;
-            clear-linux-os)
-                OS="$(uname | tr '[:upper:]' '[:lower:]')"
-                ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
-                vagrant_pkg="vagrant_${version}_${OS}_${ARCH}.zip"
-                if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-                    curl -o "$vagrant_pkg" "$vagrant_url_pkg/$vagrant_pkg"
-                    if ! command -v unzip; then
-                        sudo -H -E swupd bundle-add unzip
-                    fi
-                    unzip "$vagrant_pkg"
-                    sudo -H -E swupd bundle-add devpkg-compat-fuse-soname2 fuse
-                else
-                    curl -o "$vagrant_pkg" "$vagrant_url_pkg/$vagrant_pkg" 2>/dev/null
-                    if ! command -v unzip; then
-                        sudo -H -E swupd bundle-add --quiet unzip
-                    fi
-                    unzip -qq "$vagrant_pkg"
-                    sudo -H -E swupd bundle-add --quiet devpkg-compat-fuse-soname2 fuse
-                fi
-                sudo mkdir -p /usr/local/bin
-                sudo mv vagrant /usr/local/bin/
-            ;;
         esac
         vagrant autocomplete install
         popd > /dev/null
