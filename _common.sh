@@ -26,3 +26,18 @@ vagrant_cmd="$(command -v vagrant)"
 vagrant_up_cmd="$vagrant_cmd up --no-destroy-on-error $VAGRANT_NAME"
 vagrant_destroy_cmd="$vagrant_cmd destroy -f $VAGRANT_NAME"
 export vagrant_cmd vagrant_up_cmd vagrant_destroy_cmd
+
+# MacOS provides bash v3
+export profiles="cloud devops drivers lang utils virt"
+export profile_cloud="cni-plugins helm kn kind kubectl kustomize podman skopeo tkn"
+export profile_devops="docker fly terraform vagrant"
+export profile_drivers="qat-driver"
+export profile_lang="crystal-lang go-lang nodejs rust-lang"
+export profile_utils="gomplate hadolint nfs pip"
+export profile_virt="libvirt qemu virtualbox"
+ci_tests=""
+for profile in $profiles; do
+    tests="profile_$profile"
+    ci_tests+=" ${!tests}"
+done
+export ci_tests
