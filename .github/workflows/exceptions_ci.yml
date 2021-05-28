@@ -8,7 +8,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-name: Check All
+name: Check Test Exceptions
 # yamllint disable-line rule:truthy
 on:
   push:
@@ -21,14 +21,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse]
-        profile: [main, cloud, devops, drivers, lang, utils, virt]
-    env:
-      VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
-      CPUS: 2
-      MEMORY: 12288
-      VAGRANT_NAME: ${{ matrix.name }}
-      PROFILE: ${{ matrix.profile }}
+        include:
+          - os: opensuse
+            test: docker
+          - os: ubuntu_focal
+            test: nodejs
     steps:
       - uses: actions/checkout@v2
       - name: Cache Vagrant boxes
@@ -38,11 +35,13 @@ jobs:
           key: ${{ runner.os }}-vagrant-${{ hashFiles('Vagrantfile') }}
           restore-keys: |
             ${{ runner.os }}-vagrant-
-      - name: Install Vagrant Reload plugin
-        run: vagrant plugin install vagrant-reload
-      - name: Install GNU tools
-        run: brew install proctools iproute2mac
       - name: Replace shorten links
         run: find . -type f -iname "*sh" -exec sed -i '.bak' 's|http://bit.ly/install_pkg|https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/install.sh|g' {} \;
       - name: Run integration tests
-        run: ./check.sh
+        env:
+          VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
+          CPUS: 2
+          MEMORY: 12288
+          VAGRANT_NAME: ${{ matrix.os }}
+          TEST: ${{ matrix.test }}
+        run: cd ./scripts/${TEST}; vagrant up ${VAGRANT_NAME}
