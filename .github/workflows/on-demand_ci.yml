@@ -19,6 +19,7 @@ jobs:
   check:
     runs-on: macos-10.15
     strategy:
+      fail-fast: false
       matrix:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse]
         profile: [main, cloud, devops, drivers, lang, utils, virt]
