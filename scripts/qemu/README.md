@@ -20,7 +20,7 @@ architecture to run on another.
 | Ubuntu     | 20.04      | [x]       |
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
-| OpenSUSE   | Tumbleweed | [x]       |
+| OpenSUSE   | Tumbleweed | [ ]       |
 
 ## How to use it
 
