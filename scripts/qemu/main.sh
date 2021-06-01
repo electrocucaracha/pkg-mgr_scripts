@@ -126,13 +126,15 @@ function main {
                 popd > /dev/null
             fi
             sudo -H -E zypper install -y --no-recommends git gcc make bzip2 glib2-devel libpixman-1-0-devel diffutils zlib-devel libbz2-devel libopenssl-devel ncurses-devel readline-devel sqlite3 sqlite3-devel tack xz-devel unzip
-            curl https://pyenv.run | bash
-            export PATH="$HOME/.pyenv/bin:$PATH"
-            eval "$(pyenv init -)"
-            # pyenv uses /tmp folder to download binaries and tarballs
-            sudo rm -rf /tmp/*
-            pyenv install 3.8.5
-            pyenv global 3.8.5
+            if _vercmp "$(python -V 2>&1 | awk '{print $2}')" '<' "3.7"; then
+                curl https://pyenv.run | bash
+                export PATH="$HOME/.pyenv/bin:$PATH"
+                eval "$(pyenv init -)"
+                # pyenv uses /tmp folder to download binaries and tarballs
+                sudo rm -rf /tmp/*
+                pyenv install 3.8.10
+                pyenv global 3.8.10
+            fi
         ;;
         ubuntu|debian)
             configure_flags+=" --enable-numa"
