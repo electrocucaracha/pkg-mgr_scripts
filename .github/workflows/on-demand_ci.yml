@@ -14,6 +14,9 @@ on:
   push:
     branches:
       - 'master'
+  pull_request:
+    branches:
+      - 'master'
 
 jobs:
   check:
@@ -23,16 +26,6 @@ jobs:
       matrix:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse]
         profile: [main, cloud, devops, drivers, lang, utils, virt]
-        exclude:
-          # TODO: Address this isolated case
-          - name: opensuse
-            profile: devops
-    env:
-      VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
-      CPUS: 2
-      MEMORY: 12288
-      VAGRANT_NAME: ${{ matrix.name }}
-      PROFILE: ${{ matrix.profile }}
     steps:
       - uses: actions/checkout@v2
       - name: Cache Vagrant boxes
@@ -49,4 +42,13 @@ jobs:
       - name: Replace shorten links
         run: find . -type f -iname "*sh" -exec sed -i '.bak' 's|http://bit.ly/install_pkg|https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/install.sh|g' {} \;
       - name: Run integration tests
+        env:
+          VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
+          CPUS: 2
+          MEMORY: 12288
+          VAGRANT_NAME: ${{ matrix.name }}
+          PROFILE: ${{ matrix.profile }}
         run: ./check.sh
+      - name: Check logs
+        if: failure()
+        run: cat /tmp/check_*.log
