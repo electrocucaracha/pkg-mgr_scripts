@@ -39,7 +39,7 @@ fi
 
 info "Validate autocomplete functions"
 if declare -F | grep -q "_docker"; then
-    error "Docker autocomplete functions weren't installed"
+    warn "Docker autocomplete functions weren't installed"
 fi
 
 docker_image="quay.io/openshifttest/alpine:latest"
