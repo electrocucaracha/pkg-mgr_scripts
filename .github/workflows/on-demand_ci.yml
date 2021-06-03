@@ -44,11 +44,19 @@ jobs:
       - name: Run integration tests
         env:
           VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
-          CPUS: 2
-          MEMORY: 12288
+          CPUS: 1
+          MEMORY: 4096
           VAGRANT_NAME: ${{ matrix.name }}
           PROFILE: ${{ matrix.profile }}
         run: ./check.sh
+      - name: Check memory
+        if: failure()
+        run: vm_stat | awk '/Pages free/ {print $3 * 4 }'
+      - name: Check VMs
+        if: failure()
+        run: |
+          vagrant global-status --prune
+          VBoxManage list vms
       - name: Check logs
         if: failure()
         run: cat /tmp/check_*.log
