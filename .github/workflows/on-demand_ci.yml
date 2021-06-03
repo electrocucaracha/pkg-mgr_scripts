@@ -10,13 +10,7 @@
 
 name: Check All
 # yamllint disable-line rule:truthy
-on:
-  push:
-    branches:
-      - 'master'
-  pull_request:
-    branches:
-      - 'master'
+on: [push, pull_request]
 
 jobs:
   check:
