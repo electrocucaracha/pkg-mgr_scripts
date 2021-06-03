@@ -44,8 +44,6 @@ jobs:
       - name: Run integration tests
         env:
           VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
-          CPUS: 1
-          MEMORY: 4096
           VAGRANT_NAME: ${{ matrix.name }}
           PROFILE: ${{ matrix.profile }}
         run: ./check.sh

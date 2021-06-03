@@ -16,7 +16,6 @@ source pinned_versions.env
 
 mgmt_nic="$(ip route get 1.1.1.1 | awk 'NR==1 { print $5 }')"
 ratio=$((1024*1024)) # MB
-export CPUS=${CPUS:-1}
 export MEMORY=${MEMORY:-3072}
 export TIMEOUT=${TIMEOUT:-1800}
 export VAGRANT_NAME=${VAGRANT_NAME:-ubuntu_xenial}
