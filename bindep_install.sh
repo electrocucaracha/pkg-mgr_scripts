@@ -13,7 +13,7 @@ set -o nounset
 set -o pipefail
 
 if ! command -v bindep; then
-    curl -fsSL http://bit.ly/install_pkg | PKG=bindep bash
+    curl -fsSL https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/install.sh | PKG=bindep bash
 fi
 
 if [ -n "${PKG_BINDEP_PROFILE:-}" ]; then
@@ -24,4 +24,4 @@ fi
 export PKG
 
 echo "Installing binary dependencies..."
-curl -fsSL http://bit.ly/install_pkg | bash
+curl -fsSL https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/install.sh | bash

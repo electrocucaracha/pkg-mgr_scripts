@@ -82,7 +82,7 @@ if ! sudo docker push "$mgmt_ip:5000/bash:test"; then
 fi
 if ! command -v jq; then
     info "Installing jq requirement"
-    curl -fsSL http://bit.ly/install_pkg | PKG="jq" bash
+    curl -fsSL https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/install.sh | PKG="jq" bash
 fi
 if [ "$(curl -s -X GET http://localhost:5000/v2/_catalog | jq -r '.repositories | contains(["bash"])')" != "true" ]; then
     error "Bash docker image wasn't stored in a local registry"
