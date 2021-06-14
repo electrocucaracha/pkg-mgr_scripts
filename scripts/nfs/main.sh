@@ -62,6 +62,7 @@ function main {
             sudo -H -E zypper install -y --no-recommends nfs-kernel-server
         ;;
         ubuntu|debian)
+            sudo apt update
             sudo -H -E apt-get -y install --no-install-recommends nfs-kernel-server
         ;;
         rhel|centos|fedora)
