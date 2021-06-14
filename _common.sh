@@ -13,6 +13,7 @@ if [[ "${DEBUG:-false}" == "true" ]]; then
 fi
 
 source pinned_versions.env
+source blacklist_versions
 
 mgmt_nic="$(ip route get 1.1.1.1 | awk 'NR==1 { print $5 }')"
 ratio=$((1024*1024)) # MB

@@ -1,0 +1,2 @@
+# https://github.com/tektoncd/cli/issues/1395
+export PKG_TKN_VERSION=0.18.0
