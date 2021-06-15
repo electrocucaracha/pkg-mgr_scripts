@@ -110,33 +110,42 @@ if [ "$(id -un -- 4)" != "sync" ]; then
     fi
 fi
 info "Setting rootless context"
+XDG_RUNTIME_DIR="/run/user/$(id -u)/"
+export XDG_RUNTIME_DIR
+sudo mkdir -p "$XDG_RUNTIME_DIR"
+sudo chown "$USER": "$XDG_RUNTIME_DIR"
+"$HOME/bin/dockerd-rootless-setuptool.sh" install --force
 if systemctl --user daemon-reload >/dev/null 2>&1; then
     systemctl --user start docker
     systemctl --user enable docker
     sudo loginctl enable-linger "$(whoami)"
+    trap "systemctl --user stop docker" EXIT
 else
+    export PATH="$HOME/bin:/sbin/:$PATH"
+
     attempt_counter=0
     max_attempts=5
     # Only Ubuntu based distros support overlay filesystems in rootless mode.
     # https://medium.com/@tonistiigi/experimenting-with-rootless-docker-416c9ad8c0d6
     nohup bash -c "$HOME/bin/dockerd-rootless.sh --experimental --storage-driver vfs" > /tmp/dockerd-rootless.log 2>&1 &
-    trap "kill -s SIGTERM \$(cat /run/user/1000/docker.pid)" EXIT
     until [ -f /tmp/dockerd-rootless.log ] && grep -q "Daemon has completed initialization" /tmp/dockerd-rootless.log; do
         if [ "${attempt_counter}" -eq "${max_attempts}" ];then
+            cat /tmp/dockerd-rootless.log
             error "Max attempts reached"
         fi
         attempt_counter=$((attempt_counter+1))
         sleep 5
     done
+    if [ -f /run/user/1000/docker.pid ]; then
+        trap "kill -s SIGTERM \$(cat /run/user/1000/docker.pid)" EXIT
+    elif [ -f "$HOME/.docker/run/docker.pid" ]; then
+        trap 'kill -s SIGTERM $(cat $HOME/.docker/run/docker.pid)' EXIT
+    fi
+fi
+if docker context ls | grep -q rootless; then
+    docker context rm rootless
 fi
 docker context create rootless --description "for rootless mode" --docker "host=unix://$XDG_RUNTIME_DIR/docker.sock"
-
-info "Validating root execution with rootless container execution"
-sudo docker run --rm -d --user sync --name rootoutside-userinside --net=none "$docker_image" sleep infinity
-if ! pgrep -u "$(id -u sync)" | grep -q "$(sudo docker inspect rootoutside-userinside --format "{{.State.Pid}}")"; then
-    error "Running root container has different sync user than host"
-fi
-sudo docker stop rootoutside-userinside
 
 info "Saving $docker_image image"
 sudo docker image save -o ~/docker.tar "$docker_image"
