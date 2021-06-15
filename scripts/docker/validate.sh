@@ -115,12 +115,18 @@ if systemctl --user daemon-reload >/dev/null 2>&1; then
     systemctl --user enable docker
     sudo loginctl enable-linger "$(whoami)"
 else
+    attempt_counter=0
+    max_attempts=5
     # Only Ubuntu based distros support overlay filesystems in rootless mode.
     # https://medium.com/@tonistiigi/experimenting-with-rootless-docker-416c9ad8c0d6
     nohup bash -c "$HOME/bin/dockerd-rootless.sh --experimental --storage-driver vfs" > /tmp/dockerd-rootless.log 2>&1 &
     trap "kill -s SIGTERM \$(cat /run/user/1000/docker.pid)" EXIT
-    until grep -q "Daemon has completed initialization" /tmp/dockerd-rootless.log; do
-        sleep 2
+    until [ -f /tmp/dockerd-rootless.log ] && grep -q "Daemon has completed initialization" /tmp/dockerd-rootless.log; do
+        if [ "${attempt_counter}" -eq "${max_attempts}" ];then
+            error "Max attempts reached"
+        fi
+        attempt_counter=$((attempt_counter+1))
+        sleep 5
     done
 fi
 docker context create rootless --description "for rootless mode" --docker "host=unix://$XDG_RUNTIME_DIR/docker.sock"
