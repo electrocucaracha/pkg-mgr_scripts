@@ -43,15 +43,22 @@ jobs:
           VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
           VAGRANT_NAME: ${{ matrix.name }}
           PROFILE: ${{ matrix.profile }}
+          MEMORY: 4096
         run: ./check.sh
-      - name: Check memory
-        if: failure()
-        run: vm_stat | awk '/Pages free/ {print $3 * 4 }'
-      - name: Check VMs
+      - name: Check HW resources
         if: failure()
         run: |
-          vagrant global-status --prune
-          VBoxManage list vms
-      - name: Check logs
+          vm_stat
+          top -l 1 -n 0
+          VBoxManage list runningvms --long
+      - name: Check VM logs
         if: failure()
+        run: |
+          read -a running_vm <<< $(vagrant global-status --prune | grep running)
+          if [[ -n $running_vm ]]; then
+              cd ${running_vm[4]}
+              vagrant ssh ${running_vm[1]} -- "cat ~/*.log"
+          fi
+      - name: Check All logs
+        if: always()
         run: cat /tmp/check_*.log
