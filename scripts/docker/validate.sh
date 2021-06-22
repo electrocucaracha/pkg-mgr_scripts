@@ -134,7 +134,7 @@ else
             error "Max attempts reached"
         fi
         attempt_counter=$((attempt_counter+1))
-        sleep 5
+        sleep $((attempt_counter*5))
     done
     if [ -f /run/user/1000/docker.pid ]; then
         trap "kill -s SIGTERM \$(cat /run/user/1000/docker.pid)" EXIT

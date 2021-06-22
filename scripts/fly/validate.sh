@@ -40,7 +40,7 @@ function get_version {
             exit 1
         fi
         attempt_counter=$((attempt_counter+1))
-        sleep 2
+        sleep $((attempt_counter*2))
     done
     echo "${version#*v}"
 }
