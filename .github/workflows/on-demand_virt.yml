@@ -8,17 +8,22 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-name: Check All
+name: Check All - Virtualization Profile
 # yamllint disable-line rule:truthy
 on:
   push:
-    paths-ignore:
-      - '.github/*'
-      - 'scripts/*'
+    paths:
+      - 'scripts/libvirt/*'
+      - 'scripts/qemu/*'
+      - 'scripts/virtualbox/*'
+      - '!**.md'
   pull_request:
-    paths-ignore:
-      - '.github/*'
-      - 'scripts/*'
+    paths:
+      - pinned_versions.env
+      - 'scripts/libvirt/*'
+      - 'scripts/qemu/*'
+      - 'scripts/virtualbox/*'
+      - '!**.md'
 
 jobs:
   check:
@@ -44,8 +49,8 @@ jobs:
         env:
           VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
           VAGRANT_NAME: ${{ matrix.name }}
-          PROFILE: main
-          MEMORY: 4096
+          PROFILE: virt
+          MEMORY: 12288
         run: ./check.sh
       - name: Check HW resources
         if: failure()
