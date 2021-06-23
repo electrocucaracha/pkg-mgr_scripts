@@ -10,10 +10,7 @@
 
 name: Run misspell
 # yamllint disable-line rule:truthy
-on:
-  push:
-    branches:
-      - 'master'
+on: [push, pull_request]
 
 jobs:
   check:

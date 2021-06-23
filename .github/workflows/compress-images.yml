@@ -11,6 +11,12 @@
 name: Compress Images
 # yamllint disable-line rule:truthy
 on:
+  push:
+    paths:
+      - '**.jpg'
+      - '**.jpeg'
+      - '**.png'
+      - '**.webp'
   pull_request:
     paths:
       - '**.jpg'
