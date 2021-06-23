@@ -8,21 +8,27 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-name: Check All
+name: Check All - Programming Languages Profile
 # yamllint disable-line rule:truthy
 on:
   push:
     paths:
-      - '**.sh'
-      - '!.github/*'
-      - '!scripts/*'
+      - pinned_versions.env
+      - 'scripts/crystal-lang/*'
+      - 'scripts/go-lang/*'
+      - 'scripts/nodejs/*'
+      - 'scripts/rust-lang/*'
+      - '!**.md'
   pull_request:
     branches:
       - master
     paths:
-      - '**.sh'
-      - '!.github/*'
-      - '!scripts/*'
+      - pinned_versions.env
+      - 'scripts/crystal-lang/*'
+      - 'scripts/go-lang/*'
+      - 'scripts/nodejs/*'
+      - 'scripts/rust-lang/*'
+      - '!**.md'
 
 jobs:
   check:
@@ -48,7 +54,7 @@ jobs:
         env:
           VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
           VAGRANT_NAME: ${{ matrix.name }}
-          PROFILE: main
+          PROFILE: lang
           MEMORY: 4096
         run: ./check.sh
       - name: Check HW resources

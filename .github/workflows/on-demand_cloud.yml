@@ -8,21 +8,37 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-name: Check All
+name: Check All - Cloud Profile
 # yamllint disable-line rule:truthy
 on:
   push:
     paths:
-      - '**.sh'
-      - '!.github/*'
-      - '!scripts/*'
+      - pinned_versions.env
+      - 'scripts/cni-plugins/*'
+      - 'scripts/helm/*'
+      - 'scripts/kn/*'
+      - 'scripts/kind/*'
+      - 'scripts/kubectl/*'
+      - 'scripts/kustomize/*'
+      - 'scripts/podman/*'
+      - 'scripts/skopeo/*'
+      - 'scripts/tkn/*'
+      - '!**.md'
   pull_request:
     branches:
       - master
     paths:
-      - '**.sh'
-      - '!.github/*'
-      - '!scripts/*'
+      - pinned_versions.env
+      - 'scripts/cni-plugins/*'
+      - 'scripts/helm/*'
+      - 'scripts/kn/*'
+      - 'scripts/kind/*'
+      - 'scripts/kubectl/*'
+      - 'scripts/kustomize/*'
+      - 'scripts/podman/*'
+      - 'scripts/skopeo/*'
+      - 'scripts/tkn/*'
+      - '!**.md'
 
 jobs:
   check:
@@ -48,7 +64,7 @@ jobs:
         env:
           VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
           VAGRANT_NAME: ${{ matrix.name }}
-          PROFILE: main
+          PROFILE: cloud
           MEMORY: 4096
         run: ./check.sh
       - name: Check HW resources
