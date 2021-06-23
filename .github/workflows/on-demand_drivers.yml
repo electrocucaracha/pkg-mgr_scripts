@@ -8,21 +8,21 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-name: Check All
+name: Check All - Drivers Profile
 # yamllint disable-line rule:truthy
 on:
   push:
     paths:
-      - '**.sh'
-      - '!.github/*'
-      - '!scripts/*'
+      - pinned_versions.env
+      - 'scripts/qat-driver/*'
+      - '!**.md'
   pull_request:
     branches:
       - master
     paths:
-      - '**.sh'
-      - '!.github/*'
-      - '!scripts/*'
+      - pinned_versions.env
+      - 'scripts/qat-driver/*'
+      - '!**.md'
 
 jobs:
   check:
@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse]
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_7]
     steps:
       - uses: actions/checkout@v2
       - name: Cache Vagrant boxes
@@ -48,8 +48,8 @@ jobs:
         env:
           VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
           VAGRANT_NAME: ${{ matrix.name }}
-          PROFILE: main
-          MEMORY: 4096
+          PROFILE: drivers
+          MEMORY: 12288
         run: ./check.sh
       - name: Check HW resources
         if: failure()
