@@ -31,6 +31,7 @@ function get_github_latest_release {
         attempt_counter=$((attempt_counter+1))
         sleep $((attempt_counter*2))
     done
+
     echo "${version#v}"
 }
 
@@ -61,7 +62,7 @@ while IFS= read -r line; do
     var=$(echo "${line#*\$\{}" | awk -F ':' '{ print $1}')
     if [[ "${blacklist}" != *"${var}"* ]]; then
         func=$(echo "${line#*\$(}" | awk -F ')' '{ print $1}')
-        echo "export ${var}=$($func)" | tee --append pinned_versions.env
+        echo "export ${var}=$($func)" >> pinned_versions.env
     fi
 done < <(grep -r "_VERSION.*get_github_latest" scripts/ | awk -F '=' '{print $2}')
 sort -o pinned_versions.env pinned_versions.env
