@@ -13,7 +13,6 @@ name: Check All - DevOps Profile
 on:
   push:
     paths:
-      - pinned_versions.env
       - 'scripts/docker/*'
       - 'scripts/fly/*'
       - 'scripts/terraform/*'
@@ -23,12 +22,14 @@ on:
     branches:
       - master
     paths:
-      - pinned_versions.env
       - 'scripts/docker/*'
       - 'scripts/fly/*'
       - 'scripts/terraform/*'
       - 'scripts/vagrant/*'
       - '!**.md'
+  pull_request_review:
+    types:
+      - submitted
 
 jobs:
   check:
@@ -67,10 +68,10 @@ jobs:
         if: failure()
         shell: bash
         run: |
-          read -a running_vm <<< $(vagrant global-status --prune | grep running)
-          if [[ -n $running_vm ]]; then
-              cd ${running_vm[4]}
-              vagrant ssh ${running_vm[1]} -- "cat ~/*.log"
+          running_vm_info=$(vagrant global-status --prune | grep running)
+          if [[ -n $running_vm_info ]]; then
+              cd $(echo $running_vm_info | awk '{ print $NF}')
+              vagrant ssh $(echo $running_vm_info | awk '{ print $2 }') -- "cat ~/*.log"
           fi
       - name: Check All logs
         if: always()
