@@ -163,7 +163,7 @@ function main {
         rhel|centos|fedora)
             configure_flags+=" --enable-numa"
             PKG_MANAGER=$(command -v dnf || command -v yum)
-            sudo -H -E "${PKG_MANAGER}" -y install python36 gcc make glib2-devel pixman-devel zlib-devel libpmem-devel numactl-devel bzip2 unzip
+            sudo -H -E "${PKG_MANAGER}" -y install python36 gcc make glib2-devel pixman-devel zlib-devel libpmem-devel numactl-devel bzip2 unzip perl
         ;;
     esac
     if ! command -v ninja || _vercmp "$(ninja --version)" '<' "1.7"; then
