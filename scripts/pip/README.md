@@ -17,6 +17,7 @@ Python Package Index (PyPI).
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
+| OpenSUSE   | Leap       | [x]       |
 | Debian     | 8          | [ ]       |
 | Debian     | 9          | [x]       |
 | Debian     | 10         | [x]       |
