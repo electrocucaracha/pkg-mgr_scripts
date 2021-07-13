@@ -67,11 +67,15 @@ function main {
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+="-q "
                 fi
-                if ! $INSTALLER_CMD repos | grep "openSUSE_Leap_15.1_Update"; then
+                if ! $INSTALLER_CMD repos | grep -q "openSUSE_Leap_15.1_Update"; then
                     $INSTALLER_CMD addrepo https://download.opensuse.org/repositories/openSUSE:Leap:15.1:Update/standard/openSUSE:Leap:15.1:Update.repo
                 fi
                 $INSTALLER_CMD --gpg-auto-import-keys refresh
-                $INSTALLER_CMD install -y --no-recommends python38
+                if [[ "${ID,,}" == *leap* ]]; then
+                    $INSTALLER_CMD install -y --no-recommends python3
+                elif [[ "${ID,,}" == *tumbleweed* ]]; then
+                    $INSTALLER_CMD install -y --no-recommends python38
+                fi
             ;;
             ubuntu|debian)
                 INSTALLER_CMD="apt-get -y "
