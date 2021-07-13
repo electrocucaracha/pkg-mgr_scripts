@@ -19,7 +19,7 @@ linux:
     name: generic/ubuntu1804
   - alias: ubuntu_focal
     name: generic/ubuntu2004
-  - alias: opensuse
+  - alias: opensuse_tumbleweed
     name: opensuse/Tumbleweed.x86_64
   - alias: debian_jessie
     name: generic/debian8
