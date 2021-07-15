@@ -15,6 +15,7 @@ secrets.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
+| OpenSUSE   | Leap       | [x]       |
 
 ## How to use it
 

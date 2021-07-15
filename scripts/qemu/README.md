@@ -21,6 +21,7 @@ architecture to run on another.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [ ]       |
+| OpenSUSE   | Leap       | [x]       |
 
 ## How to use it
 

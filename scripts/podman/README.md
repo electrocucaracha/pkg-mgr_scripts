@@ -16,6 +16,7 @@ run as root or in rootless mode.
 | CentOS     | 7          | [ ]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
+| OpenSUSE   | Leap       | [x]       |
 
 ## How to use it
 
