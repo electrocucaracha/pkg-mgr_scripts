@@ -21,7 +21,8 @@ for server-side and client-side scripts.
 | Ubuntu     | 20.04      | [x]       |
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
-| OpenSUSE   | Tumbleweed | [ ]       |
+| OpenSUSE   | Tumbleweed | [x]       |
+| OpenSUSE   | Leap       | [x]       |
 
 ## How to use it
 

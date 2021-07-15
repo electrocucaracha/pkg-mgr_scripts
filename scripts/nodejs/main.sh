@@ -33,7 +33,12 @@ function main {
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+="-q "
             fi
-            INSTALLER_CMD+="install -y --no-recommends nodejs16"
+            INSTALLER_CMD+="install -y --no-recommends "
+            if [[ "${ID,,}" == *leap* ]]; then
+                INSTALLER_CMD+="nodejs14"
+            elif [[ "${ID,,}" == *tumbleweed* ]]; then
+                INSTALLER_CMD+="nodejs16"
+            fi
         ;;
         ubuntu|debian)
             url="https://deb"
@@ -62,8 +67,11 @@ function main {
         curl -fsSL "$url" | sudo -E bash -
     fi
 
-    INSTALLER_CMD+=" yarn"
     $INSTALLER_CMD
+    rm -rf ~/.yarn/
+    curl -o- -L https://yarnpkg.com/install.sh | bash
+    # shellcheck disable=SC2016
+    echo 'export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH' | sudo tee /etc/profile.d/yarn_path.sh > /dev/null
 }
 
 main
