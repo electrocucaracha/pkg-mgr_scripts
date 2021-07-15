@@ -71,11 +71,13 @@ function main {
                 INSTALLER_CMD+=" -q"
             fi
             INSTALLER_CMD+=" install -y"
-            sudo -H -E "$INSTALLER_CMD" -t pattern devel_C_C++
+            eval "sudo -H -E $INSTALLER_CMD -t pattern devel_C_C++"
             INSTALLER_CMD+=" --no-recommends"
-            pkgs="pciutils libudev-devel openssl-devel gcc-c++ kernel-source kernel-syms"
-            echo "WARN: QAT driver is not supported in openSUSE $VERSION_ID"
-            return
+            pkgs="pciutils libudev-devel openssl-devel gcc-c++ kernel-source kernel-syms insserv-compat"
+            if [[ "${ID,,}" == *tumbleweed* ]]; then
+                echo "WARN: QAT driver is not supported in openSUSE $VERSION_ID"
+                return
+            fi
         ;;
         ubuntu|debian)
             INSTALLER_CMD="apt-get -y --no-install-recommends"

@@ -15,6 +15,7 @@ control processing.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [ ]       |
 | OpenSUSE   | Tumbleweed | [ ]       |
+| OpenSUSE   | Leap       | [x]       |
 
 ## How to use it
 
