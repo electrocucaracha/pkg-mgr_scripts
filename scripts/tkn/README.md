@@ -17,6 +17,7 @@ project provides a common line interface for interacting with Tekton.
 | CentOS     | 7          | [x]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
+| OpenSUSE   | Leap       | [x]       |
 
 ## How to use it
 

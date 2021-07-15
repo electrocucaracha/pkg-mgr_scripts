@@ -17,6 +17,7 @@ to lint the Bash code inside RUN instructions.
 | CentOS     | 7          | [ ]       |
 | CentOS     | 8          | [x]       |
 | OpenSUSE   | Tumbleweed | [x]       |
+| OpenSUSE   | Leap       | [x]       |
 
 ## How to use it
 

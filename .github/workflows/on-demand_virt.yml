@@ -35,7 +35,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed]
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
     steps:
       - uses: actions/checkout@v2
       - name: Cache Vagrant boxes
