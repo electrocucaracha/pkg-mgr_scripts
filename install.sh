@@ -103,6 +103,7 @@ function main {
     pkg_mgr_supported[krb5-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"libkrb5-dev\",\"RedHat\": \"krb5-devel\"}"
     pkg_mgr_supported[libassuan]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan\"}"
     pkg_mgr_supported[libassuan-devel]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"$PKG_MGR_UNSUPPORTED\",\"RedHat\": \"libassuan-devel\"}"
+    pkg_mgr_supported[libguestfs]="{\"Suse\": \"guestfs-tools\",\"Debian\": \"libguestfs-tools\",\"RedHat\": \"libguestfs-tools\"}"
     pkg_mgr_supported[mkpasswd]="{\"Suse\": \"$PKG_MGR_UNSUPPORTED\",\"Debian\": \"mkpasswd\",\"RedHat\": \"expect\"}"
     pkg_mgr_supported[python-devel]="{\"Suse\": \"python-devel\",\"Debian\": \"python-dev\",\"RedHat\": \"python3-devel python2-devel\"}"
     pkg_mgr_supported[qemu-utils]="{\"Suse\": \"qemu-tools\",\"Debian\": \"qemu-utils\",\"RedHat\": \"qemu-utils\"}"
