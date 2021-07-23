@@ -93,7 +93,7 @@ if [ "$(sudo docker regctl image ratelimit "$docker_image" | jq -r '.Set')" != "
 fi
 
 info "Validating root execution with root container execution"
-sudo docker run --rm -d --name rootoutside-rootinside --net=none "$docker_image" sleep infinity
+sudo docker run --rm -d --name rootoutside-rootinside --net=none --userns=host "$docker_image" sleep infinity
 if ! pgrep -u "$(id -u root)" | grep -q "$(sudo docker inspect rootoutside-rootinside --format "{{.State.Pid}}")"; then
     error "Running root container has different root user than host"
 fi

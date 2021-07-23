@@ -41,6 +41,7 @@ Vagrant.configure("2") do |config|
     sh.env = {
       'PKG_DEBUG': "#{$debug}",
       'PKG_REGCLIENT_VERSION': "#{$version}",
+      'PKG_DOCKER_ENABLE_USERNS_REMAP': "true",
 #      'PKG_DOCKER_INSECURE_REGISTRIES': '172.30.0.0/16',
 #      'PKG_DOCKER_REGISTRY_MIRRORS': '"http://localhost:5000"',
 #      'PKG_DOCKER_DEFAULT_ADDRESS_POOLS': '{"base":"10.244.1.0/24","size":24}',

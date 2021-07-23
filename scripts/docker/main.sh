@@ -141,8 +141,13 @@ function main {
     if [ -n "${PKG_DOCKER_DEFAULT_ADDRESS_POOLS:-}" ]; then
         default_address_pools="$PKG_DOCKER_DEFAULT_ADDRESS_POOLS"
     fi
-    sudo tee /etc/docker/daemon.json << EOF
-{
+    echo "{" | sudo tee /etc/docker/daemon.json
+    if [[ "${PKG_DOCKER_ENABLE_USERNS_REMAP:-false}" == "true" ]]; then
+        sudo tee --append /etc/docker/daemon.json << EOF
+  "userns-remap": "default",
+EOF
+    fi
+    sudo tee --append /etc/docker/daemon.json << EOF
   "default-address-pools":[$default_address_pools],
   "registry-mirrors" : [${PKG_DOCKER_REGISTRY_MIRRORS:-}],
   "insecure-registries" : [$insecure_registries]
