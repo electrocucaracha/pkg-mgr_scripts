@@ -30,5 +30,6 @@ if ! command -v VBoxManage; then
     error "VirtualBox command line wasn't installed"
 fi
 
+sudo systemctl restart vboxdrv
 info "Validating VirtualBox execution"
 VBoxManage -v

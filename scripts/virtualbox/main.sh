@@ -42,6 +42,7 @@ function main {
                 fi
                 sudo rpm --import oracle_vbox.asc
             fi
+            pkgs+=" virtualbox-host-source"
             sudo zypper --gpg-auto-import-keys refresh
             INSTALLER_CMD="sudo -H -E zypper "
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
@@ -68,7 +69,6 @@ function main {
             pkgs+=" kernel-devel kernel-devel-$(uname -r)"
             eval "sudo $(command -v dnf || command -v yum) -y --quiet --errorlevel=0 install $pkgs"
             sudo usermod -aG vboxusers "$USER"
-            sudo /sbin/vboxconfig
         ;;
     esac
     popd 2> /dev/null
