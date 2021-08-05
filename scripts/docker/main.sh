@@ -75,6 +75,7 @@ function main {
                 if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                     INSTALLER_CMD+="-q=3 "
                 fi
+                sudo apt-get update
                 $INSTALLER_CMD --no-install-recommends install uidmap
                 curl -fsSL https://get.docker.com/ | sh
             ;;
