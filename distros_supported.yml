@@ -12,13 +12,14 @@ linux:
     name: generic/centos7
   - alias: centos_8
     name: generic/centos8
-    version: 3.2.20
+    version: 3.3.2
   - alias: ubuntu_xenial
     name: generic/ubuntu1604
   - alias: ubuntu_bionic
     name: generic/ubuntu1804
   - alias: ubuntu_focal
     name: generic/ubuntu2004
+    version: 3.3.2
   - alias: opensuse_tumbleweed
     name: opensuse/Tumbleweed.x86_64
   - alias: opensuse_leap
