@@ -62,3 +62,22 @@ info "Validating autocomplete functions"
 if declare -F | grep -q "_terraform-docs"; then
     error "terraform-docs autocomplete install failed"
 fi
+
+pushd "$(mktemp -d)"
+cat << EOF > main.tf
+terraform {
+  required_version = ">= 0.12.26"
+}
+
+output "hello_world" {
+  value = "Hello, World!"
+}
+EOF
+if ! terraform init; then
+    error "Terraform didn't initialize properly"
+fi
+if ! terraform apply -auto-approve; then
+    error "Terraform apply didn't work"
+fi
+terraform destroy -auto-approve
+popd
