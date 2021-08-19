@@ -65,9 +65,9 @@ jobs:
         shell: bash
         run: |
           running_vm_info=$(vagrant global-status --prune | grep running)
-          if [[ -n $running_vm_info ]]; then
-              cd $(echo $running_vm_info | awk '{ print $NF}')
-              vagrant ssh $(echo $running_vm_info | awk '{ print $2 }') -- "cat ~/*.log"
+          if [ "$running_vm_info" ]; then
+              cd "$(echo "$running_vm_info" | awk '{ print $NF}')"
+              vagrant ssh "$(echo "$running_vm_info" | awk '{ print $2 }')" -- "cat ~/*.log"
           fi
       - name: Check All logs
         if: always()
