@@ -5,3 +5,4 @@ OVMF.fd
 *.db
 coverage.*
 super-linter.log
+dictionary.dic
