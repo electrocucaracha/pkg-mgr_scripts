@@ -42,9 +42,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.vagrant.d/boxes
-          key: ${{ runner.os }}-vagrant-${{ hashFiles('Vagrantfile') }}
+          key: ${{ runner.os }}-vagrant-${{ matrix.name }}-${{ hashFiles('distros_supported.yml') }}
           restore-keys: |
-            ${{ runner.os }}-vagrant-
+            ${{ runner.os }}-vagrant-${{ matrix.name }}-
       - name: Install Vagrant Reload plugin
         run: vagrant plugin install vagrant-reload
       - name: Install GNU tools
