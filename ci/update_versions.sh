@@ -57,7 +57,7 @@ function get_github_latest_tag {
 }
 
 rm -f ./ci/pinned_versions.env
-blacklist="$(cat blacklist_versions)"
+blacklist="$(cat ./ci/blacklist_versions)"
 while IFS= read -r line; do
     var=$(echo "${line#*\$\{}" | awk -F ':' '{ print $1}')
     if [[ "${blacklist}" != *"${var}"* ]]; then

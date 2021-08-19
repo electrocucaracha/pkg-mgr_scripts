@@ -51,8 +51,8 @@ if ! command -v vagrant; then
     vagrant plugin install vagrant-reload
 fi
 
-source ./_utils.sh
-source ./_common.sh
+source ./ci/_utils.sh
+source ./ci/_common.sh
 
 trap exit_trap ERR
 

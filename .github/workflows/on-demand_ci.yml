@@ -53,7 +53,7 @@ jobs:
           VAGRANT_NAME: ${{ matrix.name }}
           PROFILE: main
           MEMORY: 4096
-        run: ./check.sh
+        run: ./ci/check.sh
       - name: Check HW resources
         if: failure()
         run: |
