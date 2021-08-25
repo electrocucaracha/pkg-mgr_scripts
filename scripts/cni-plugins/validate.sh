@@ -52,7 +52,8 @@ fi
 
 info "Validating CNI plugin binaries installation..."
 cni_version="$(get_version)"
-for plugin in bandwidth bridge dhcp firewall flannel host-device host-local ipvlan loopback macvlan portmap ptp sbr static tuning vlan; do
+# TODO: Add flannel once the binary is provided by its new repo (https://github.com/containernetworking/plugins/issues/655)
+for plugin in bandwidth bridge dhcp firewall host-device host-local ipvlan loopback macvlan portmap ptp sbr static tuning vlan; do
     if [ ! -f "${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}/$plugin" ]; then
         error "$plugin CNI binary doesn't exist"
     fi
