@@ -88,7 +88,6 @@ QAT
 qemu
 QuickAssist
 regclient
-REGCLIENT
 releng
 renderer
 RPC
