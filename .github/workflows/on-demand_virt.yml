@@ -17,21 +17,25 @@ on:
       - 'scripts/qemu/*'
       - 'scripts/virtualbox/*'
       - '!**.md'
-  pull_request:
-    branches:
-      - master
+  pull_request_review:
+    types:
+      - submitted
     paths:
+      - ci/pinned_versions.env
       - 'scripts/libvirt/*'
       - 'scripts/qemu/*'
       - 'scripts/virtualbox/*'
       - '!**.md'
-  pull_request_review:
-    types:
-      - submitted
 
 jobs:
   check:
     runs-on: macos-10.15
+    if: >-
+      (
+        github.event_name == 'pull_request_review' &&
+        github.event.review.state == 'approved'
+      ) ||
+      github.event_name != 'pull_request_review'
     strategy:
       fail-fast: false
       matrix:

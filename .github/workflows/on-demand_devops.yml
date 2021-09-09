@@ -18,22 +18,26 @@ on:
       - 'scripts/terraform/*'
       - 'scripts/vagrant/*'
       - '!**.md'
-  pull_request:
-    branches:
-      - master
+  pull_request_review:
+    types:
+      - submitted
     paths:
+      - ci/pinned_versions.env
       - 'scripts/docker/*'
       - 'scripts/fly/*'
       - 'scripts/terraform/*'
       - 'scripts/vagrant/*'
       - '!**.md'
-  pull_request_review:
-    types:
-      - submitted
 
 jobs:
   check:
     runs-on: macos-10.15
+    if: >-
+      (
+        github.event_name == 'pull_request_review' &&
+        github.event.review.state == 'approved'
+      ) ||
+      github.event_name != 'pull_request_review'
     strategy:
       fail-fast: false
       matrix:
@@ -56,7 +60,7 @@ jobs:
           VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
           VAGRANT_NAME: ${{ matrix.name }}
           PROFILE: devops
-          MEMORY: 4096
+          MEMORY: 12288
         run: ./ci/check.sh
       - name: Check HW resources
         if: failure()
