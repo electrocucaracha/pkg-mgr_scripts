@@ -25,7 +25,7 @@ function _print_msg {
     echo "$1: $2"
 }
 
-for cmd in node yarn; do
+for cmd in node npm yarn; do
     info "Validating $cmd installation..."
     if ! command -v "$cmd"; then
         error "$cmd command line wasn't installed"

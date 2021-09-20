@@ -72,6 +72,9 @@ function main {
     curl -o- -L https://yarnpkg.com/install.sh | bash
     # shellcheck disable=SC2016
     echo 'export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH' | sudo tee /etc/profile.d/yarn_path.sh > /dev/null
+
+    # Upgrade to lastest stable NPM version
+    sudo npm install npm@latest -g
 }
 
 main
