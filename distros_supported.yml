@@ -28,7 +28,7 @@ linux:
     version: "1.0.20210830"
   - alias: opensuse_leap
     name: opensuse/Leap-15.2.x86_64
-    version: "15.2.31.524"
+    version: "15.2.31.565"
   - alias: debian_jessie
     name: generic/debian8
     version: "3.4.0"
