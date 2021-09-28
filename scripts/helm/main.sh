@@ -30,35 +30,35 @@ function main {
 
     echo "INFO: Installing helm $version version..."
     if [ "$version" == "2" ]; then
+        helm_user="helm"
         export DESIRED_VERSION="v2.17.0"
         echo "INFO: Running get_helm.sh remote script"
         curl -L https://git.io/get_helm.sh | HELM_INSTALL_DIR=/usr/bin bash
 
         echo "INFO: Create helm service account"
-        id -u helm &>/dev/null || sudo useradd helm
-        echo "helm ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/helm
-        sudo mkdir -p /home/helm/.kube
-        sudo chown helm -R /home/helm/
+        id -u "$helm_user" &>/dev/null || sudo useradd "$helm_user"
+        echo "$helm_user ALL=(ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/$helm_user"
+        sudo mkdir -p "/home/$helm_user/.kube"
+        sudo chown "$helm_user" -R "/home/$helm_user/"
 
         echo "INFO: Creating helm service"
+        sudo su "$helm_user" -c "helm init --wait --client-only"
         sudo tee <<EOF /etc/systemd/system/helm-serve.service >/dev/null
 [Unit]
 Description=Helm Server
 After=network.target
 [Service]
-User=helm
 Restart=always
-ExecStart=/usr/bin/helm serve
+ExecStart=$(command -v helm) serve --home /home/$helm_user/.helm
 [Install]
 WantedBy=multi-user.target
 EOF
-        sudo su helm -c "helm init --wait --client-only"
         sudo systemctl enable helm-serve
         sudo systemctl start helm-serve
 
-        sudo su helm -c "helm repo remove local"
-        sudo su helm -c "helm repo add local http://localhost:8879/charts"
-        sudo su helm -c "helm repo update"
+        sudo su "$helm_user" -c "helm repo remove local"
+        sudo su "$helm_user" -c "helm repo add local http://localhost:8879/charts"
+        sudo su "$helm_user" -c "helm repo update"
     else
         echo "INFO: Running get-helm-3 remote script"
         curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
