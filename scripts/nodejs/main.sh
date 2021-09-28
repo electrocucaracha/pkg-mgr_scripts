@@ -57,7 +57,6 @@ function main {
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+=" --quiet --errorlevel=0"
             fi
-            INSTALLER_CMD+=" install nodejs"
 
             curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
         ;;
@@ -65,6 +64,12 @@ function main {
     if [ "${url:-}" != "" ]; then
         url+=".nodesource.com/setup_${version}.x"
         curl -fsSL "$url" | sudo -E bash -
+    fi
+
+    # TODO: Remove node source mirror workaround when works on CentOS distros
+    if [ "${ID,,}" == "centos" ]; then
+        curl -sL -o /tmp/nodejs.rpm "$(yumdownloader --urls nodejs -q)"
+        INSTALLER_CMD+=" install /tmp/nodejs.rpm"
     fi
 
     $INSTALLER_CMD
