@@ -99,6 +99,8 @@ function main {
             INSTALLER_CMD+=" install"
             echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
             curl -sL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
+            sudo apt-get update ||:
+            $INSTALLER_CMD --reinstall ca-certificates
             sudo apt-get update
         ;;
         rhel|centos|fedora)
