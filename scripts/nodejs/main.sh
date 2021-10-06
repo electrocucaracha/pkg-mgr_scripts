@@ -50,6 +50,8 @@ function main {
 
             curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
             echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+            sudo apt-get update ||:
+            $INSTALLER_CMD --reinstall ca-certificates
         ;;
         rhel|centos|fedora)
             url="https://rpm"
@@ -63,7 +65,7 @@ function main {
     esac
     if [ "${url:-}" != "" ]; then
         url+=".nodesource.com/setup_${version}.x"
-        curl -fsSL "$url" | sudo -E bash -
+        curl -kfsSL "$url" | sudo -E bash -
     fi
 
     # TODO: Remove node source mirror workaround when works on CentOS distros
