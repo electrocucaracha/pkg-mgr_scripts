@@ -33,6 +33,7 @@ curl -fsSL http://bit.ly/install_pkg | PKG=cni-plugins bash
 |:------------------------|:---------------------------------|:-----------------------------------------------------------|
 | PKG_CNI_PLUGINS_VERSION |                                  | Specifies the CNI plugins version to be installed          |
 | PKG_CNI_PLUGINS_FOLDER  | /opt/containernetworking/plugins | Defines the destination folder for the CNI plugin binaries |
+| PKG_FLANNEL_VERSION     |                                  | Specifies the Flannel CNI version to be installed          |
 
 ## Used by
 
