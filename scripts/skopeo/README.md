@@ -2,7 +2,7 @@
 
 ![Logo](../../docs/img/skopeo.png)
 
-skopeo is a command line utility that performs various operations on
+skopeo is a command-line utility that performs various operations on
 container images and image repositories. It does not require the user
 to be running as root to do most of its operations. It does not
 require a daemon to be running to perform its operations. It can work

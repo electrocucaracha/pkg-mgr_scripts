@@ -46,7 +46,7 @@ curl -fsSL https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/ma
 The cURL package installer can be combined with [bindep tool][1] to
 perform multiOS installations. The following example demostrates how
 to install the [Portable Hardware Locality tools][2] in the current
-node.
+machine.
 
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=bindep bash

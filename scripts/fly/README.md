@@ -1,6 +1,6 @@
 # Fly
 
-A command line interface that runs a build in a container with ATC.
+A command-line interface that runs a build in a container with ATC.
 
 ## Operating System Support Matrix
 
