@@ -42,16 +42,17 @@ function main {
         ;;
         ubuntu|debian)
             url="https://deb"
-            INSTALLER_CMD+="apt-get -y "
+            INSTALLER_CMD+="apt-get install -y "
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+="-q=3 "
             fi
-            INSTALLER_CMD+=" --no-install-recommends install nodejs"
 
             curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
             echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
             sudo apt-get update ||:
             $INSTALLER_CMD --reinstall ca-certificates
+            sudo update-ca-certificates
+            INSTALLER_CMD+=" --no-install-recommends nodejs"
         ;;
         rhel|centos|fedora)
             url="https://rpm"
@@ -63,9 +64,11 @@ function main {
             curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
         ;;
     esac
+    echo insecure >> ~/.curlrc
+    trap 'rm -rf ~/.yarn/' EXIT
     if [ "${url:-}" != "" ]; then
         url+=".nodesource.com/setup_${version}.x"
-        curl -kfsSL "$url" | sudo -E bash -
+        curl -fsSL "$url" | sudo -E bash -
     fi
 
     # TODO: Remove node source mirror workaround when works on CentOS distros
@@ -75,10 +78,11 @@ function main {
     fi
 
     $INSTALLER_CMD
-    rm -rf ~/.yarn/
-    curl -o- -L https://yarnpkg.com/install.sh | bash
+    curl -o- -sL https://yarnpkg.com/install.sh | bash
+    sed -i '/^insecure$/d' ~/.curlrc
+
     # shellcheck disable=SC2016
-    echo 'export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH' | sudo tee /etc/profile.d/yarn_path.sh > /dev/null
+    echo 'export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:/usr/lib/node_modules/corepack/shims/' | sudo tee /etc/profile.d/yarn_path.sh > /dev/null
 
     # Upgrade to lastest stable NPM version
     sudo npm install npm@latest -g
