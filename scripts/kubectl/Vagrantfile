@@ -53,17 +53,12 @@ Vagrant.configure("2") do |config|
 
       cd /vagrant
       ./main.sh | tee ~/main.log 2>&1
-    SHELL
-  end
-  config.vm.provision 'shell', privileged: false do |sh|
-    sh.env = {
-      'PKG_KREW_VERSION': "#{$version}",
-      'PKG_KREW_PLUGINS_LIST': "#{$plugins_list}",
-    }
-    sh.inline = <<-SHELL
-      set -o errexit
-      cd /vagrant
+      export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
       ./validate.sh | tee ~/validate.log
+      rm -rf -- ~/.krew
+      export PKG_KREW_VERSION=0.4.1
+      ./main.sh | tee --append ~/main.log 2>&1
+      ./validate.sh | tee --append ~/validate.log
       echo "Tests completed!!!"
     SHELL
   end

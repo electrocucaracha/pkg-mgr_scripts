@@ -15,6 +15,44 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+# _vercmp() - Function that compares two versions
+function _vercmp {
+    local v1=$1
+    local op=$2
+    local v2=$3
+    local result
+
+    # sort the two numbers with sort's "-V" argument.  Based on if v2
+    # swapped places with v1, we can determine ordering.
+    result=$(echo -e "$v1\n$v2" | sort -V | head -1)
+
+    case $op in
+        "==")
+            [ "$v1" = "$v2" ]
+            return
+            ;;
+        ">")
+            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+            return
+            ;;
+        "<")
+            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+            return
+            ;;
+        ">=")
+            [ "$result" = "$v2" ]
+            return
+            ;;
+        "<=")
+            [ "$result" = "$v1" ]
+            return
+            ;;
+        *)
+            die $LINENO "unrecognised op: $op"
+            ;;
+    esac
+}
+
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -64,15 +102,21 @@ function main {
     if ! kubectl krew version &>/dev/null || [[ "$(kubectl krew version | grep GitTag | awk '{ print $2}')" != v"$krew_version" ]]; then
         echo "INFO: Installing krew..."
 
+        krew_assets="krew.{tar.gz,yaml}"
+        tarball="krew.tar.gz"
+        if _vercmp "$krew_version" '>' '0.4.1'; then
+            krew_assets="krew{-${OS}_${ARCH}.tar.gz,.yaml}"
+            tarball="krew-${OS}_${ARCH}.tar.gz"
+        fi
         pushd "$(mktemp -d)" > /dev/null
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/v${krew_version}/krew.{tar.gz,yaml}"
-            tar -vxzf krew.tar.gz
+            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/v${krew_version}/$krew_assets"
+            tar -vxzf "$tarball"
         else
-            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/v${krew_version}/krew.{tar.gz,yaml}" 2> /dev/null
-            tar -xzf krew.tar.gz
+            curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/v${krew_version}/$krew_assets" 2> /dev/null
+            tar -xzf "$tarball"
         fi
-        ./krew-"${OS}_$ARCH" install --manifest=krew.yaml --archive=krew.tar.gz
+        ./krew-"${OS}_$ARCH" install --manifest=krew.yaml --archive="$tarball"
 
         sudo mkdir -p /etc/profile.d/
         # shellcheck disable=SC2016
