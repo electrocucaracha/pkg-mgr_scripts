@@ -21,44 +21,33 @@ function main {
     fi
     echo "INFO: Installing crystal..."
 
-    pkgs="crystal"
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
         *suse*)
-            sudo rpm --import https://dist.crystal-lang.org/rpm/RPM-GPG-KEY
-            sudo zypper ar -e -f -t rpm-md https://dist.crystal-lang.org/rpm/ Crystal
-            INSTALLER_CMD="zypper "
+            INSTALLER_CMD="sudo -H -E zypper "
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+="-q "
             fi
-            INSTALLER_CMD+=" install -y --no-recommends"
+            if [[ "${ID,,}" == *leap* ]]; then
+                $INSTALLER_CMD ar -f https://download.opensuse.org/repositories/devel:/languages:/crystal/openSUSE_Leap_15.2/devel:languages:crystal.repo
+            elif [[ "${ID,,}" == *tumbleweed* ]]; then
+                $INSTALLER_CMD ar -f https://download.opensuse.org/repositories/devel:/languages:/crystal/openSUSE_Tumbleweed/devel:languages:crystal.repo
+            fi
+            $INSTALLER_CMD --gpg-auto-import-keys install -y --no-recommends crystal
         ;;
         ubuntu|debian)
+            sudo apt-get update
             INSTALLER_CMD="apt-get -y "
             if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
                 INSTALLER_CMD+="-q=3 "
             fi
-            INSTALLER_CMD+=" --no-install-recommends install"
-            # shellcheck disable=SC2086
-            sudo -H -E $INSTALLER_CMD gnupg
-            curl -sL https://keybase.io/crystal/pgp_keys.asc | sudo apt-key add -
-            echo "deb https://dist.crystal-lang.org/apt crystal main" | sudo tee /etc/apt/sources.list.d/crystal.list
-            sudo apt update
-            pkgs+=" libssl-dev libxml2-dev libyaml-dev libgmp-dev libreadline-dev libz-dev crystal"
-        ;;
-        rhel|centos|fedora)
-            curl -sSL https://dist.crystal-lang.org/rpm/setup.sh | sudo bash
-            PKG_MANAGER=$(command -v dnf || command -v yum)
-            INSTALLER_CMD="${PKG_MANAGER} -y"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" --quiet --errorlevel=0"
-            fi
-            INSTALLER_CMD+=" install"
+            eval "sudo -H -E $INSTALLER_CMD --no-install-recommends install wget"
+        ;&
+        *)
+            curl -fsSL https://crystal-lang.org/install.sh | sudo bash
         ;;
     esac
-    # shellcheck disable=SC2086
-    sudo -H -E $INSTALLER_CMD $pkgs
 }
 
 main
