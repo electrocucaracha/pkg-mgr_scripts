@@ -65,7 +65,7 @@ function main {
         ;;
     esac
     echo insecure >> ~/.curlrc
-    trap 'rm -rf ~/.yarn/' EXIT
+    trap 'rm -rf ~/.yarn/;sed -i "/^insecure\$/d" ~/.curlrc' EXIT
     if [ "${url:-}" != "" ]; then
         url+=".nodesource.com/setup_${version}.x"
         curl -fsSL "$url" | sudo -E bash -
@@ -79,7 +79,6 @@ function main {
 
     $INSTALLER_CMD
     curl -o- -sL https://yarnpkg.com/install.sh | bash
-    sed -i '/^insecure$/d' ~/.curlrc
 
     # shellcheck disable=SC2016
     echo 'export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:/usr/lib/node_modules/corepack/shims/' | sudo tee /etc/profile.d/yarn_path.sh > /dev/null
