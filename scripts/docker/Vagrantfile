@@ -13,7 +13,6 @@ $no_proxy = ENV['NO_PROXY'] || ENV['no_proxy'] || "127.0.0.1,localhost"
   $no_proxy += ",10.0.2.#{i}"
 end
 $debug = ENV['PKG_DEBUG'] || "true"
-$version = ENV['PKG_REGCLIENT_VERSION']
 
 distros = YAML.load_file(File.dirname(__FILE__) + '/../../distros_supported.yml')
 
@@ -40,7 +39,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision 'shell', privileged: false do |sh|
     sh.env = {
       'PKG_DEBUG': "#{$debug}",
-      'PKG_REGCLIENT_VERSION': "#{$version}",
+      'PKG_REGCLIENT_VERSION': ENV['PKG_REGCLIENT_VERSION'],
+      'PKG_DOCKER_SLIM_VERSION': ENV['PKG_DOCKER_SLIM_VERSION'],
       'PKG_DOCKER_ENABLE_USERNS_REMAP': "true",
 #      'PKG_DOCKER_INSECURE_REGISTRIES': '172.30.0.0/16',
 #      'PKG_DOCKER_REGISTRY_MIRRORS': '"http://localhost:5000"',

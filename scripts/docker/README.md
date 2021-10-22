@@ -36,6 +36,7 @@ curl -fsSL http://bit.ly/install_pkg | PKG=docker bash
 | PKG_DOCKER_REGISTRY_MIRRORS      |                                                                       | Defines a list of Docker registries                                                 |
 | PKG_REGCLIENT_VERSION            |                                                                       | Specificies the [regclient](https://github.com/regclient/regclient) version         |
 | PKG_DOCKER_ENABLE_USERNS_REMAP   | false                                                                 | Enables [UserNS Remap](https://docs.docker.com/engine/security/userns-remap/)       |
+| PKG_DOCKER_SLIM_VERSION          |                                                                       | Specificies the [docker-slim](https://github.com/docker-slim/docker-slim) version   |
 
 ## Used by
 
