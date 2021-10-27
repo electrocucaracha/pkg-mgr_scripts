@@ -70,6 +70,8 @@ function main {
 
     echo "INFO: Installing go $version version..."
     pushd "$(mktemp -d)" > /dev/null
+    echo insecure >> ~/.curlrc
+    trap 'sed -i "/^insecure\$/d" ~/.curlrc' EXIT
     if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
         curl -o "$tarball" "https://dl.google.com/go/$tarball"
         sudo tar -C /usr/local -vxzf "$tarball"

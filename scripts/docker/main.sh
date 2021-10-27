@@ -15,6 +15,9 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+OS="$(uname | tr '[:upper:]' '[:lower:]')"
+ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -35,9 +38,44 @@ function get_github_latest_release {
     echo "${version#v}"
 }
 
-function main {
+function _install_regctl {
     local version=${PKG_REGCLIENT_VERSION:-$(get_github_latest_release regclient/regclient)}
+    echo "INFO: Installing regctl $version version..."
 
+    binary="regctl-$OS-$ARCH"
+    url="https://github.com/regclient/regclient/releases/download/v${version}/$binary"
+    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        curl -Lo ./regctl "$url"
+        curl -Lo ./docker-regclient "https://raw.githubusercontent.com/regclient/regclient/v${version}/docker-plugin/docker-regclient"
+    else
+        curl -Lo ./regctl "$url" 2> /dev/null
+        curl -Lo ./docker-regclient "https://raw.githubusercontent.com/regclient/regclient/v${version}/docker-plugin/docker-regclient" 2> /dev/null
+    fi
+    chmod +x ./regctl
+    sudo mv ./regctl /usr/bin/regctl
+
+    sed -i "s/version=.*/version=\"${version}\"/" docker-regclient
+    chmod +x ./docker-regclient
+    if [ -d /usr/libexec/docker/cli-plugins/ ]; then
+        sudo cp ./docker-regclient /usr/libexec/docker/cli-plugins/docker-regctl
+    fi
+    mkdir -p "${HOME}/.docker/cli-plugins/"
+    sudo mkdir -p /root/.docker/cli-plugins/
+    sudo cp ./docker-regclient /root/.docker/cli-plugins/docker-regctl
+    mv ./docker-regclient "${HOME}/.docker/cli-plugins/docker-regctl"
+}
+
+function _install_docker-slim {
+    local version=${PKG_DOCKER_SLIM_VERSION:-$(get_github_latest_release docker-slim/docker-slim)}
+    echo "INFO: Installing docker-slim $version version..."
+
+    url="https://downloads.dockerslim.com/releases/${version}/dist_$OS.tar.gz"
+    curl -sL "$url" | sudo tar xz --strip-components=1 -C /usr/bin/
+}
+
+function main {
+    echo insecure >> ~/.curlrc
+    trap 'sed -i "/^insecure\$/d" ~/.curlrc' EXIT
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     if ! command -v docker; then
@@ -176,33 +214,14 @@ EOF
     # Install Rootless Docker
     curl -fsSL https://get.docker.com/rootless | FORCE_ROOTLESS_INSTALL=1 sh
 
-    # Install client interface for the registry API
+    # install client interface for the registry api
     if ! command -v regctl; then
-        echo "INFO: Installing regctl $version version..."
+        _install_regctl
+    fi
 
-        OS="$(uname | tr '[:upper:]' '[:lower:]')"
-        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
-        binary="regctl-$OS-$ARCH"
-        url="https://github.com/regclient/regclient/releases/download/v${version}/$binary"
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-            curl -Lo ./regctl "$url"
-            curl -Lo ./docker-regclient "https://raw.githubusercontent.com/regclient/regclient/v${version}/docker-plugin/docker-regclient"
-        else
-            curl -Lo ./regctl "$url" 2> /dev/null
-            curl -Lo ./docker-regclient "https://raw.githubusercontent.com/regclient/regclient/v${version}/docker-plugin/docker-regclient" 2> /dev/null
-        fi
-        chmod +x ./regctl
-        sudo mv ./regctl /usr/bin/regctl
-
-        sed -i "s/version=.*/version=\"${version}\"/" docker-regclient
-        chmod +x ./docker-regclient
-        if [ -d /usr/libexec/docker/cli-plugins/ ]; then
-            sudo cp ./docker-regclient /usr/libexec/docker/cli-plugins/docker-regctl
-        fi
-        mkdir -p "${HOME}/.docker/cli-plugins/"
-        sudo mkdir -p /root/.docker/cli-plugins/
-        sudo cp ./docker-regclient /root/.docker/cli-plugins/docker-regctl
-        mv ./docker-regclient "${HOME}/.docker/cli-plugins/docker-regctl"
+    # install minify docker image tool
+    if ! command -v docker-slim; then
+        _install_docker-slim
     fi
 }
 

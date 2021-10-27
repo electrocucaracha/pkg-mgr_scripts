@@ -87,14 +87,18 @@ function main {
         pushd "$(mktemp -d)" > /dev/null
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/$OS/$ARCH/kubectl"
+            curl -o kubectl-convert "https://dl.k8s.io/release/$version/bin/$OS/$ARCH/kubectl-convert"
         else
             curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/$OS/$ARCH/kubectl" 2> /dev/null
+            curl -o kubectl-convert "https://dl.k8s.io/release/$version/bin/$OS/$ARCH/kubectl-convert" 2> /dev/null
         fi
-        chmod +x kubectl
         mkdir -p ~/{.local,}/bin
         sudo mkdir -p /snap/bin
         sudo mkdir -p /usr/local/bin/
-        sudo mv kubectl /usr/local/bin/kubectl
+        for bin in kubectl kubectl-convert; do
+            chmod +x "$bin"
+            sudo mv "$bin" "/usr/local/bin/$bin"
+        done
         popd > /dev/null
         kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
     fi

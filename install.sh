@@ -235,5 +235,13 @@ trap exit_trap ERR
 if [[ "${PKG_UPDATE:-false}" == "true" ]]; then
     update_repos
 fi
+if [[ -n ${PKG_COMMANDS_LIST:-} ]]; then
+    [[ -n ${PKG:-} ]] || PKG=""
+    for cmd in ${PKG_COMMANDS_LIST//,/ }; do
+        if ! command -v "$cmd" > /dev/null; then
+            PKG+=" $cmd"
+        fi
+    done
+fi
 main
 trap ERR

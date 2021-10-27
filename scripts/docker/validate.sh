@@ -32,9 +32,11 @@ function _print_msg {
 }
 
 info "Validating Docker installation..."
-if ! command -v docker; then
-    error "Docker command line wasn't installed"
-fi
+for cmd in docker docker-slim; do
+    if ! command -v "$cmd"; then
+        error "$cmd command line wasn't installed"
+    fi
+done
 
 info "Validate autocomplete functions"
 if declare -F | grep -q "_docker"; then
@@ -57,7 +59,7 @@ info "Validating Docker pulling process with $docker_image image"
 if ! sudo docker pull "$docker_image"; then
     error "Docker pull action doesn't work"
 fi
-sudo docker run --rm "$docker_image" nslookup google.com
+sudo docker run --rm "$docker_image" ping -c 1 localhost
 
 info "Validating Docker building process with $docker_image image"
 pushd "$(mktemp -d)"
@@ -67,6 +69,9 @@ RUN apk update && apk add bash
 EOF
 if ! sudo docker build --no-cache -t "$mgmt_ip:5000/bash:test" . ; then
     error "Docker build action doesn't work"
+fi
+if ! sudo docker-slim build "$mgmt_ip:5000/bash:test" --http-probe=false --continue-after 1 --tag "$mgmt_ip:5000/bash:slim"; then
+    error "Docker-slim build action doesn't work"
 fi
 popd
 

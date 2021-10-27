@@ -45,10 +45,12 @@ function get_version {
     echo "v${version#*v}"
 }
 
-info "Validating kubectl installation..."
-if ! command -v kubectl; then
-    error "Kubectl command line wasn't installed"
-fi
+for cmd in kubectl kubectl-convert; do
+    info "Validating $cmd installation..."
+    if ! command -v "$cmd"; then
+        error "$cmd command line wasn't installed"
+    fi
+done
 
 info "Validating autocomplete functions"
 if declare -F | grep -q "_kubectl"; then
