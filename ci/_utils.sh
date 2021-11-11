@@ -68,6 +68,7 @@ function _run_test {
         info "Skipping $(basename "$(pwd)") test for $VAGRANT_NAME"
         return
     fi
+    $vagrant_halt_cmd > /dev/null
     $vagrant_destroy_cmd > /dev/null
     if [ -f "/sys/class/net/$mgmt_nic/statistics/rx_bytes" ]; then
         rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
@@ -98,5 +99,6 @@ function _run_test {
         printf "%'.f MB downloaded - Network Usage for %s in %s\n"  "$(((rx_bytes_after-rx_bytes_before)/ratio))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
     fi
 
+    $vagrant_halt_cmd > /dev/null
     $vagrant_destroy_cmd > /dev/null
 }
