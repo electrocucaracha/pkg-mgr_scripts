@@ -15,15 +15,15 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
-function get_github_latest_tag {
+function get_github_latest_release {
     version=""
     attempt_counter=0
     max_attempts=5
 
     until [ "$version" ]; do
-        tags="$(curl -s "https://api.github.com/repos/$1/tags")"
-        if [ "$tags" ]; then
-            version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest")
+        if [ "$url_effective" ]; then
+            version="${url_effective##*/}"
             break
         elif [ ${attempt_counter} -eq ${max_attempts} ];then
             echo "Max attempts reached"
@@ -32,12 +32,11 @@ function get_github_latest_tag {
         attempt_counter=$((attempt_counter+1))
         sleep $((attempt_counter*2))
     done
-
-    echo "${version#*v}"
+    echo "${version#v}"
 }
 
 function main {
-    local version=${PKG_KN_VERSION:-$(get_github_latest_tag knative/client)}
+    local version=${PKG_KN_VERSION:-$(get_github_latest_release knative/client)}
 
     if ! command -v kn || [[ "v$(kn version | awk 'NR==1{print $2}')" != "$version" ]]; then
         echo "INFO: Installing Knative client $version version..."
@@ -46,6 +45,9 @@ function main {
         ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
         binary="kn-$OS-$ARCH"
         url="https://github.com/knative/client/releases/download/v${version}/$binary"
+        if [[ "$version" == *"knative"* ]]; then
+            url="https://github.com/knative/client/releases/download/${version}/$binary"
+        fi
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -Lo ./kn "$url"
         else

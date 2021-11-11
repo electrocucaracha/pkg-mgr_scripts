@@ -16,6 +16,10 @@ function info {
     _print_msg "INFO" "$1"
 }
 
+function warn {
+    _print_msg "WARN" "$1"
+}
+
 function error {
     _print_msg "ERROR" "$1"
     exit 1
@@ -57,5 +61,5 @@ fi
 
 info "Checking kn version"
 if [ "$(kn version | awk 'NR==1{print $2}')" != "v$(get_version)" ]; then
-    error "Knative client version installed is different that expected"
+    warn "Knative client version installed is different that expected"
 fi
