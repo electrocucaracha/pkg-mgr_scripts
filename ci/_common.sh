@@ -25,7 +25,8 @@ export mgmt_nic ratio
 vagrant_cmd="$(command -v vagrant)"
 vagrant_up_cmd="$vagrant_cmd up --no-destroy-on-error $VAGRANT_NAME"
 vagrant_destroy_cmd="$vagrant_cmd destroy -f $VAGRANT_NAME"
-export vagrant_cmd vagrant_up_cmd vagrant_destroy_cmd
+vagrant_halt_cmd="$vagrant_cmd halt $VAGRANT_NAME"
+export vagrant_cmd vagrant_up_cmd vagrant_destroy_cmd vagrant_halt_cmd
 
 # MacOS provides bash v3
 export profiles="cloud devops drivers lang utils virt"
