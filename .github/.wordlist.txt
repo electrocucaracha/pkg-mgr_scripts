@@ -25,6 +25,8 @@ DigitalOcean
 discoverable
 dnf
 Dockerfile
+dockersl
+DockerSlim
 DSLs
 EJSON
 electrocucaracha
@@ -39,6 +41,7 @@ gomplate
 Grafana
 Griesemer
 GrimoireLab
+gVisor
 gw
 Hadolint
 HashiCorp
@@ -47,6 +50,7 @@ HorizontalPodAutoscaler
 href
 https
 hwloc
+im
 img
 init
 Innotek
@@ -89,6 +93,7 @@ QAT
 qemu
 QuickAssist
 regclient
+regctl
 releng
 renderer
 RPC

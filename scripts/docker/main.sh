@@ -213,6 +213,30 @@ EOF
     # Enable autocompletion
     sudo curl -s https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
 
+    # Install client interface for the registry API
+    if [[ "${PKG_DOCKER_INSTALL_REGCTL:-false}" == "true" ]] && ! command -v regctl; then
+        _install_regctl
+    fi
+
+    # Install minify docker image tool
+    if [[ "${PKG_DOCKER_INSTALL_DOCKER_SLIM:-false}" == "true" ]] && ! command -v docker-slim; then
+        _install_docker-slim
+    fi
+
+    # Install Rootless Docker
+    if [[ "${PKG_DOCKER_INSTALL_ROOTLESS:-false}" == "true" ]]; then
+        curl -fsSL https://get.docker.com/rootless | FORCE_ROOTLESS_INSTALL=1 sh
+    fi
+
+    # Install gVisor sandbox
+    if [[ "${PKG_DOCKER_INSTALL_GVISOR:-false}" == "true" ]]; then
+        if ! command -v runcsc; then
+            _install_gvisor
+        fi
+        sudo /usr/local/bin/runsc install
+        sudo systemctl reload docker
+    fi
+
     printf "Waiting for docker service..."
     until sudo docker info > /dev/null; do
         printf "."
@@ -225,26 +249,6 @@ EOF
         fi
         #curl -fsSL https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh | bash
     fi
-
-    # Install Rootless Docker
-    curl -fsSL https://get.docker.com/rootless | FORCE_ROOTLESS_INSTALL=1 sh
-
-    # install client interface for the registry api
-    if ! command -v regctl; then
-        _install_regctl
-    fi
-
-    # install minify docker image tool
-    if ! command -v docker-slim; then
-        _install_docker-slim
-    fi
-
-    # install gVisor sandbox
-    if ! command -v runcsc; then
-        _install_gvisor
-    fi
-    sudo /usr/local/bin/runsc install
-    sudo systemctl reload docker
 }
 
 main
