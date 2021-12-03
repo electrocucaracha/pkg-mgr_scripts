@@ -26,12 +26,12 @@ function _print_msg {
 }
 
 function get_version {
-    local version=${PKG_KREW_VERSION:-}
+    version=""
     attempt_counter=0
     max_attempts=5
 
     until [ "$version" ]; do
-        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/kubernetes-sigs/krew/releases/latest")
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest")
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
@@ -42,7 +42,7 @@ function get_version {
         attempt_counter=$((attempt_counter+1))
         sleep $((attempt_counter*2))
     done
-    echo "v${version#*v}"
+    echo "${version#*v}"
 }
 
 for cmd in kubectl kubectl-convert; do
@@ -63,6 +63,16 @@ if ! kubectl plugin list | grep "kubectl-krew"; then
 fi
 
 info "Checking krew version"
-if [ "$(kubectl krew version | grep GitTag | awk '{ print $2}')" != "$(get_version)" ]; then
+if [ "$(kubectl krew version | grep GitTag | awk '{ print $2}')" != "v${PKG_KREW_VERSION:-$(get_version kubernetes-sigs/krew)}" ]; then
     error "Krew version installed is different that expected"
+fi
+
+info "Validating finalize_namespace installation..."
+if ! command -v kubectl-finalize_namespace; then
+    error "finalize_namespace plugin wasn't installed"
+fi
+
+info "Checking finalize_namespace version"
+if [ "$(kubectl finalize_namespace -V | awk '{ print $2}')" != "${PKG_FINALIZE_NAMESPACE_VERSION:-$(get_version mattn/kubectl-finalize_namespace)}" ]; then
+    error "finalize_namespace version installed is different that expected"
 fi

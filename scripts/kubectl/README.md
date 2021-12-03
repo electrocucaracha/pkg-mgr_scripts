@@ -39,11 +39,13 @@ curl -fsSL http://bit.ly/install_pkg | PKG=kubectl bash
 ```
 ### Environment variables
 
-| Name                  | Default                                         | Description                                   |
-|:----------------------|:------------------------------------------------|:----------------------------------------------|
-| PKG_KUBECTL_VERSION   |                                                 | Specifies the Kubectl version to be installed |
-| PKG_KREW_VERSION      |                                                 | Specifies the Krew version to be installed    |
-| PKG_KREW_PLUGINS_LIST | tree,access-matrix,score,sniff,view-utilization | List of Krew plugins to be installed          |
+| Name                           | Default                                         | Description                                                     |
+|:-------------------------------|:------------------------------------------------|:----------------------------------------------------------------|
+| PKG_KUBECTL_VERSION            |                                                 | Specifies the Kubectl version to be installed                   |
+| PKG_KREW_VERSION               |                                                 | Specifies the Krew version to be installed                      |
+| PKG_KREW_PLUGINS_LIST          | tree,access-matrix,score,sniff,view-utilization | List of Krew plugins to be installed                            |
+| PKG_INSTALL_FINALIZE_NAMESPACE | false                                           | Determines if `finalize_namespace` is going to be installed     |
+| PKG_FINALIZE_NAMESPACE_VERSION |                                                 | Specifies the finalize_namespace plugin version to be installed |
 
 ## Used by
 

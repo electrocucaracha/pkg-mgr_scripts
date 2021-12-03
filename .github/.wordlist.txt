@@ -73,6 +73,7 @@ Microsystems
 mpi
 multinode
 multiOS
+namespace
 NFS
 nodejs
 NonPreemptingPriority
