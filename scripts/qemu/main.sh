@@ -94,12 +94,28 @@ function _vercmp {
     esac
 }
 
+# install_pmdk() - Installs Persistent Memory Development Kit
+function install_pmdk {
+    local pmdk_version=${PKG_PMDK_VERSION:-$(get_github_latest_release pmem/pmdk)}
+
+    pmdk_url="https://github.com/pmem/pmdk/releases/download/$pmdk_version/pmdk-${pmdk_version}.tar.gz"
+    pushd "$(mktemp -d)" > /dev/null
+    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        curl -L -o pmdk-dpkgs.tar.gz "${pmdk_url}"
+        tar xvf pmdk-dpkgs.tar.gz --strip-components=1
+    else
+        curl -L -o pmdk-dpkgs.tar.gz "${pmdk_url}" 2> /dev/null
+        tar xf pmdk-dpkgs.tar.gz --strip-components=1
+    fi
+    make
+    sudo make install
+    popd > /dev/null
+}
+
 function main {
     local ninja_version=${PKG_NINJA_VERSION:-$(get_github_latest_release ninja-build/ninja)}
     local version=${PKG_QEMU_VERSION:-$(get_github_latest_tag qemu/qemu)}
     local qemu_tarball="qemu-${version}.tar.xz"
-    local pmdk_version=${PKG_PMDK_VERSION:-1.4}
-    local pmdk_url="https://github.com/pmem/pmdk/releases/download/$pmdk_version/pmdk-${pmdk_version}-"
 
     if command -v qemu-img && [[ "$(qemu-img --version | awk 'NR==1{print $3}')" == "$version" ]]; then
         return
@@ -111,21 +127,9 @@ function main {
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
         opensuse*)
-            if ! sudo zypper search --match-exact --installed-only libpmem; then
-                pushd "$(mktemp -d)" > /dev/null
-                if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-                    curl -L -o pmdk-rpms.tar.gz "${pmdk_url}rpms.tar.gz"
-                    tar xvf pmdk-rpms.tar.gz
-                else
-                    curl -L -o pmdk-rpms.tar.gz "${pmdk_url}rpms.tar.gz" 2> /dev/null
-                    tar xf pmdk-rpms.tar.gz
-                fi
-                for pkg in libpmem libpmem-devel; do
-                    sudo rpm -i "$(uname -m)/${pkg}-${pmdk_version}-1.fc25.$(uname -m).rpm"
-                done
-                popd > /dev/null
-            fi
-            sudo -H -E zypper install -y --no-recommends git gcc make bzip2 glib2-devel libpixman-1-0-devel diffutils zlib-devel libbz2-devel libopenssl-devel ncurses-devel readline-devel sqlite3 sqlite3-devel tack xz-devel unzip
+            sudo -H -E zypper install -y --no-recommends git gcc make bzip2 glib2-devel libpixman-1-0-devel \
+            diffutils zlib-devel libbz2-devel libopenssl-devel ncurses-devel readline-devel sqlite3 \
+            sqlite3-devel tack xz-devel unzip libndctl-devel gcc-c++
             if _vercmp "$(python -V 2>&1 | awk '{print $2}')" '<' "3.7"; then
                 curl https://pyenv.run | bash
                 export PATH="$HOME/.pyenv/bin:$PATH"
@@ -135,35 +139,31 @@ function main {
                 pyenv install 3.8.10
                 pyenv global 3.8.10
             fi
+            install_pmdk
+            grep -q LD_LIBRARY_PATH /etc/environment || echo "LD_LIBRARY_PATH=/usr/local/lib64/" | sudo tee --append /etc/environment
         ;;
         ubuntu|debian)
             configure_flags+=" --enable-numa"
-            if _vercmp "${VERSION_ID}" '<=' "16.04"; then
-                pushd "$(mktemp -d)" > /dev/null
-                if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-                    curl -L -o pmdk-dpkgs.tar.gz "${pmdk_url}dpkgs.tar.gz"
-                    tar xvf pmdk-dpkgs.tar.gz
-                else
-                    curl -L -o pmdk-dpkgs.tar.gz "${pmdk_url}dpkgs.tar.gz" 2> /dev/null
-                    tar xf pmdk-dpkgs.tar.gz
-                fi
-                ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
-                for pkg in libpmem libpmem-dev; do
-                    sudo dpkg -i "${pkg}_${pmdk_version}-1_$ARCH.deb"
-                done
-                popd > /dev/null
-            fi
             sudo -H -E apt-get -y install software-properties-common
             sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
             sudo apt-get update
-            sudo -H -E apt-get -y install --no-install-recommends python3.7 gcc make libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libpmem-dev libnuma-dev unzip
+            sudo -H -E apt-get -y install --no-install-recommends python3.7 gcc make libglib2.0-dev \
+            libfdt-dev libpixman-1-dev zlib1g-dev libpmem-dev libnuma-dev unzip libndctl-dev libdaxctl-dev g++
             sudo rm -f /usr/bin/python3
             sudo ln -s /usr/bin/python3.7 /usr/bin/python3
+
+            if _vercmp "${VERSION_ID}" '>=' "20.04"; then
+                install_pmdk
+            fi
         ;;
         rhel|centos|fedora)
             configure_flags+=" --enable-numa"
             PKG_MANAGER=$(command -v dnf || command -v yum)
-            sudo -H -E "${PKG_MANAGER}" -y install python36 gcc make glib2-devel pixman-devel zlib-devel libpmem-devel numactl-devel bzip2 unzip perl
+            sudo -H -E "${PKG_MANAGER}" -y install python36 gcc make glib2-devel pixman-devel zlib-devel \
+            libpmem-devel numactl-devel bzip2 unzip perl ndctl-devel daxctl-devel
+            if _vercmp "${VERSION_ID}" '>=' "8"; then
+                install_pmdk
+            fi
         ;;
     esac
     if ! command -v ninja || _vercmp "$(ninja --version)" '<' "1.7"; then
