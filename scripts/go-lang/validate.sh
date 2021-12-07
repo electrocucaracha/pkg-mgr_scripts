@@ -31,7 +31,7 @@ function get_version {
     attempt_counter=0
     max_attempts=5
     until [ "$version" ]; do
-        stable_version="$(curl -s https://golang.org/VERSION?m=text)"
+        stable_version="$(curl -sL https://golang.org/VERSION?m=text)"
         if [ "$stable_version" ]; then
             version="${stable_version#go}"
             break
