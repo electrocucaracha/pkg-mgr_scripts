@@ -49,11 +49,13 @@ jobs:
           key: ${{ runner.os }}-vagrant-${{ matrix.name }}-${{ hashFiles('distros_supported.yml') }}
           restore-keys: |
             ${{ runner.os }}-vagrant-${{ matrix.name }}-
-      # TODO: Remove this once https://www.virtualbox.org/ticket/20636 is released
-      - name: Apply workaround for VBoxHeadless in macOS
+      - name: Apply workaround for VBoxHeadless issue on macOS (https://www.virtualbox.org/ticket/20636)
+        shell: bash
         run: |
-          find . -type f -iname "Vagrantfile" -exec sed -i '.bak' 's|v.gui = .*|v.gui = true|g' {} \;
-          find . -type f -name "*.bak" -delete
+          if [[ "$(VBoxManage --version)" == "6.1.28r147628" ]]; then
+              find . -type f -iname "Vagrantfile" -exec sed -i '.bak' 's|v.gui = .*|v.gui = true|g' {} \;
+              find . -type f -name "*.bak" -delete
+          fi
       - name: Install Vagrant Reload plugin
         run: vagrant plugin install vagrant-reload
       - name: Install GNU tools

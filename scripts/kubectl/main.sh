@@ -15,6 +15,9 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+OS="$(uname | tr '[:upper:]' '[:lower:]')"
+ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+
 # _vercmp() - Function that compares two versions
 function _vercmp {
     local v1=$1
@@ -73,13 +76,30 @@ function get_github_latest_release {
     echo "${version#v}"
 }
 
+function _install_finalize_namespace {
+    local finalize_namespace_version=${PKG_FINALIZE_NAMESPACE_VERSION:-$(get_github_latest_release mattn/kubectl-finalize_namespace)}
+
+    if ! kubectl finalize_namespace -V || [[ "$(kubectl finalize_namespace -V | awk '{ print $2}')" != "$finalize_namespace_version" ]]; then
+        pushd "$(mktemp -d)" > /dev/null
+        tarball="kubectl-finalize_namespace_v${finalize_namespace_version}_${OS}_${ARCH}.tar.gz"
+        url="https://github.com/mattn/kubectl-finalize_namespace/releases/download/v${finalize_namespace_version}/$tarball"
+        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+            curl -fsSLO "$url"
+            tar -vxzf "$tarball" --strip-components=1
+        else
+            curl -fsSLO "$url" 2> /dev/null
+            tar -xzf "$tarball" --strip-components=1
+        fi
+        sudo mv kubectl-finalize_namespace /usr/local/bin/
+        popd > /dev/null
+    fi
+}
+
 function main {
     local version=${PKG_KUBECTL_VERSION:-$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)}
     local krew_version=${PKG_KREW_VERSION:-$(get_github_latest_release kubernetes-sigs/krew)}
     krew_plugins_list=${PKG_KREW_PLUGINS_LIST:-tree,access-matrix,score,sniff,view-utilization}
 
-    OS="$(uname | tr '[:upper:]' '[:lower:]')"
-    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
 
     if ! command -v kubectl || [[ "$(kubectl version --short --client | awk '{print $3}')" != "$version" ]]; then
         echo "INFO: Installing kubectl $version version..."
@@ -160,6 +180,9 @@ function main {
     for plugin in ${krew_plugins_list//,/ }; do
         kubectl krew install "$plugin" || true
     done
+    if [[ "${PKG_INSTALL_FINALIZE_NAMESPACE:-false}" == "true" ]]; then
+        _install_finalize_namespace
+    fi
 }
 
 main

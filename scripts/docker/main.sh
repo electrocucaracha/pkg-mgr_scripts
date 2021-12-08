@@ -38,6 +38,12 @@ function get_github_latest_release {
     echo "${version#v}"
 }
 
+function _install_gvisor {
+    wget -q "https://storage.googleapis.com/gvisor/releases/release/latest/$(uname -m)"/{runsc,containerd-shim-runsc-v1}
+    chmod a+rx runsc containerd-shim-runsc-v1
+    sudo mv runsc containerd-shim-runsc-v1 /usr/local/bin
+}
+
 function _install_regctl {
     local version=${PKG_REGCLIENT_VERSION:-$(get_github_latest_release regclient/regclient)}
     echo "INFO: Installing regctl $version version..."
@@ -78,27 +84,44 @@ function main {
     trap 'sed -i "/^insecure\$/d" ~/.curlrc' EXIT
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
-    if ! command -v docker; then
+    INSTALLER_CMD="sudo -H -E "
+    case ${ID,,} in
+        *suse*)
+            INSTALLER_CMD+="zypper"
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+=" -q"
+            fi
+            INSTALLER_CMD+=" install -y --no-recommends"
+        ;;
+        rhel|centos|fedora)
+            INSTALLER_CMD+="$(command -v dnf || command -v yum) -y install"
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+=" --quiet --errorlevel=0"
+            fi
+        ;;
+        ubuntu|debian)
+            INSTALLER_CMD+="apt-get -y "
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+="-q=3 "
+            fi
+            INSTALLER_CMD+="--no-install-recommends install"
+        ;;
+    esac
+    # Install Chameleon Socks dependency
+    if ! command -v wget > /dev/null; then
+        $INSTALLER_CMD wget
+    fi
+    if ! command -v docker > /dev/null; then
         echo "Installing docker service..."
-
-        INSTALLER_CMD="sudo -H -E "
         case ${ID,,} in
             *suse*)
-                INSTALLER_CMD+="zypper"
-                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                    INSTALLER_CMD+=" -q"
-                fi
-                $INSTALLER_CMD --gpg-auto-import-keys refresh
-                $INSTALLER_CMD install -y --no-recommends docker
+                sudo zypper --gpg-auto-import-keys refresh
+                $INSTALLER_CMD docker
                 for mod in ip_tables iptable_mangle iptable_nat iptable_filter; do
                     sudo modprobe "$mod"
                 done
             ;;
             rhel|centos|fedora)
-                INSTALLER_CMD+="$(command -v dnf || command -v yum) -y install"
-                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                    INSTALLER_CMD+=" --quiet --errorlevel=0"
-                fi
                 if [[ "$VERSION_ID" == "7" ]]; then
                     echo "user.max_user_namespaces = 28633" | sudo tee /etc/sysctl.d/51-rootless.conf
                     sudo sysctl --system
@@ -109,12 +132,8 @@ function main {
                 sudo systemctl restart firewalld
             ;;
             ubuntu|debian)
-                INSTALLER_CMD+="apt-get -y "
-                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                    INSTALLER_CMD+="-q=3 "
-                fi
                 sudo apt-get update
-                $INSTALLER_CMD --no-install-recommends install uidmap
+                $INSTALLER_CMD uidmap
                 curl -fsSL https://get.docker.com/ | sh
             ;;
         esac
@@ -133,10 +152,6 @@ function main {
     fi
     if [ -n "${SOCKS_PROXY:-}" ]; then
         socks_tmp="${SOCKS_PROXY#*//}"
-        # Install Chameleon Socks dependency
-        if ! command -v wget; then
-            curl -fsSL https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/install.sh | PKG=wget bash
-        fi
         curl -sSL https://raw.githubusercontent.com/crops/chameleonsocks/master/chameleonsocks.sh | sudo PROXY="${socks_tmp%:*}" PORT="${socks_tmp#*:}" bash -s -- --install
     else
         if [ -n "${HTTP_PROXY:-}" ]; then
@@ -198,6 +213,30 @@ EOF
     # Enable autocompletion
     sudo curl -s https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
 
+    # Install client interface for the registry API
+    if [[ "${PKG_DOCKER_INSTALL_REGCTL:-false}" == "true" ]] && ! command -v regctl; then
+        _install_regctl
+    fi
+
+    # Install minify docker image tool
+    if [[ "${PKG_DOCKER_INSTALL_DOCKER_SLIM:-false}" == "true" ]] && ! command -v docker-slim; then
+        _install_docker-slim
+    fi
+
+    # Install Rootless Docker
+    if [[ "${PKG_DOCKER_INSTALL_ROOTLESS:-false}" == "true" ]]; then
+        curl -fsSL https://get.docker.com/rootless | FORCE_ROOTLESS_INSTALL=1 sh
+    fi
+
+    # Install gVisor sandbox
+    if [[ "${PKG_DOCKER_INSTALL_GVISOR:-false}" == "true" ]]; then
+        if ! command -v runcsc; then
+            _install_gvisor
+        fi
+        sudo /usr/local/bin/runsc install
+        sudo systemctl reload docker
+    fi
+
     printf "Waiting for docker service..."
     until sudo docker info > /dev/null; do
         printf "."
@@ -209,19 +248,6 @@ EOF
             sudo -E "$(command -v ctr)" --address "$(sudo find / -name containerd.sock  | head -n 1)" plugins ls
         fi
         #curl -fsSL https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh | bash
-    fi
-
-    # Install Rootless Docker
-    curl -fsSL https://get.docker.com/rootless | FORCE_ROOTLESS_INSTALL=1 sh
-
-    # install client interface for the registry api
-    if ! command -v regctl; then
-        _install_regctl
-    fi
-
-    # install minify docker image tool
-    if ! command -v docker-slim; then
-        _install_docker-slim
     fi
 }
 

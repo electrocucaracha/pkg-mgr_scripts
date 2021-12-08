@@ -32,7 +32,7 @@ function _print_msg {
 }
 
 info "Validating Docker installation..."
-for cmd in docker docker-slim; do
+for cmd in docker docker-slim runsc; do
     if ! command -v "$cmd"; then
         error "$cmd command line wasn't installed"
     fi
@@ -59,7 +59,11 @@ info "Validating Docker pulling process with $docker_image image"
 if ! sudo docker pull "$docker_image"; then
     error "Docker pull action doesn't work"
 fi
+info "Validating Docker running process with $docker_image image (runc runtime)"
 sudo docker run --rm "$docker_image" ping -c 1 localhost
+
+info "Validating Docker running process with $docker_image image (runsc runtime)"
+sudo docker run --rm --runtime=runsc "$docker_image" ping -c 1 localhost
 
 info "Validating Docker building process with $docker_image image"
 pushd "$(mktemp -d)"

@@ -33,7 +33,7 @@ curl -fsSL http://bit.ly/install_pkg | PKG=qemu bash
 | Name              | Default | Description                                 |
 |:------------------|:--------|:--------------------------------------------|
 | PKG_QEMU_VERSION  |         | Specifies the QEMU version to be installed  |
-| PKG_PMDK_VERSION  | 1.4     | Specifies the PMDK version to be installed  |
+| PKG_PMDK_VERSION  |         | Specifies the PMDK version to be installed  |
 | PKG_NINJA_VERSION |         | Specifies the Ninja version to be installed |
 
 ## Used by
