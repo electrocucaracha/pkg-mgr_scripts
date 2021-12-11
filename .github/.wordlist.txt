@@ -5,7 +5,7 @@ Autoscaler
 backend
 bindep
 Bluemix
-BMaaS
+bmaas
 BoltDB
 CentOS
 cFW
