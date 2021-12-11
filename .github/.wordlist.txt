@@ -5,12 +5,12 @@ Autoscaler
 backend
 bindep
 Bluemix
-BMaaS
+bmaas
 BoltDB
 CentOS
 cFW
-cli
-CNCF
+CLI
+cncf
 CNI
 containernetworking
 crun
@@ -94,7 +94,7 @@ QAT
 qemu
 QuickAssist
 regclient
-regctl
+REGCTL
 releng
 renderer
 RPC
