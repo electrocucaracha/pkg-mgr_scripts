@@ -5,6 +5,13 @@ Autoscaler
 backend
 bindep
 Bluemix
+bmaas
+BoltDB
+CentOS
+cFW
+CLI
+cncf
+CNI
 containernetworking
 crun
 CSP
