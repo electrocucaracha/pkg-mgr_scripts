@@ -31,7 +31,7 @@ export vagrant_cmd vagrant_up_cmd vagrant_destroy_cmd vagrant_halt_cmd
 # MacOS provides bash v3
 export profiles="cloud devops drivers lang utils virt"
 export profile_cloud="cni-plugins helm kn kind kubectl kustomize podman skopeo tkn"
-export profile_devops="docker fly terraform vagrant"
+export profile_devops="act docker fly terraform vagrant"
 export profile_drivers="qat-driver"
 export profile_lang="crystal-lang go-lang nodejs rust-lang"
 export profile_utils="gomplate hadolint nfs pip"

@@ -13,6 +13,7 @@ name: Check All - DevOps Profile
 on:
   push:
     paths:
+      - 'scripts/act/*'
       - 'scripts/docker/*'
       - 'scripts/fly/*'
       - 'scripts/terraform/*'
@@ -23,6 +24,7 @@ on:
       - submitted
     paths:
       - ci/pinned_versions.env
+      - 'scripts/act/*'
       - 'scripts/docker/*'
       - 'scripts/fly/*'
       - 'scripts/terraform/*'
