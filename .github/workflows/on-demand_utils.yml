@@ -16,7 +16,8 @@ on:
       - 'scripts/gomplate/*'
       - 'scripts/hadolint/*'
       - 'scripts/nfs/*'
-      - 'scripts/vagrant/**.sh'
+      - 'scripts/vagrant/*'
+      - 'scripts/yq/*'
       - '!**.md'
   pull_request_review:
     types:
@@ -26,7 +27,8 @@ on:
       - 'scripts/gomplate/*'
       - 'scripts/hadolint/*'
       - 'scripts/nfs/*'
-      - 'scripts/vagrant/**.sh'
+      - 'scripts/vagrant/*'
+      - 'scripts/yq/*'
       - '!**.md'
 
 jobs:

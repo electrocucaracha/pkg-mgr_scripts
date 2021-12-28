@@ -55,6 +55,7 @@ img
 init
 Innotek
 jpg
+jq
 js
 JSON
 Knative
@@ -121,3 +122,4 @@ vSphere
 Xen
 xVM
 YAML
+YQ
