@@ -34,7 +34,7 @@ export profile_cloud="cni-plugins helm kn kind kubectl kustomize podman skopeo t
 export profile_devops="act docker fly terraform vagrant"
 export profile_drivers="qat-driver"
 export profile_lang="crystal-lang go-lang nodejs rust-lang"
-export profile_utils="gomplate hadolint nfs pip"
+export profile_utils="gomplate hadolint nfs pip yq"
 export profile_virt="libvirt qemu virtualbox"
 ci_tests=""
 for profile in $profiles; do
