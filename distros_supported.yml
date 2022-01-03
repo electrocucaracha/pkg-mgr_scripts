@@ -22,7 +22,7 @@ linux:
     version: "3.6.4"
   - alias: ubuntu_focal
     name: generic/ubuntu2004
-    version: "3.6.4"
+    version: "3.2.20"
   - alias: opensuse_tumbleweed
     name: opensuse/Tumbleweed.x86_64
     version: "1.0.20220101"
