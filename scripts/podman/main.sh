@@ -15,6 +15,9 @@ if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
     set -o xtrace
 fi
 
+OS="$(uname | tr '[:upper:]' '[:lower:]')"
+ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+
 # _vercmp() - Function that compares two versions
 function _vercmp {
     local v1=$1
@@ -73,8 +76,65 @@ function get_github_latest_release {
     echo "${version#v}"
 }
 
+function _install_runc {
+    local version=${PKG_RUNC_VERSION:-$(get_github_latest_release opencontainers/runc)}
+
+    if ! command -v runc || [[ "$(runc --version | awk 'NR==1{ print $NF }')" != "$version" ]]; then
+        echo "INFO: Installing runc $version version..."
+        url="https://github.com/opencontainers/runc/releases/download/v${version}/runc.$ARCH"
+        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+            sudo curl -o /usr/bin/runc -sL "$url"
+        else
+            sudo curl -o /usr/bin/runc -sL "$url" 2>/dev/null
+        fi
+        sudo chmod +x /usr/bin/runc
+    fi
+}
+
+function _install_crun {
+    local version=${PKG_CRUN_VERSION:-$(get_github_latest_release containers/crun)}
+
+    if ! command -v crun || [[ "$(crun --version | awk 'NR==1{ print $NF }')" != "$version" ]]; then
+        echo "INFO: Installing crun $version version..."
+        binary="crun-${version}-$OS-$ARCH"
+        if _vercmp "${version}" '<' "0.15"; then
+            binary="crun-${version}-static-$(uname -m)"
+        fi
+        url="https://github.com/containers/crun/releases/download/${version}/$binary"
+        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+            sudo curl -o /usr/bin/crun -sL "$url"
+        else
+            sudo curl -o /usr/bin/crun -sL "$url" 2>/dev/null
+        fi
+        sudo chmod +x /usr/bin/crun
+    fi
+}
+
+function _install_youki {
+    local version=${PKG_YOUKI_VERSION:-$(get_github_latest_release containers/youki)}
+
+    if ! command -v youki || [[ "$(youki --version | awk 'NR==1{ print $NF }')" != "$version" ]]; then
+        echo "INFO: Installing youki $version version..."
+        pushd "$(mktemp -d)" > /dev/null
+        tarball="youki_v${version//./_}_$OS.tar.gz"
+        url="https://github.com/containers/youki/releases/download/v${version}/${tarball}"
+        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+            curl -fsSLO "$url"
+            tar -vxzf "$tarball" --strip-components=2
+        else
+            curl -fsSLO "$url" 2> /dev/null
+            tar -xzf "$tarball" --strip-components=2
+        fi
+        sudo mv youki /usr/bin/youki
+        sudo chown root: /usr/bin/youki
+        popd > /dev/null
+    fi
+}
+
+# TODO: Create runc install function https://github.com/opencontainers/runc/releases/download/v1.0.3/runc.amd64
+
 function main {
-    local crun_version=${PKG_CRUN_VERSION:-$(get_github_latest_release containers/crun)}
+    runtimes_list=${PKG_PODMAN_RUNTIMES_LIST:-runc,crun,youki}
 
     INSTALLER_CMD="sudo -H -E "
     # shellcheck disable=SC1091
@@ -86,6 +146,46 @@ function main {
                 INSTALLER_CMD+="-q "
             fi
             INSTALLER_CMD+="install -y --no-recommends"
+            sudo mkdir -p /etc/cni/net.d/
+            sudo tee /etc/cni/net.d/87-podman-bridge.conflist <<EOF
+{
+  "cniVersion": "0.4.0",
+  "name": "podman",
+  "plugins": [
+    {
+      "type": "bridge",
+      "bridge": "cni-podman0",
+      "isGateway": true,
+      "ipMasq": true,
+      "hairpinMode": true,
+      "ipam": {
+        "type": "host-local",
+        "routes": [{ "dst": "0.0.0.0/0" }],
+        "ranges": [
+          [
+            {
+              "subnet": "10.88.0.0/16",
+              "gateway": "10.88.0.1"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "type": "portmap",
+      "capabilities": {
+        "portMappings": true
+      }
+    },
+    {
+      "type": "firewall"
+    },
+    {
+      "type": "tuning"
+    }
+  ]
+}
+EOF
         ;;
         ubuntu|debian)
             if _vercmp "${VERSION_ID}" '<=' "16.04"; then
@@ -143,33 +243,22 @@ function main {
         fi
     fi
 
-    echo "INFO: Installing crun..."
-    OS="$(uname | tr '[:upper:]' '[:lower:]')"
-    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
-    crun_binary="crun-${crun_version}-$OS-$ARCH"
-    if _vercmp "${crun_version}" '<' "0.15"; then
-        crun_binary="crun-${crun_version}-static-$(uname -m)"
-    fi
-    crun_url="https://github.com/containers/crun/releases/download/${crun_version}/$crun_binary"
-    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-        sudo curl -o /usr/bin/crun -sL "$crun_url"
-    else
-        sudo curl -o /usr/bin/crun -sL "$crun_url" 2>/dev/null
-    fi
-    sudo chmod +x /usr/bin/crun
     sudo tee /etc/containers/containers.conf << EOF
 [containers]
 [network]
 [engine]
 runtime = "crun"
 [engine.runtimes]
-runc = [
-        "$(command -v runc)",
-]
-crun = [
-        "/usr/bin/crun",
+EOF
+
+    for runtime in ${runtimes_list//,/ }; do
+        "_install_$runtime"
+        sudo tee --append /etc/containers/containers.conf << EOF
+$runtime = [
+        "$(command -v "$runtime")",
 ]
 EOF
+    done
 }
 
 main

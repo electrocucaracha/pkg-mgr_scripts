@@ -25,27 +25,6 @@ function _print_msg {
     echo "$1: $2"
 }
 
-function get_version {
-    local version=${PKG_CRUN_VERSION:-}
-    attempt_counter=0
-    max_attempts=5
-
-    until [ "$version" ]; do
-        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/containers/crun/releases/latest")
-        if [ "$url_effective" ]; then
-            echo "${url_effective##*/}"
-            break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
-            echo "Max attempts reached"
-            exit 1
-        fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
-    done
-
-    echo "${version##*/}"
-}
-
 function setup_ftrace {
     ftrace_analyzer_version="0.1.3"
     ftrace_folder_path="/usr/local/bin"
@@ -103,16 +82,6 @@ if ! command -v podman; then
     error "podman command line wasn't installed"
 fi
 
-info "Validating crun installation..."
-if ! command -v crun; then
-    error "crun command line wasn't installed"
-fi
-
-info "Checking crun version"
-if [ "$(crun --version | awk 'NR==1{sub(/-.*/,""); print $3}')" != "$(get_version)" ]; then
-    error "crun version installed is different that expected"
-fi
-
 info "Validating podman service..."
 if ! systemctl is-enabled --quiet podman.socket; then
     error "Podman is not enabled"
@@ -128,6 +97,24 @@ fi
 
 info "Validate fetch image"
 podman pull quay.io/quay/busybox:latest
+
+runtimes_list=${PKG_PODMAN_RUNTIMES_LIST:-runc,crun,youki}
+for runtime in ${runtimes_list//,/ }; do
+    info "Validating $runtime installation..."
+    if ! command -v "$runtime"; then
+        error "$runtime command line wasn't installed"
+    fi
+
+    info "Checking $runtime version"
+    if ! "$runtime" --version; then
+        error "$runtime version command failure"
+    fi
+
+    if ! sudo podman --runtime "$runtime" run --rm quay.io/quay/busybox:latest ls; then
+        error "$runtime failed execution"
+    fi
+done
+
 
 info "Validate pod creation"
 podman pod rm single-pod --ignore

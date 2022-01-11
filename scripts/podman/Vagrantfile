@@ -43,7 +43,10 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: false do |sh|
     sh.env = {
       PKG_DEBUG: ENV["PKG_DEBUG"] || "true",
-      PKG_CRUN_VERSION: ENV["PKG_CRUN_VERSION"]
+      PKG_PODMAN_RUNTIMES_LIST: ENV["PKG_PODMAN_RUNTIMES_LIST"],
+      PKG_RUNC_VERSION: ENV["PKG_RUNC_VERSION"],
+      PKG_CRUN_VERSION: ENV["PKG_CRUN_VERSION"],
+      PKG_YOUKI_VERSION: ENV["PKG_YOUKI_VERSION"]
     }
     sh.inline = <<-SHELL
       set -o errexit

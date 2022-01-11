@@ -25,9 +25,12 @@ curl -fsSL http://bit.ly/install_pkg | PKG=podman bash
 ```
 ### Environment variables
 
-| Name             | Default | Description                                |
-|:-----------------|:--------|:-------------------------------------------|
-| PKG_CRUN_VERSION |         | Specifies the crun version to be installed |
+| Name                     | Default         | Description                                 |
+|:-------------------------|:----------------|:--------------------------------------------|
+| PKG_RUNC_VERSION         |                 | Specifies the runc version to be installed  |
+| PKG_CRUN_VERSION         |                 | Specifies the crun version to be installed  |
+| PKG_YOUKI_VERSION        |                 | Specifies the youki version to be installed |
+| PKG_PODMAN_RUNTIMES_LIST | runc,crun,youki | List of runtimes to be installed            |
 
 ## Used by
 
