@@ -13,6 +13,7 @@ name: Check All - Cloud Profile
 on:
   push:
     paths:
+      - 'scripts/aws/*'
       - 'scripts/cni-plugins/*'
       - 'scripts/helm/*'
       - 'scripts/kn/*'
@@ -28,6 +29,7 @@ on:
       - submitted
     paths:
       - ci/pinned_versions.env
+      - 'scripts/aws/*'
       - 'scripts/cni-plugins/*'
       - 'scripts/helm/*'
       - 'scripts/kn/*'
