@@ -127,6 +127,7 @@ function _install_youki {
         fi
         sudo mv youki /usr/bin/youki
         sudo chown root: /usr/bin/youki
+        youki completion --shell bash | sudo tee /etc/bash_completion.d/youki > /dev/null
         popd > /dev/null
     fi
 }

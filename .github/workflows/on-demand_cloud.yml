@@ -13,6 +13,7 @@ name: Check All - Cloud Profile
 on:
   push:
     paths:
+      - 'scripts/aws/*'
       - 'scripts/cni-plugins/*'
       - 'scripts/helm/*'
       - 'scripts/kn/*'
@@ -28,6 +29,7 @@ on:
       - submitted
     paths:
       - ci/pinned_versions.env
+      - 'scripts/aws/*'
       - 'scripts/cni-plugins/*'
       - 'scripts/helm/*'
       - 'scripts/kn/*'
@@ -54,7 +56,7 @@ jobs:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed]
         runtimes: ["runc,crun,youki"]
         include:
-          # TODO: Remove this use case once this is solved https://github.com/containers/youki/issues/608
+          # NOTE: youki runtime requires libseccomp-devel +2.5 version to operate (https://github.com/containers/youki/issues/608#issuecomment-1012521257)
           - name: opensuse_leap
             runtimes: "runc,crun"
     steps:
