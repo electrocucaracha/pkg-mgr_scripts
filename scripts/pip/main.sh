@@ -88,9 +88,11 @@ function main {
                     sudo -H -E $INSTALLER_CMD software-properties-common
                     sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
                     sudo apt-get update
-                    pkgs="python3.7 python3-setuptools python-setuptools"
+                    pkgs="python3-setuptools python-setuptools"
                     if _vercmp "${VERSION_ID}" '<=' "18.04"; then
-                        pkgs+=" python-minimal"
+                        pkgs+=" python3.5 python-minimal"
+                    else
+                        pkgs+=" python3.7"
                     fi
                 else
                     pkgs="python3-setuptools python-setuptools"
