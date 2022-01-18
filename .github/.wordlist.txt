@@ -1,7 +1,7 @@
+Ansible
 APIs
 AST
 ATC
-Ansible
 Autoscaler
 backend
 BINDEP
@@ -46,9 +46,9 @@ GVISOR
 GW
 HADOLINT
 HashiCorp
+haxx
 HCL
 HorizontalPodAutoscaler
-haxx
 href
 https
 hwloc
@@ -109,8 +109,8 @@ serverless
 ShellCheck
 skopeo
 Specificies
-Stenberg
 src
+Stenberg
 subnet
 SuspendResume
 svg
