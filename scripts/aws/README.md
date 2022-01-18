@@ -1,6 +1,6 @@
-# AWS Command Line Interface
+# AWS command-line
 
-The AWS Command Line Interface (AWS CLI) is an open source tool that enables you
+The AWS command-line Interface (AWS CLI) is an open source tool that enables you
 to interact with AWS services using commands in your command-line shell.
 
 ## Operating System Support Matrix

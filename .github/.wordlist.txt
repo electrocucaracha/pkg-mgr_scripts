@@ -1,6 +1,7 @@
 APIs
 AST
 ATC
+Ansible
 Autoscaler
 backend
 BINDEP
@@ -47,6 +48,7 @@ HADOLINT
 HashiCorp
 HCL
 HorizontalPodAutoscaler
+haxx
 href
 https
 hwloc
@@ -107,6 +109,7 @@ serverless
 ShellCheck
 skopeo
 Specificies
+Stenberg
 src
 subnet
 SuspendResume
@@ -121,6 +124,7 @@ virtualizations
 VM
 VMware
 vSphere
+wget
 Xen
 xVM
 YAML

@@ -8,6 +8,15 @@ This project pretends to centralize and facilitate the process to
 install and configure some Linux projects on major different Linux
 Distributions.
 
+Why using curl instead of wget? Daniel Stenberg [explains](https://daniel.haxx.se/docs/curl-vs-wget.html)
+that curl works like a traditional Unix `cat` command and can do a
+single-shot transfer data
+
+Why not using configuration management tools like [Ansible](https://www.ansible.com/),
+[Puppet](https://puppet.com) or [Chef](https://www.chef.io/)? These
+great tools require an initial installation step for its operation
+which results in additional undesired packages in the OS.
+
 ## Supported distributions
 
 | Name       | Version           |
