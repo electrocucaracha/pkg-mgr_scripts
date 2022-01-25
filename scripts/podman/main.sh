@@ -116,7 +116,10 @@ function _install_youki {
     if ! command -v youki || [[ "$(youki --version | awk 'NR==1{ print $NF }')" != "$version" ]]; then
         echo "INFO: Installing youki $version version..."
         pushd "$(mktemp -d)" > /dev/null
-        tarball="youki_v${version//./_}_$OS.tar.gz"
+        tarball="youki_${version//./_}_$OS.tar.gz"
+        if _vercmp "${version}" '<=' "0.0.1"; then
+            tarball="youki_v${version//./_}_$OS.tar.gz"
+        fi
         url="https://github.com/containers/youki/releases/download/v${version}/${tarball}"
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
             curl -fsSLO "$url"
