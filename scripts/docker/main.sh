@@ -182,7 +182,9 @@ function main {
         config="${config::-1} } },"
     fi
     echo "${config::-1} }" | tee "$HOME/.docker/config.json"
-    sudo cp "$HOME/.docker/config.json" /root/.docker/config.json
+    if [[ $(id -u) -ne 0 ]]; then
+        sudo cp "$HOME/.docker/config.json" /root/.docker/config.json
+    fi
     sudo mkdir -p /etc/docker
     insecure_registries="\"0.0.0.0/0\""
     for ip in $(ip addr | awk "/$(ip route | grep "^default" | head -n1 | awk '{ print $5 }')\$/ { sub(/\/[0-9]*/, \"\","' $2); print $2}'); do
