@@ -84,7 +84,7 @@ linux:
 EOT
 
 _vagrant_pull "centos_7" "generic/centos7"
-_vagrant_pull "centos_8" "generic/centos8"
+_vagrant_pull "centos_8" "centos/stream8"
 _vagrant_pull "ubuntu_xenial" "generic/ubuntu1604"
 _vagrant_pull "ubuntu_bionic" "generic/ubuntu1804"
 _vagrant_pull "ubuntu_focal" "generic/ubuntu2004"

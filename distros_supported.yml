@@ -12,8 +12,8 @@ linux:
     name: generic/centos7
     version: "3.6.4"
   - alias: centos_8
-    name: generic/centos8
-    version: "3.6.4"
+    name: centos/stream8
+    version: "20210210.0"
   - alias: ubuntu_xenial
     name: generic/ubuntu1604
     version: "3.6.4"
