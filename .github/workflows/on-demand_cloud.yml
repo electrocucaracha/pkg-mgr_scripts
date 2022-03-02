@@ -60,7 +60,7 @@ jobs:
           - name: opensuse_leap
             runtimes: "runc,crun"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache Vagrant boxes
         uses: actions/cache@v2
         with:
