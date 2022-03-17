@@ -32,7 +32,8 @@ on:
       - '!**.md'
 
 jobs:
-  check:
+  check-devops:
+    name: Run devops profile on all supported Linux distros
     runs-on: macos-10.15
     if: >-
       (

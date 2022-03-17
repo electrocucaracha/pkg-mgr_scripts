@@ -28,7 +28,8 @@ on:
       - '!**.md'
 
 jobs:
-  check:
+  check-virt:
+    name: Run virt profile on all supported Linux distros
     runs-on: macos-10.15
     if: >-
       (

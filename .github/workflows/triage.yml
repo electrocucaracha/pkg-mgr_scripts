@@ -14,6 +14,7 @@ on: [push, pull_request]
 
 jobs:
   assign-label:
+    name: Run GitHub action to assing labels to Pull Requests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/labeler@v4
