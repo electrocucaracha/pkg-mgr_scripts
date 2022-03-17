@@ -14,12 +14,14 @@ on: [push, pull_request]
 
 jobs:
   check-broken-links:
+    name: Check URL broken links into documentation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Check broken links
         uses: gaurav-nelson/github-action-markdown-link-check@v1
   check-super-linter:
+    name: Run GitHub super-linter tool for verify quality of code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,6 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: /
   check-tox:
+    name: Run additional linter tools from python tox
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
