@@ -27,6 +27,16 @@ on:
       - '!**.md'
 
 jobs:
+  check-shellspec:
+    name: Run BDD shell specs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install ShellSpec
+        run: curl -fsSL https://github.com/shellspec/shellspec/releases/latest/download/shellspec-dist.tar.gz | tar -xz -C ..
+      - name: Run Shellspec
+        shell: bash
+        run: ../shellspec/shellspec
   check-all:
     name: Run main profile on all supported Linux distros
     runs-on: macos-10.15

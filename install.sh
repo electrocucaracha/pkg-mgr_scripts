@@ -47,7 +47,8 @@ function _vercmp {
             return
             ;;
         *)
-            die $LINENO "unrecognised op: $op"
+            echo "unrecognised op: $op"
+            exit 1
             ;;
     esac
 }
