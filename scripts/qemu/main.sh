@@ -160,7 +160,7 @@ function main {
             configure_flags+=" --enable-numa"
             PKG_MANAGER=$(command -v dnf || command -v yum)
             sudo -H -E "${PKG_MANAGER}" -y install python36 gcc make glib2-devel pixman-devel zlib-devel \
-            libpmem-devel numactl-devel bzip2 unzip perl ndctl-devel daxctl-devel
+            libpmem-devel numactl-devel bzip2 unzip perl ndctl-devel daxctl-devel gcc-c++
             if _vercmp "${VERSION_ID}" '>=' "8"; then
                 install_pmdk
             fi
