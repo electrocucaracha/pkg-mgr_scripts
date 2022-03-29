@@ -19,14 +19,17 @@ source ./ci/_common.sh
 
 function info {
     _print_msg "INFO" "$1"
+    echo "::notice::$1"
 }
 
 function warn {
     _print_msg "WARN" "$1"
+    echo "::warning::$1"
 }
 
 function error {
     _print_msg "ERROR" "$1"
+    echo "::error::$1"
     exit 1
 }
 
