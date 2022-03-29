@@ -14,7 +14,7 @@ metadata:
   name: check-task
 spec:
   params:
-    - name: vagrant_name
+    - name: vagrant-name
       description: the vagrant box image to be used (centos_7,centos_8,ubuntu_xenial,ubuntu_bionic,ubuntu_focal,opensuse)
       default: ubuntu_xenial
       type: string
@@ -37,7 +37,7 @@ spec:
         - name: SUDO_VAGRANT_CMD
           value: "true"
         - name: VAGRANT_NAME
-          value: "$(params.vagrant_name)"
+          value: "$(params.vagrant-name)"
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
@@ -64,7 +64,7 @@ spec:
       taskRef:
         name: linter-task
       params:
-        - name: linter_tool
+        - name: linter-tool
           value: tox
       resources:
         inputs:
@@ -74,7 +74,7 @@ spec:
       taskRef:
         name: linter-task
       params:
-        - name: linter_tool
+        - name: linter-tool
           value: shellcheck
       resources:
         inputs:
@@ -84,7 +84,7 @@ spec:
       taskRef:
         name: check-task
       params:
-        - name: vagrant_name
+        - name: vagrant-name
           value: ubuntu_xenial
       resources:
         inputs:
@@ -97,7 +97,7 @@ spec:
       taskRef:
         name: check-task
       params:
-        - name: vagrant_name
+        - name: vagrant-name
           value: centos_7
       resources:
         inputs:
@@ -110,7 +110,7 @@ spec:
       taskRef:
         name: check-task
       params:
-        - name: vagrant_name
+        - name: vagrant-name
           value: opensuse
       resources:
         inputs:
@@ -123,7 +123,7 @@ spec:
       taskRef:
         name: check-task
       params:
-        - name: vagrant_name
+        - name: vagrant-name
           value: ubuntu_bionic
       resources:
         inputs:
@@ -135,7 +135,7 @@ spec:
       taskRef:
         name: check-task
       params:
-        - name: vagrant_name
+        - name: vagrant-name
           value: centos_8
       resources:
         inputs:
@@ -147,7 +147,7 @@ spec:
       taskRef:
         name: check-task
       params:
-        - name: vagrant_name
+        - name: vagrant-name
           value: ubuntu_focal
       resources:
         inputs:
