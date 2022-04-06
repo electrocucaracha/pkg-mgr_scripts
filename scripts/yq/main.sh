@@ -41,24 +41,8 @@ function main {
     if ! command -v yq || [[ "$(yq --version | awk '{print $NF}')" != "$version" ]]; then
         echo "INFO: Installing yq $version version..."
 
-        OS="$(uname | tr '[:upper:]' '[:lower:]')"
-        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
-        tarball="yq_${OS}_${ARCH}.tar.gz"
-        url="https://github.com/mikefarah/yq/releases/download/v${version}/$tarball"
-
-        pushd "$(mktemp -d)" > /dev/null
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-            curl -Lo yq.tgz "$url"
-            tar xvf yq.tgz
-        else
-            curl -Lo yq.tgz "$url" 2> /dev/null
-            tar xf yq.tgz
-        fi
-        sudo mkdir -p /usr/local/bin/
-        sudo mv "./yq_${OS}_${ARCH}" /usr/local/bin/yq
+        curl -s "https://i.jpillora.com/mikefarah/yq@v$version!!" | bash
         export PATH=$PATH:/usr/local/bin/
-        sudo --preserve-env=PATH ./install-man-page.sh
-        popd > /dev/null
     fi
     yq shell-completion bash | sudo tee /etc/bash_completion.d/yq > /dev/null
 }
