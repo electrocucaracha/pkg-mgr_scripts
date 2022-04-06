@@ -41,19 +41,8 @@ function main {
     if ! command -v act || [[ "$(act --version | awk '{print $3}')" != "$version" ]]; then
         echo "INFO: Installing GitHub actions client $version version..."
 
-        url="https://github.com/nektos/act/releases/download/v$version/act_$(uname)_$(uname -m).tar.gz"
-        pushd "$(mktemp -d)" > /dev/null
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-            curl -Lo act.tgz "$url"
-            sudo tar xvf act.tgz
-        else
-            curl -Lo act.tgz "$url" > /dev/null
-            sudo tar xf act.tgz
-        fi
-        sudo mkdir -p /usr/local/bin/
-        sudo mv ./act /usr/local/bin/act
+        curl -s "https://i.jpillora.com/nektos/act@v$version!!" | bash
         export PATH=$PATH:/usr/local/bin/
-        popd > /dev/null
     fi
 }
 
