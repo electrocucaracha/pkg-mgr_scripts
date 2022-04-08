@@ -120,6 +120,7 @@ function main {
             sudo mv "$bin" "/usr/local/bin/$bin"
         done
         popd > /dev/null
+        sudo mkdir -p /etc/bash_completion.d
         kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
     fi
 
