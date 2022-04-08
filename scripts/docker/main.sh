@@ -213,6 +213,7 @@ EOF
     sudo systemctl restart docker
 
     # Enable autocompletion
+    sudo mkdir -p /etc/bash_completion.d
     sudo curl -s https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
 
     # Install client interface for the registry API

@@ -134,6 +134,7 @@ function main {
         echo "INFO: Installing terraform-docs $docs_version version..."
 
         curl -s "https://i.jpillora.com/terraform-docs/terraform-docs@v${docs_version#*v}!!" | bash
+        sudo mkdir -p /etc/bash_completion.d
         terraform-docs completion bash | sudo tee /etc/bash_completion.d/terraform-docs > /dev/null
     fi
 }

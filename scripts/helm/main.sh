@@ -63,6 +63,7 @@ EOF
         echo "INFO: Running get-helm-3 remote script"
         curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
     fi
+    sudo mkdir -p /etc/bash_completion.d
     helm completion bash | sudo tee /etc/bash_completion.d/helm > /dev/null
 }
 

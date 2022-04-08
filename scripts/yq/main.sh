@@ -44,6 +44,7 @@ function main {
         curl -s "https://i.jpillora.com/mikefarah/yq@v$version!!" | bash
         export PATH=$PATH:/usr/local/bin/
     fi
+    sudo mkdir -p /etc/bash_completion.d
     yq shell-completion bash | sudo tee /etc/bash_completion.d/yq > /dev/null
 }
 
