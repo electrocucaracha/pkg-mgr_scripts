@@ -11,6 +11,7 @@ BoltDB
 CentOS
 cFW
 CLI
+CMD
 cncf
 CNI
 containernetworking
@@ -89,6 +90,7 @@ OpenStack
 OpenSUSE
 OVH
 PaaS
+passwordless
 PMDK
 png
 PODMAN
@@ -100,6 +102,7 @@ REGCLIENT
 REGCTL
 releng
 renderer
+repos
 RPC
 RUNC
 runtime
@@ -111,7 +114,9 @@ skopeo
 Specificies
 src
 Stenberg
+subgraph
 subnet
+sudo
 SuspendResume
 svg
 Tekton

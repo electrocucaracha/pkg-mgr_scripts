@@ -133,19 +133,8 @@ function main {
     if ! command -v terraform-docs || [ "$(terraform-docs version | awk '{ print $3}')" != "${docs_version#*v}" ]; then
         echo "INFO: Installing terraform-docs $docs_version version..."
 
-        tarball="terraform-docs-v${docs_version#*v}-$OS-$ARCH.tar.gz"
-        url="https://github.com/terraform-docs/terraform-docs/releases/download/v${docs_version#*v}/$tarball"
-        pushd "$(mktemp -d)" > /dev/null
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-            curl -L -o terraform-docs.tgz "$url"
-            tar -xzvf terraform-docs.tgz
-        else
-            curl -L -o terraform-docs.tgz "$url" 2>/dev/null
-            tar -xzf terraform-docs.tgz
-        fi
-        chmod +x terraform-docs
-        sudo mv terraform-docs /usr/local/bin/
-        popd > /dev/null
+        curl -s "https://i.jpillora.com/terraform-docs/terraform-docs@v${docs_version#*v}!!" | bash
+        sudo mkdir -p /etc/bash_completion.d
         terraform-docs completion bash | sudo tee /etc/bash_completion.d/terraform-docs > /dev/null
     fi
 }

@@ -50,6 +50,7 @@ function main {
             curl -sL "$url" 2> /dev/null | sudo tar xzv -C /usr/local/bin/
         fi
     fi
+    sudo mkdir -p /etc/bash_completion.d
     kustomize completion bash | sudo tee /etc/bash_completion.d/kustomize > /dev/null
 }
 

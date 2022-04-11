@@ -55,6 +55,7 @@ function main {
         sudo mv ./kind /usr/local/bin/kind
         export PATH=$PATH:/usr/local/bin/
     fi
+    sudo mkdir -p /etc/bash_completion.d
     kind completion bash | sudo tee /etc/bash_completion.d/kind > /dev/null
 }
 

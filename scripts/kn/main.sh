@@ -58,6 +58,7 @@ function main {
         sudo mv ./kn /usr/local/bin/kn
         export PATH=$PATH:/usr/local/bin/
     fi
+    sudo mkdir -p /etc/bash_completion.d
     kn completion bash | sudo tee /etc/bash_completion.d/kn > /dev/null
 }
 

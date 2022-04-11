@@ -59,6 +59,7 @@ function main {
         export PATH=$PATH:/usr/local/bin/
         popd > /dev/null
     fi
+    sudo mkdir -p /etc/bash_completion.d
     fly completion --shell bash | sudo tee /etc/bash_completion.d/fly > /dev/null
 }
 
