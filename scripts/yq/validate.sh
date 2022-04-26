@@ -26,7 +26,7 @@ function _print_msg {
 }
 
 function get_version {
-    local version=${PKG_KIND_VERSION:-}
+    local version=${PKG_YQ_VERSION:-}
     attempt_counter=0
     max_attempts=5
 
