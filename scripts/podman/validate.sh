@@ -16,6 +16,10 @@ function info {
     _print_msg "INFO" "$1"
 }
 
+function warn {
+    _print_msg "WARN" "$1"
+}
+
 function error {
     _print_msg "ERROR" "$1"
     exit 1
@@ -102,16 +106,15 @@ runtimes_list=${PKG_PODMAN_RUNTIMES_LIST:-runc,crun,youki}
 for runtime in ${runtimes_list//,/ }; do
     info "Validating $runtime installation..."
     if ! command -v "$runtime"; then
-        error "$runtime command line wasn't installed"
-    fi
-
-    info "Checking $runtime version"
-    if ! "$runtime" --version; then
-        error "$runtime version command failure"
-    fi
-
-    if ! sudo podman --runtime "$runtime" run --rm quay.io/quay/busybox:latest ls; then
-        error "$runtime failed execution"
+        warn "$runtime command line wasn't installed"
+    else
+        info "Checking $runtime version"
+        if ! "$runtime" --version; then
+            error "$runtime version command failure"
+        fi
+        if ! sudo podman --runtime "$runtime" run --rm quay.io/quay/busybox:latest ls; then
+            error "$runtime failed execution"
+        fi
     fi
 done
 
