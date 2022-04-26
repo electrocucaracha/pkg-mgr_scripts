@@ -24,5 +24,6 @@ lint:
 	sudo -E $(DOCKER_CMD) run --rm -v $$(pwd):/tmp/lint \
 	-e RUN_LOCAL=true \
 	-e LINTER_RULES_PATH=/ \
+	-e KUBERNETES_KUBEVAL_OPTIONS=--ignore-missing-schemas \
 	github/super-linter
 	tox -e lint
