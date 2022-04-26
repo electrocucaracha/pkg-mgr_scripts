@@ -114,6 +114,40 @@ function _install_youki {
     local version=${PKG_YOUKI_VERSION:-$(get_github_latest_release containers/youki)}
 
     if ! command -v youki || [[ "$(youki --version | awk 'NR==1{ print $NF }')" != "$version" ]]; then
+        if  _vercmp "${version}" '==' "0.0.3"; then
+            path_checker=true
+            case ${ID,,} in
+                ubuntu)
+                    if [ "${VERSION_ID}" == "20.04" ]; then
+                        path_checker=false
+                    fi
+                ;;
+                *suse*)
+                    if [[ "${ID,,}" == *"tumbleweed"* ]]; then
+                        path_checker=false
+                    fi
+                ;;
+            esac
+            if [ "$path_checker" == "false" ]; then
+                echo "WARN: youki 0.0.3 has some issues in Ubuntu 20.04(https://github.com/containers/youki/issues/845)"
+                return 1
+            fi
+        fi
+        case ${ID,,} in
+            ubuntu)
+                libc_version="$(apt-cache policy libc6 | grep Installed | awk 'NR==1{print $NF}')"
+            ;;
+            centos)
+                libc_version="$($(command -v dnf || command -v yum) info glibc | grep Version | awk 'NR==1{print $NF}')"
+            ;;
+            *suse*)
+                libc_version="$(zypper info glibc | grep Version | awk 'NR==1{print $NF}')"
+            ;;
+        esac
+        if _vercmp "${libc_version%-*}" '<' "2.29"; then
+            echo "WARN: youki 0.0.3 requires GLIBC_2.29 or greater"
+            return 1
+        fi
         echo "INFO: Installing youki $version version..."
         pushd "$(mktemp -d)" > /dev/null
         tarball="youki_${version//./_}_$OS.tar.gz"
@@ -135,8 +169,6 @@ function _install_youki {
         popd > /dev/null
     fi
 }
-
-# TODO: Create runc install function https://github.com/opencontainers/runc/releases/download/v1.0.3/runc.amd64
 
 function main {
     runtimes_list=${PKG_PODMAN_RUNTIMES_LIST:-runc,crun,youki}
@@ -257,12 +289,13 @@ runtime = "crun"
 EOF
 
     for runtime in ${runtimes_list//,/ }; do
-        "_install_$runtime"
-        sudo tee --append /etc/containers/containers.conf << EOF
+        if "_install_$runtime"; then
+            sudo tee --append /etc/containers/containers.conf << EOF
 $runtime = [
         "$(command -v "$runtime")",
 ]
 EOF
+        fi
     done
 }
 
