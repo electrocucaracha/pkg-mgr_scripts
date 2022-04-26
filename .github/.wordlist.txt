@@ -121,6 +121,7 @@ SuspendResume
 svg
 Tekton
 TERRAFORM
+Terrascan
 TKN
 txt
 USERNS

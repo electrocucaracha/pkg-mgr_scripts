@@ -76,6 +76,7 @@ function _vercmp {
 function main {
     local version=${PKG_TERRAFORM_VERSION:-$(get_github_latest_release hashicorp/terraform)}
     local docs_version=${PKG_TERRAFORM_DOCS_VERSION:-$(get_github_latest_release terraform-docs/terraform-docs)}
+    local terrascan_version=${PKG_TERRASCAN_VERSION:-$(get_github_latest_release accurics/terrascan)}
 
     OS="$(uname | tr '[:upper:]' '[:lower:]')"
     ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
@@ -136,6 +137,11 @@ function main {
         curl -s "https://i.jpillora.com/terraform-docs/terraform-docs@v${docs_version#*v}!!" | bash
         sudo mkdir -p /etc/bash_completion.d
         terraform-docs completion bash | sudo tee /etc/bash_completion.d/terraform-docs > /dev/null
+    fi
+    if ! command -v $ terrascan || [ "$(terrascan version | awk '{ print $NF}')" != "v${terrascan_version#*v}" ]; then
+        echo "INFO: Installing terrascan $terrascan_version version..."
+
+        curl -s "https://i.jpillora.com/accurics/terrascan@v${terrascan_version#*v}!!" | bash
     fi
 }
 

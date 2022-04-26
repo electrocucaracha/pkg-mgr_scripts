@@ -35,6 +35,7 @@ curl -fsSL http://bit.ly/install_pkg | PKG=terraform bash
 |:---------------------------|:--------|:-----------------------------------------------------|
 | PKG_TERRAFORM_VERSION      |         | Specifies the Terraform version to be installed      |
 | PKG_TERRAFORM_DOCS_VERSION |         | Specifies the Terraform docs version to be installed |
+| PKG_TERRASCAN_VERSION      |         | Specifies the Terrascan version to be installed      |
 
 ## Used by
 

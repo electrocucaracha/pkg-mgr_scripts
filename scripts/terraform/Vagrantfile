@@ -17,6 +17,7 @@ end
 driver = ENV["PKG_DRIVER"] || "qemu"
 version = ENV["PKG_TERRAFORM_VERSION"]
 docs_version = ENV["PKG_TERRAFORM_DOCS_VERSION"]
+terrascan_version = ENV["PKG_TERRASCAN_VERSION"]
 
 distros = YAML.load_file("#{File.dirname(__FILE__)}/../../distros_supported.yml")
 
@@ -40,7 +41,8 @@ Vagrant.configure("2") do |config|
     sh.env = {
       PKG_DEBUG: ENV["PKG_DEBUG"] || "true",
       PKG_TERRAFORM_VERSION: version.to_s,
-      PKG_TERRAFORM_DOCS_VERSION: docs_version.to_s
+      PKG_TERRAFORM_DOCS_VERSION: docs_version.to_s,
+      PKG_TERRASCAN_VERSION: terrascan_version.to_s
     }
     sh.inline = <<-SHELL
       set -o errexit
@@ -55,7 +57,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: false do |sh|
     sh.env = {
       PKG_TERRAFORM_VERSION: version.to_s,
-      PKG_TERRAFORM_DOCS_VERSION: docs_version.to_s
+      PKG_TERRAFORM_DOCS_VERSION: docs_version.to_s,
+      PKG_TERRASCAN_VERSION: terrascan_version.to_s
     }
     sh.inline = <<-SHELL
       set -o errexit
