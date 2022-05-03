@@ -125,12 +125,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed]
-        runtimes: ["runc,crun,youki"]
-        include:
-          # NOTE: youki runtime requires libseccomp-devel +2.5 version to operate (https://github.com/containers/youki/issues/608#issuecomment-1012521257)
-          - name: opensuse_leap
-            runtimes: "runc,crun"
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/check
