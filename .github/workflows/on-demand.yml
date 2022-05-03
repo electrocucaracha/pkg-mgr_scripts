@@ -1,0 +1,219 @@
+---
+# SPDX-license-identifier: Apache-2.0
+##############################################################################
+# Copyright (c) 2021
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Apache License, Version 2.0
+# which accompanies this distribution, and is available at
+# http://www.apache.org/licenses/LICENSE-2.0
+##############################################################################
+
+name: Check All
+# yamllint disable-line rule:truthy
+on:
+  push:
+    paths:
+      - '**.sh'
+  pull_request_review:
+    types:
+      - submitted
+    paths:
+      - '**.sh'
+
+jobs:
+  check-shellspec:
+    name: Run BDD shell specs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install ShellSpec
+        run: curl -fsSL https://github.com/shellspec/shellspec/releases/latest/download/shellspec-dist.tar.gz | tar -xz -C ..
+      - name: Run Shellspec
+        shell: bash
+        run: ../shellspec/shellspec
+  changes:
+    runs-on: ubuntu-latest
+    if: >-
+      (
+        github.event_name == 'pull_request_review' &&
+        github.event.review.state == 'approved'
+      ) ||
+      github.event_name != 'pull_request_review'
+    outputs:
+      main: ${{ steps.filter.outputs.main }}
+      cloud: ${{ steps.filter.outputs.cloud }}
+      devops: ${{ steps.filter.outputs.devops }}
+      drivers: ${{ steps.filter.outputs.drivers }}
+      lang: ${{ steps.filter.outputs.lang }}
+      utils: ${{ steps.filter.outputs.utils }}
+      virt: ${{ steps.filter.outputs.virt }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        if: ${{ !env.ACT }}
+        id: filter
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filters: |
+            versions: &versions
+              - ci/pinned_versions.env
+            main:
+              - *versions
+              - '*.sh'
+            cloud:
+              - *versions
+              - 'scripts/aws/*'
+              - 'scripts/cni-plugins/*'
+              - 'scripts/helm/*'
+              - 'scripts/kn/*'
+              - 'scripts/kind/*'
+              - 'scripts/kubectl/*'
+              - 'scripts/kustomize/*'
+              - 'scripts/podman/*'
+              - 'scripts/skopeo/*'
+              - 'scripts/tkn/*'
+            devops:
+              - *versions
+              - 'scripts/act/*'
+              - 'scripts/docker/*'
+              - 'scripts/fly/*'
+              - 'scripts/terraform/*'
+              - 'scripts/vagrant/*'
+            drivers:
+              - *versions
+              - 'scripts/qat-driver/*'
+            lang:
+              - *versions
+              - 'scripts/crystal-lang/*'
+              - 'scripts/go-lang/*'
+              - 'scripts/nodejs/*'
+              - 'scripts/rust-lang/*'
+            utils:
+              - *versions
+              - 'scripts/gomplate/*'
+              - 'scripts/hadolint/*'
+              - 'scripts/nfs/*'
+              - 'scripts/vagrant/*'
+              - 'scripts/yq/*'
+            virt:
+              - *versions
+              - 'scripts/libvirt/*'
+              - 'scripts/qemu/*'
+              - 'scripts/virtualbox/*'
+  check-main:
+    if: needs.changes.outputs.main == 'true'
+    name: Run main profile on all supported Linux distros
+    runs-on: macos-10.15
+    needs:
+      - changes
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/check
+        with:
+          vagrant_name: ${{ matrix.name }}
+          profile: main
+  check-cloud:
+    if: needs.changes.outputs.cloud == 'true'
+    name: Run cloud profile on all supported Linux distros
+    runs-on: macos-10.15
+    needs:
+      - changes
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed]
+        runtimes: ["runc,crun,youki"]
+        include:
+          # NOTE: youki runtime requires libseccomp-devel +2.5 version to operate (https://github.com/containers/youki/issues/608#issuecomment-1012521257)
+          - name: opensuse_leap
+            runtimes: "runc,crun"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/check
+        with:
+          vagrant_name: ${{ matrix.name }}
+          profile: cloud
+  check-devops:
+    if: needs.changes.outputs.devops == 'true'
+    name: Run devops profile on all supported Linux distros
+    runs-on: macos-10.15
+    needs:
+      - changes
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/check
+        with:
+          vagrant_name: ${{ matrix.name }}
+          profile: devops
+  check-drivers:
+    if: needs.changes.outputs.drivers == 'true'
+    name: Run drivers profile on all supported Linux distros
+    needs:
+      - changes
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_7, opensuse_leap]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/check
+        with:
+          vagrant_name: ${{ matrix.name }}
+          profile: drivers
+  check-lang:
+    if: needs.changes.outputs.lang == 'true'
+    name: Run lang profile on all supported Linux distros
+    runs-on: macos-10.15
+    needs:
+      - changes
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/check
+        with:
+          vagrant_name: ${{ matrix.name }}
+          profile: lang
+  check-utils:
+    if: needs.changes.outputs.utils == 'true'
+    name: Run utils profile on all supported Linux distros
+    runs-on: macos-10.15
+    needs:
+      - changes
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/check
+        with:
+          vagrant_name: ${{ matrix.name }}
+          profile: utils
+  check-virt:
+    if: needs.changes.outputs.virt == 'true'
+    name: Run virt profile on all supported Linux distros
+    runs-on: macos-10.15
+    needs:
+      - changes
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/check
+        with:
+          vagrant_name: ${{ matrix.name }}
+          profile: virt
