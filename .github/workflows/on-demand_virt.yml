@@ -43,46 +43,7 @@ jobs:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
     steps:
       - uses: actions/checkout@v3
-      - name: Cache Vagrant boxes
-        uses: actions/cache@v3
+      - uses: ./.github/actions/check
         with:
-          path: ~/.vagrant.d/boxes
-          key: ${{ runner.os }}-vagrant-${{ matrix.name }}-${{ hashFiles('distros_supported.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-vagrant-${{ matrix.name }}-
-      - name: Apply workaround for VBoxHeadless issue on macOS (https://www.virtualbox.org/ticket/20636)
-        shell: bash
-        run: |
-          if [[ "$(VBoxManage --version)" == "6.1.28r147628" ]]; then
-              find . -type f -iname "Vagrantfile" -exec sed -i '.bak' 's|v.gui = .*|v.gui = true|g' {} \;
-              find . -type f -name "*.bak" -delete
-          fi
-      - name: Install Vagrant Reload plugin
-        run: vagrant plugin install vagrant-reload
-      - name: Install GNU tools
-        run: brew install proctools iproute2mac
-      - name: Run integration tests
-        env:
-          VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
-          VAGRANT_NAME: ${{ matrix.name }}
-          PROFILE: virt
-          MEMORY: 12288
-        run: ./ci/check.sh
-      - name: Check HW resources
-        if: failure()
-        run: |
-          vm_stat
-          top -l 1 -n 0
-          VBoxManage list runningvms --long
-      - name: Check VM logs
-        if: failure()
-        shell: bash
-        run: |
-          running_vm_info=$(vagrant global-status --prune | grep running)
-          if [ "$running_vm_info" ]; then
-              cd "$(echo "$running_vm_info" | awk '{ print $NF}')"
-              vagrant ssh "$(echo "$running_vm_info" | awk '{ print $2 }')" -- "cat ~/*.log"
-          fi
-      - name: Check All logs
-        if: always()
-        run: cat /tmp/check_*.log
+          vagrant_name: ${{ matrix.name }}
+          profile: virt
