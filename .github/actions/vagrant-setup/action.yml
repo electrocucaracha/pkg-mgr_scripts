@@ -36,4 +36,5 @@ runs:
       shell: bash
       run: vagrant plugin install vagrant-reload
     - name: Install GNU tools
+      shell: bash
       run: brew install proctools iproute2mac
