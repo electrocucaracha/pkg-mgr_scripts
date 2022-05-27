@@ -88,15 +88,15 @@ fi
 
 info "Validating podman service..."
 if ! systemctl is-enabled --quiet podman.socket; then
-    error "Podman is not enabled"
+    warn "Podman is not enabled"
 fi
 if ! systemctl is-active --quiet podman.socket; then
-    error "Podman is not active"
+    warn "Podman is not active"
 fi
 
 info "Validating podman remote execution..."
 if ! sudo podman --remote info; then
-    error "Podman service wasn't started"
+    warn "Podman service wasn't started"
 fi
 
 info "Validate fetch image"

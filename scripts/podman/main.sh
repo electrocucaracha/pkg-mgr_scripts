@@ -247,14 +247,8 @@ EOF
                 INSTALLER_CMD+=" --quiet --errorlevel=0"
             fi
             INSTALLER_CMD+=" install"
-            if [ "${ID,,}" == "centos" ]; then
-                if [ "${VERSION_ID}" == "8" ]; then
-                    eval "sudo $PKG_MANAGER -y module disable container-tools"
-                    $INSTALLER_CMD 'dnf-command(copr)'
-                    eval "sudo $PKG_MANAGER -y copr enable rhcontainerbot/container-selinux"
-                fi
-                sudo curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_${VERSION_ID}/devel:kubic:libcontainers:stable.repo"
-            fi
+            $INSTALLER_CMD libseccomp-devel
+            echo 62460 | sudo tee /proc/sys/user/max_user_namespaces
         ;;
     esac
     echo "INFO: Installing podman..."
@@ -266,7 +260,6 @@ EOF
     fi
 
     if [ "${ID,,}" == "centos" ] && [ "${VERSION_ID}" == "7" ]; then
-        sudo sed -i 's/mountopt = .*/mountopt = ""/' /etc/containers/storage.conf
         echo "WARN: Podman service is not supported in CentOS 7"
     else
         echo "INFO: Starting podman service..."
