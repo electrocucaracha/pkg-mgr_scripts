@@ -34,13 +34,15 @@ curl -fsSL http://bit.ly/install_pkg | PKG=docker bash
 | PKG_DOCKER_INSECURE_REGISTRIES   |                                                                       | Determines the insecure registries to configure                                     |
 | PKG_DOCKER_DEFAULT_ADDRESS_POOLS | {"base":"172.80.0.0/16","size":24},{"base":"172.90.0.0/16","size":24} | Defines the subnet network that Docker will pick to local scope networks            |
 | PKG_DOCKER_REGISTRY_MIRRORS      |                                                                       | Defines a list of Docker registries                                                 |
-| PKG_REGCLIENT_VERSION            |                                                                       | Specificies the [regclient](https://github.com/regclient/regclient) version         |
+| PKG_REGCLIENT_VERSION            |                                                                       | Specifies the [regclient](https://github.com/regclient/regclient) version           |
 | PKG_DOCKER_ENABLE_USERNS_REMAP   | false                                                                 | Enables [UserNS Remap](https://docs.docker.com/engine/security/userns-remap/)       |
-| PKG_DOCKER_SLIM_VERSION          |                                                                       | Specificies the [docker-slim](https://github.com/docker-slim/docker-slim) version   |
+| PKG_DOCKER_SLIM_VERSION          |                                                                       | Specifies the [docker-slim](https://github.com/docker-slim/docker-slim) version     |
 | PKG_DOCKER_INSTALL_ROOTLESS      | false                                                                 | Installs [Rootless mode](https://docs.docker.com/engine/security/rootless/)         |
 | PKG_DOCKER_INSTALL_REGCTL        | false                                                                 | Installs [Registry API client](https://github.com/regclient/regclient)              |
 | PKG_DOCKER_INSTALL_DOCKER_SLIM   | false                                                                 | Installs [DockerSlim tool](https://dockersl.im/)                                    |
 | PKG_DOCKER_INSTALL_GVISOR        | false                                                                 | Installs [gVisor runtime](https://gvisor.dev/)                                      |
+| PKG_DOCKER_INSTALL_DIVE          | false                                                                 | Installs [dive](https://github.com/wagoodman/dive)                                  |
+| PKG_DOCKER_DIVE_VERSION          |                                                                       | Specifies the [dive](https://github.com/wagoodman/dive) version                     |
 
 ## Used by
 

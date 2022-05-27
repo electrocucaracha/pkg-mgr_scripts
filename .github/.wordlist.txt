@@ -111,7 +111,6 @@ sed
 serverless
 ShellCheck
 skopeo
-Specificies
 src
 Stenberg
 subgraph
@@ -130,6 +129,7 @@ virtualizations
 VM
 VMware
 vSphere
+wagoodman
 wget
 Xen
 xVM

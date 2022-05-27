@@ -32,7 +32,7 @@ function _print_msg {
 }
 
 info "Validating Docker installation..."
-for cmd in docker docker-slim runsc; do
+for cmd in docker docker-slim runsc dive; do
     if ! command -v "$cmd"; then
         error "$cmd command line wasn't installed"
     fi
@@ -59,6 +59,11 @@ info "Validating Docker pulling process with $docker_image image"
 if ! sudo docker pull "$docker_image"; then
     error "Docker pull action doesn't work"
 fi
+info "Validating Docker size image"
+if ! sudo "$(command -v dive)" --ci "$docker_image"; then
+    error "Dive command doesn't work"
+fi
+
 info "Validating Docker running process with $docker_image image (runc runtime)"
 sudo docker run --rm "$docker_image" ping -c 1 localhost
 
@@ -74,7 +79,9 @@ EOF
 if ! sudo docker build --no-cache -t "$mgmt_ip:5000/bash:test" . ; then
     error "Docker build action doesn't work"
 fi
-if ! sudo docker-slim build "$mgmt_ip:5000/bash:test" --http-probe=false --continue-after 1 --tag "$mgmt_ip:5000/bash:slim"; then
+export DSLIM_HTTP_PROBE=false
+export DSLIM_CONTINUE_AFTER=1
+if ! sudo -E docker-slim build "$mgmt_ip:5000/bash:test" --tag "$mgmt_ip:5000/bash:slim"; then
     error "Docker-slim build action doesn't work"
 fi
 popd

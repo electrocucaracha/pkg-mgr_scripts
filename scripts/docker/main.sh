@@ -79,6 +79,13 @@ function _install_docker-slim {
     curl -sL "$url" | sudo tar xz --strip-components=1 -C /usr/bin/
 }
 
+function _install_dive {
+    local version=${PKG_DOCKER_DIVE_VERSION:-$(get_github_latest_release wagoodman/dive)}
+    echo "INFO: Installing dive $version version..."
+
+    curl -s "https://i.jpillora.com/wagoodman/dive@v$version!!" | bash
+}
+
 function main {
     echo insecure >> ~/.curlrc
     trap 'sed -i "/^insecure\$/d" ~/.curlrc' EXIT
@@ -238,6 +245,11 @@ EOF
         fi
         sudo /usr/local/bin/runsc install
         sudo systemctl reload docker
+    fi
+
+    # Install dive tool
+    if [[ "${PKG_DOCKER_INSTALL_DIVE:-false}" == "true" ]]; then
+        _install_dive
     fi
 
     printf "Waiting for docker service..."
