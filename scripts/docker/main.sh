@@ -141,7 +141,14 @@ function main {
             ubuntu|debian)
                 sudo apt-get update
                 $INSTALLER_CMD uidmap
-                curl -fsSL https://get.docker.com/ | sh
+                if [[ "$VERSION_ID" == "16.04" ]]; then
+                    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+                    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+                    sudo apt-get update
+                    $INSTALLER_CMD docker-ce
+                else
+                    curl -fsSL https://get.docker.com/ | sh
+                fi
             ;;
         esac
     fi
