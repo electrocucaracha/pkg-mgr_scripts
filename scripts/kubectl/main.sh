@@ -96,7 +96,7 @@ function _install_finalize_namespace {
 }
 
 function main {
-    local version=${PKG_KUBECTL_VERSION:-$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)}
+    local version=${PKG_KUBECTL_VERSION:-$(curl -L -s https://dl.k8s.io/release/stable.txt)}
     local krew_version=${PKG_KREW_VERSION:-$(get_github_latest_release kubernetes-sigs/krew)}
     krew_plugins_list=${PKG_KREW_PLUGINS_LIST:-tree,access-matrix,score,sniff,view-utilization}
 
@@ -105,12 +105,11 @@ function main {
         echo "INFO: Installing kubectl $version version..."
 
         pushd "$(mktemp -d)" > /dev/null
+        url="https://dl.k8s.io/release/v${version#v}/bin/$OS/$ARCH"
         if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
-            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/$OS/$ARCH/kubectl"
-            curl -o kubectl-convert "https://dl.k8s.io/release/$version/bin/$OS/$ARCH/kubectl-convert"
+            curl -LO "$url/kubectl" -LO "$url/kubectl-convert"
         else
-            curl -o kubectl "https://storage.googleapis.com/kubernetes-release/release/$version/bin/$OS/$ARCH/kubectl" 2> /dev/null
-            curl -o kubectl-convert "https://dl.k8s.io/release/$version/bin/$OS/$ARCH/kubectl-convert" 2> /dev/null
+            curl -LO "$url/kubectl" -LO "$url/kubectl-convert" 2> /dev/null
         fi
         mkdir -p ~/{.local,}/bin
         sudo mkdir -p /snap/bin
