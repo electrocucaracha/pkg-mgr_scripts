@@ -58,6 +58,7 @@ function main {
             eval "sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 $pkgs"
         ;;
         rhel|centos|fedora)
+            PKG_MANAGER=$(command -v dnf || command -v yum)
             if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
                 sudo curl -o /etc/yum.repos.d/virtualbox.repo https://download.virtualbox.org/virtualbox/rpm/el/virtualbox.repo
                 sudo rpm --import --verbose oracle_vbox.asc
@@ -65,9 +66,12 @@ function main {
                 sudo curl -o /etc/yum.repos.d/virtualbox.repo https://download.virtualbox.org/virtualbox/rpm/el/virtualbox.repo 2> /dev/null
                 sudo rpm --import --quiet oracle_vbox.asc
             fi
-            sudo "$(command -v dnf || command -v yum)" repolist --assumeyes || true
+            if ! sudo "$PKG_MANAGER" repolist | grep "epel/"; then
+                sudo -H -E "$PKG_MANAGER" -q -y install epel-release
+            fi
+            sudo "$PKG_MANAGER" repolist --assumeyes || true
             pkgs+=" kernel-devel kernel-devel-$(uname -r)"
-            eval "sudo $(command -v dnf || command -v yum) -y --quiet --errorlevel=0 install $pkgs"
+            eval "sudo $PKG_MANAGER -y --quiet --errorlevel=0 install $pkgs"
             sudo usermod -aG vboxusers "$USER"
         ;;
     esac
