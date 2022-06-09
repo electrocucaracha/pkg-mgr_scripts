@@ -24,6 +24,8 @@ function main {
 
     echo "INFO: Installing nodejs..."
 
+    echo insecure >> ~/.curlrc
+    trap 'rm -rf ~/.yarn/;sed -i "/^insecure\$/d" ~/.curlrc' EXIT
     INSTALLER_CMD="sudo -H -E "
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
@@ -62,29 +64,33 @@ function main {
             fi
 
             curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+            if [ "${ID,,}" == "centos" ] && [ "$VERSION_ID" == "7" ]; then
+                $INSTALLER_CMD install centos-release-scl-rh
+                sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
+                INSTALLER_CMD+=" install rh-nodejs12"
+            else
+                INSTALLER_CMD+=" install --nogpgcheck nodejs"
+            fi
         ;;
     esac
-    echo insecure >> ~/.curlrc
-    trap 'rm -rf ~/.yarn/;sed -i "/^insecure\$/d" ~/.curlrc' EXIT
     if [ "${url:-}" != "" ]; then
         url+=".nodesource.com/setup_${version}.x"
         curl -fsSL "$url" | sudo -E bash -
     fi
 
-    # TODO: Remove node source mirror workaround when works on CentOS distros
-    if [ "${ID,,}" == "centos" ]; then
-        curl -sL -o /tmp/nodejs.rpm "$(yumdownloader --urls nodejs -q)"
-        INSTALLER_CMD+=" install /tmp/nodejs.rpm"
-    fi
-
     $INSTALLER_CMD
-    curl -o- -sL https://yarnpkg.com/install.sh | bash
+    if [ "${ID,,}" == "centos" ] && [ "$VERSION_ID" == "7" ]; then
+        sudo mkdir -p /etc/profile.d/
+        echo "source scl_source enable rh-nodejs12" | sudo tee /etc/profile.d/nodejs.sh > /dev/null
+    else
+        curl -o- -sL https://yarnpkg.com/install.sh | bash
 
-    # shellcheck disable=SC2016
-    echo 'export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:/usr/lib/node_modules/corepack/shims/' | sudo tee /etc/profile.d/yarn_path.sh > /dev/null
+        # shellcheck disable=SC2016
+        echo 'export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:/usr/lib/node_modules/corepack/shims/' | sudo tee /etc/profile.d/yarn_path.sh > /dev/null
 
-    # Upgrade to lastest stable NPM version
-    sudo npm install npm@latest -g
+        # Upgrade to lastest stable NPM version
+        sudo npm install npm@latest -g
+    fi
 }
 
 main
