@@ -127,9 +127,10 @@ function main {
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
         opensuse*)
-            sudo -H -E zypper install -y --no-recommends git gcc make bzip2 glib2-devel libpixman-1-0-devel \
-            diffutils zlib-devel libbz2-devel libopenssl-devel ncurses-devel readline-devel sqlite3 \
-            sqlite3-devel tack xz-devel unzip libndctl-devel gcc-c++
+            sudo -H -E zypper install -y --no-recommends git gcc make bzip2 \
+            glib2-devel libpixman-1-0-devel diffutils zlib-devel libbz2-devel \
+            libopenssl-devel ncurses-devel readline-devel sqlite3 \
+            sqlite3-devel tack xz-devel unzip libndctl-devel gcc-c++ patch cmake
             if _vercmp "$(python -V 2>&1 | awk '{print $2}')" '<' "3.7"; then
                 curl https://pyenv.run | bash
                 export PATH="$HOME/.pyenv/bin:$PATH"
@@ -147,10 +148,9 @@ function main {
             sudo -H -E apt-get -y install software-properties-common
             sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
             sudo apt-get update
-            sudo -H -E apt-get -y install --no-install-recommends python3.7 gcc make libglib2.0-dev \
-            libfdt-dev libpixman-1-dev zlib1g-dev libpmem-dev libnuma-dev unzip libndctl-dev libdaxctl-dev g++
-            sudo rm -f /usr/bin/python3
-            sudo ln -s /usr/bin/python3.7 /usr/bin/python3
+            sudo -H -E apt-get -y install --no-install-recommends python3 \
+            gcc make libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev \
+            libpmem-dev libnuma-dev unzip libndctl-dev libdaxctl-dev g++ cmake
 
             if _vercmp "${VERSION_ID}" '>=' "20.04"; then
                 install_pmdk
@@ -159,8 +159,9 @@ function main {
         rhel|centos|fedora)
             configure_flags+=" --enable-numa"
             PKG_MANAGER=$(command -v dnf || command -v yum)
-            sudo -H -E "${PKG_MANAGER}" -y install python36 gcc make glib2-devel pixman-devel zlib-devel \
-            libpmem-devel numactl-devel bzip2 unzip perl ndctl-devel daxctl-devel gcc-c++
+            sudo -H -E "${PKG_MANAGER}" -y install python36 gcc make \
+            glib2-devel pixman-devel zlib-devel libpmem-devel numactl-devel \
+            bzip2 unzip perl ndctl-devel daxctl-devel gcc-c++ cmake
             if _vercmp "${VERSION_ID}" '>=' "8"; then
                 install_pmdk
             fi
