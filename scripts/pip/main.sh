@@ -57,83 +57,94 @@ function main {
     local major_python_version=${PKG_PYTHON_MAJOR_VERSION:-3}
     local min_pip_version="20"
 
-    if ! command -v python  || _vercmp "$(python -V 2>&1 | awk '{print $2}')" '<' "$major_python_version"; then
-        echo "INFO: Installing python $major_python_version version..."
-        # shellcheck disable=SC1091
-        source /etc/os-release || source /usr/lib/os-release
-        case ${ID,,} in
-            *suse*)
-                INSTALLER_CMD="sudo -H -E zypper "
-                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                    INSTALLER_CMD+="-q "
-                fi
-                if ! $INSTALLER_CMD repos | grep -q "openSUSE_Leap_15.1_Update"; then
-                    $INSTALLER_CMD addrepo https://download.opensuse.org/repositories/openSUSE:Leap:15.1:Update/standard/openSUSE:Leap:15.1:Update.repo
-                fi
-                $INSTALLER_CMD --gpg-auto-import-keys refresh
-                if [[ "${ID,,}" == *leap* ]]; then
-                    $INSTALLER_CMD install -y --no-recommends python3
-                elif [[ "${ID,,}" == *tumbleweed* ]]; then
-                    $INSTALLER_CMD install -y --no-recommends python38
-                fi
-            ;;
-            ubuntu|debian)
-                INSTALLER_CMD="apt-get -y "
-                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                    INSTALLER_CMD+="-q=3 "
-                fi
-                INSTALLER_CMD+=" --no-install-recommends install"
-                if [ "${ID,,}" == "ubuntu" ]; then
-                    # shellcheck disable=SC2086
-                    sudo -H -E $INSTALLER_CMD software-properties-common
-                    sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
-                    sudo apt-get update
-                    pkgs="python3-setuptools python-setuptools"
-                    if _vercmp "${VERSION_ID}" '<=' "18.04"; then
-                        pkgs+=" python3.5 python-minimal"
-                    else
-                        pkgs+=" python3.7"
+    # shellcheck disable=SC1091
+    source /etc/os-release || source /usr/lib/os-release
+    case ${ID,,} in
+        ubuntu|debian)
+            INSTALLER_CMD="sudo -H -E apt-get -y "
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+="-q=3 "
+            fi
+            INSTALLER_CMD+=" --no-install-recommends install"
+        ;;
+        rhel|centos|fedora)
+            PKG_MANAGER=$(command -v dnf || command -v yum)
+            INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
+            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
+                INSTALLER_CMD+=" --quiet --errorlevel=0"
+            fi
+            INSTALLER_CMD+=" install"
+        ;;
+    esac
+
+    case $major_python_version in
+        2)
+            if ! command -v python || _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>' "3"; then
+                echo "INFO: Installing python $major_python_version version..."
+                case ${ID,,} in
+                    ubuntu|debian)
+                        pkgs="python-setuptools"
+                        if [ "${ID,,}" == "ubuntu" ]; then
+                            # shellcheck disable=SC2086
+                            $INSTALLER_CMD software-properties-common
+                            sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
+                            sudo apt-get update
+                            if _vercmp "${VERSION_ID}" '<=' "18.04"; then
+                                pkgs+=" python-minimal"
+                            fi
+                        fi
+                        # shellcheck disable=SC2086
+                        $INSTALLER_CMD $pkgs
+                ;;
+                rhel|centos|fedora)
+                    $INSTALLER_CMD yum-utils python2
+                    for file in yum yum-config-manager; do
+                        echo "INFO: Setting $file to use python 2"
+                        if [ -f "/usr/bin/$file" ]; then
+                            sudo sed -i "s|#\!/usr/bin/python|#!$(command -v python2)|g" "/usr/bin/$file"
+                        fi
+                    done
+                    if [ -f /usr/libexec/urlgrabber-ext-down ]; then
+                        echo "INFO: Setting urlgrabber-ext-down script to use python 2"
+                        sudo sed -i "s|#\! /usr/bin/python|#!$(command -v python2)|g" /usr/libexec/urlgrabber-ext-down
                     fi
-                else
-                    pkgs="python3-setuptools python-setuptools"
-                    if [ "${VERSION_ID}" == "10" ]; then
-                        pkgs+=" python3.7"
-                    elif [ "${VERSION_ID}" == "9" ]; then
-                        pkgs+=" python3.5"
-                    else
-                        pkgs+=" python3.4"
-                    fi
-                fi
+                ;;
+                esac
+            fi
+        ;;
+        3)
+            PYTHON_CMD=$(command -v python3 || command -v python ||:)
+            if [ -z "$PYTHON_CMD" ] || _vercmp "$($PYTHON_CMD -V 2>&1 | awk '{print $2}')" '<' "3"; then
+                echo "INFO: Installing python $major_python_version version..."
+                case ${ID,,} in
+                    debian)
+                        pkgs="python3-setuptools python3.4"
+                        sudo sed -i "s|#! /usr/bin/python|#! $(command -v python2)|g" "$(command -v lsb_release)"
+                    ;;
+                    rhel|centos|fedora)
+                        pkgs="python3"
+                    ;;
+                esac
                 # shellcheck disable=SC2086
-                sudo -H -E $INSTALLER_CMD $pkgs
-            ;;
-            rhel|centos|fedora)
-                PKG_MANAGER=$(command -v dnf || command -v yum)
-                INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
-                if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                    INSTALLER_CMD+=" --quiet --errorlevel=0"
-                fi
-                INSTALLER_CMD+=" install"
-                $INSTALLER_CMD python36 yum-utils python2
-                for file in yum yum-config-manager; do
-                    echo "INFO: Setting $file to use python 2"
-                    if [ -f "/usr/bin/$file" ]; then
-                        sudo sed -i "s|#\!/usr/bin/python|#!$(command -v python2)|g" "/usr/bin/$file"
-                    fi
-                done
-                if [ -f /usr/libexec/urlgrabber-ext-down ]; then
-                    echo "INFO: Setting urlgrabber-ext-down script to use python 2"
-                    sudo sed -i "s|#\! /usr/bin/python|#!$(command -v python2)|g" /usr/libexec/urlgrabber-ext-down
-                fi
-            ;;
-        esac
-    fi
+                $INSTALLER_CMD $pkgs
+            fi
+        ;;
+        *)
+            echo "ERROR: Unsupported Python $major_python_version version"
+            exit 1
+        ;;
+    esac
 
     echo "INFO: Setting python $major_python_version as default option"
     sudo rm -f /usr/bin/python
     sudo ln -s "/usr/bin/python${major_python_version}" /usr/bin/python
 
     if ! command -v pip || _vercmp "$(pip -V | awk '{print $2}')" '<' "$min_pip_version"; then
+        if _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>=' "3" && \
+        [[ "${ID,,}" == "debian" || "${ID,,}" == "ubuntu" ]]; then
+            # shellcheck disable=SC2086
+            $INSTALLER_CMD python3-distutils ||:
+        fi
         echo "INFO: Installing PIP $min_pip_version version"
         current_version="$(python -V | awk '{print $2}')"
         url="https://bootstrap.pypa.io/get-pip.py"

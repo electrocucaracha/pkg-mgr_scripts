@@ -93,7 +93,7 @@ jobs:
               - 'scripts/gomplate/*'
               - 'scripts/hadolint/*'
               - 'scripts/nfs/*'
-              - 'scripts/vagrant/*'
+              - 'scripts/pip/*'
               - 'scripts/yq/*'
             virt:
               - *versions
