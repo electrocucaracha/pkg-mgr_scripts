@@ -113,7 +113,7 @@ function main {
             fi
         ;;
         3)
-            PYTHON_CMD=$(command -v python3 || command -v python)
+            PYTHON_CMD=$(command -v python3 || command -v python ||:)
             if [ -z "$PYTHON_CMD" ] || _vercmp "$($PYTHON_CMD -V 2>&1 | awk '{print $2}')" '<' "3"; then
                 echo "INFO: Installing python $major_python_version version..."
                 case ${ID,,} in
@@ -141,10 +141,9 @@ function main {
 
     if ! command -v pip || _vercmp "$(pip -V | awk '{print $2}')" '<' "$min_pip_version"; then
         if _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>=' "3" && \
-        [[ ( "${ID,,}" == "debian" && "${VERSION_ID}" == "10" ) || \
-        ( "${ID,,}" == "ubuntu" && "${VERSION_ID}" != "16.04" ) ]]; then
+        [[ "${ID,,}" == "debian" || "${ID,,}" == "ubuntu" ]]; then
             # shellcheck disable=SC2086
-            $INSTALLER_CMD python3-distutils
+            $INSTALLER_CMD python3-distutils ||:
         fi
         echo "INFO: Installing PIP $min_pip_version version"
         current_version="$(python -V | awk '{print $2}')"
