@@ -32,6 +32,9 @@ runs:
             find . -type f -iname "Vagrantfile" -exec sed -i '.bak' 's|v.gui = .*|v.gui = true|g' {} \;
             find . -type f -name "*.bak" -delete
         fi
+    - name: Install vagrant tool
+      shell: bash
+      run: brew install vagrant
     - name: Install Vagrant Reload plugin
       shell: bash
       run: vagrant plugin install vagrant-reload
