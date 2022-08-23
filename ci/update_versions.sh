@@ -10,7 +10,7 @@
 
 set -o errexit
 set -o pipefail
-if [[ "${DEBUG:-false}" == "true" ]]; then
+if [[ ${DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -24,12 +24,12 @@ function get_github_latest_release {
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
 
     echo "${version#v}"
@@ -43,14 +43,14 @@ function get_github_latest_tag {
     until [ "$version" ]; do
         tags="$(curl -s "https://api.github.com/repos/$1/tags")"
         if [ "$tags" ]; then
-            version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+            version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F '"' 'NR==1{print $4}')"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
 
     echo "${version#*v}"
@@ -60,9 +60,9 @@ rm -f ./ci/pinned_versions.env
 blacklist="$(cat ./ci/blacklist_versions)"
 while IFS= read -r line; do
     var=$(echo "${line#*\$\{}" | awk -F ':' '{ print $1}')
-    if [[ "${blacklist}" != *"${var}"* ]]; then
+    if [[ ${blacklist} != *"${var}"* ]]; then
         func=$(echo "${line#*\$(}" | awk -F ')' '{ print $1}')
-        echo "export ${var}=$($func)" >> ./ci/pinned_versions.env
+        echo "export ${var}=$($func)" >>./ci/pinned_versions.env
     fi
 done < <(grep -r "_VERSION.*get_github_latest" scripts/ | awk -F '=' '{print $2}')
 echo "$blacklist" | tee --append ./ci/pinned_versions.env

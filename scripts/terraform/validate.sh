@@ -35,12 +35,12 @@ function get_version {
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "${version#*v}"
 }
@@ -57,29 +57,29 @@ function _vercmp {
     result=$(echo -e "$v1\n$v2" | sort -V | head -1)
 
     case $op in
-        "==")
-            [ "$v1" = "$v2" ]
-            return
-            ;;
-        ">")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
-            return
-            ;;
-        "<")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
-            return
-            ;;
-        ">=")
-            [ "$result" = "$v2" ]
-            return
-            ;;
-        "<=")
-            [ "$result" = "$v1" ]
-            return
-            ;;
-        *)
-            die $LINENO "unrecognised op: $op"
-            ;;
+    "==")
+        [ "$v1" = "$v2" ]
+        return
+        ;;
+    ">")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+        return
+        ;;
+    "<")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+        return
+        ;;
+    ">=")
+        [ "$result" = "$v2" ]
+        return
+        ;;
+    "<=")
+        [ "$result" = "$v1" ]
+        return
+        ;;
+    *)
+        die $LINENO "unrecognised op: $op"
+        ;;
     esac
 }
 
@@ -107,7 +107,7 @@ if declare -F | grep -q "_terraform-docs"; then
 fi
 
 pushd "$(mktemp -d)"
-cat << EOF > main.tf
+cat <<EOF >main.tf
 terraform {
 }
 
@@ -126,7 +126,7 @@ terraform destroy -auto-approve
 if _vercmp "$terraform_version" '>=' "0.15.0"; then
     info "Running Terraform Experimental Test feature"
     mkdir -p tests/defaults/
-    cat << EOF > tests/defaults/test_defaults.tf
+    cat <<EOF >tests/defaults/test_defaults.tf
 terraform {
   required_providers {
     test = {

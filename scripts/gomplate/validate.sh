@@ -31,7 +31,7 @@ if ! command -v gomplate; then
 fi
 
 info "Validating gomplate execution..."
-cat << EOF > /tmp/config.yaml
+cat <<EOF >/tmp/config.yaml
 foo:
   bar:
     baz: qux

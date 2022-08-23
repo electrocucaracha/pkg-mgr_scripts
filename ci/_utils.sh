@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${DEBUG:-false}" == "true" ]]; then
+if [[ ${DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -51,7 +51,7 @@ function run_test {
         trap -- "" SIGTERM
         (
             sleep "$TIMEOUT"
-            if kill $child 2> /dev/null; then
+            if kill $child 2>/dev/null; then
                 warn "Timeout was reached after $TIMEOUT seconds ($(basename "$(pwd)"))"
             fi
         ) &
@@ -67,12 +67,12 @@ function print_running {
 }
 
 function _run_test {
-    if [ -f os-blacklist.conf ] && grep "$VAGRANT_NAME" os-blacklist.conf > /dev/null; then
+    if [ -f os-blacklist.conf ] && grep "$VAGRANT_NAME" os-blacklist.conf >/dev/null; then
         info "Skipping $(basename "$(pwd)") test for $VAGRANT_NAME"
         return
     fi
-    $vagrant_halt_cmd > /dev/null
-    $vagrant_destroy_cmd > /dev/null
+    $vagrant_halt_cmd >/dev/null
+    $vagrant_destroy_cmd >/dev/null
     if [ -f "/sys/class/net/$mgmt_nic/statistics/rx_bytes" ]; then
         rx_bytes_before=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
     fi
@@ -81,7 +81,7 @@ function _run_test {
     start=$(date +%s)
     print_running 2>&1 &
     pid=$!
-    $vagrant_up_cmd > "/tmp/check_$(basename "$(pwd)")_$VAGRANT_NAME.log"
+    $vagrant_up_cmd >"/tmp/check_$(basename "$(pwd)")_$VAGRANT_NAME.log"
 
     # Verify validation errors
     if $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log | grep "ERROR"; then
@@ -91,17 +91,17 @@ function _run_test {
     if [ -f "/sys/class/net/$mgmt_nic/statistics/rx_bytes" ]; then
         rx_bytes_after=$(cat "/sys/class/net/$mgmt_nic/statistics/rx_bytes")
     fi
-    kill "$pid" 2> /dev/null
+    kill "$pid" 2>/dev/null
     info "$(basename "$(pwd)") test completed for $VAGRANT_NAME"
 
     echo "=== Summary ==="
     $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log | grep "^INFO" | sed 's/^INFO: //'
     $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log | grep "^INFO" | sed 's/^INFO: //'
-    printf "%s secs - Duration time for %s in %s\n" "$(($(date +%s)-start))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
-    if [ -n "${rx_bytes_before:-}" ] && [ -n "${rx_bytes_after:-}" ]; then
-        printf "%'.f MB downloaded - Network Usage for %s in %s\n"  "$(((rx_bytes_after-rx_bytes_before)/ratio))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
+    printf "%s secs - Duration time for %s in %s\n" "$(($(date +%s) - start))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
+    if [ -n "${rx_bytes_before-}" ] && [ -n "${rx_bytes_after-}" ]; then
+        printf "%'.f MB downloaded - Network Usage for %s in %s\n" "$(((rx_bytes_after - rx_bytes_before) / ratio))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
     fi
 
-    $vagrant_halt_cmd > /dev/null
-    $vagrant_destroy_cmd > /dev/null
+    $vagrant_halt_cmd >/dev/null
+    $vagrant_destroy_cmd >/dev/null
 }

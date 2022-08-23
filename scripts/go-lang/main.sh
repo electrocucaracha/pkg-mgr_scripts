@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -25,12 +25,12 @@ function get_go_latest_version {
         if [ "$stable_version" ]; then
             echo "${stable_version#go}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
 }
 
@@ -50,40 +50,40 @@ function main {
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
-        *suse*)
-            if zypper search --match-exact --installed-only go &>/dev/null; then
-                sudo zypper -q remove -y -u go
-            fi
+    *suse*)
+        if zypper search --match-exact --installed-only go &>/dev/null; then
+            sudo zypper -q remove -y -u go
+        fi
         ;;
-        ubuntu|debian)
-            if dpkg -l golang &>/dev/null; then
-                sudo apt autoremove -y -qq golang
-            fi
+    ubuntu | debian)
+        if dpkg -l golang &>/dev/null; then
+            sudo apt autoremove -y -qq golang
+        fi
         ;;
-        rhel|centos|fedora)
-            if rpm -q golang &>/dev/null; then
-                # shellcheck disable=SC2046
-                sudo $(command -v dnf || command -v yum) -y --quiet --errorlevel=0 autoremove golang
-            fi
+    rhel | centos | fedora)
+        if rpm -q golang &>/dev/null; then
+            # shellcheck disable=SC2046
+            sudo $(command -v dnf || command -v yum) -y --quiet --errorlevel=0 autoremove golang
+        fi
         ;;
     esac
 
     echo "INFO: Installing go $version version..."
-    pushd "$(mktemp -d)" > /dev/null
-    echo insecure >> ~/.curlrc
+    pushd "$(mktemp -d)" >/dev/null
+    echo insecure >>~/.curlrc
     trap 'sed -i "/^insecure\$/d" ~/.curlrc' EXIT
-    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+    if [[ ${PKG_DEBUG:-false} == "true" ]]; then
         curl -o "$tarball" "https://dl.google.com/go/$tarball"
         sudo tar -C /usr/local -vxzf "$tarball"
     else
-        curl -o "$tarball" "https://dl.google.com/go/$tarball" 2> /dev/null
+        curl -o "$tarball" "https://dl.google.com/go/$tarball" 2>/dev/null
         sudo tar -C /usr/local -xzf "$tarball"
     fi
-    popd > /dev/null
+    popd >/dev/null
 
     sudo mkdir -p /etc/profile.d/
     # shellcheck disable=SC2016
-    echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee /etc/profile.d/path.sh > /dev/null
+    echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee /etc/profile.d/path.sh >/dev/null
 }
 
 main

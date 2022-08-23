@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -25,12 +25,12 @@ function get_github_latest_release {
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "${version#v}"
 }
@@ -47,29 +47,29 @@ function _vercmp {
     result=$(echo -e "$v1\n$v2" | sort -V | head -1)
 
     case $op in
-        "==")
-            [ "$v1" = "$v2" ]
-            return
-            ;;
-        ">")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
-            return
-            ;;
-        "<")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
-            return
-            ;;
-        ">=")
-            [ "$result" = "$v2" ]
-            return
-            ;;
-        "<=")
-            [ "$result" = "$v1" ]
-            return
-            ;;
-        *)
-            die $LINENO "unrecognised op: $op"
-            ;;
+    "==")
+        [ "$v1" = "$v2" ]
+        return
+        ;;
+    ">")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+        return
+        ;;
+    "<")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+        return
+        ;;
+    ">=")
+        [ "$result" = "$v2" ]
+        return
+        ;;
+    "<=")
+        [ "$result" = "$v1" ]
+        return
+        ;;
+    *)
+        die $LINENO "unrecognised op: $op"
+        ;;
     esac
 }
 
@@ -83,39 +83,39 @@ function main {
 
     if ! command -v terraform || [ "$(terraform version | awk 'NR==1{print $2}')" != "v${version#*v}" ]; then
         echo "INFO: Installing terraform $version version..."
-        pushd "$(mktemp -d)" > /dev/null
+        pushd "$(mktemp -d)" >/dev/null
         if ! command -v unzip; then
             INSTALLER_CMD="sudo -H -E "
             # shellcheck disable=SC1091
             source /etc/os-release || source /usr/lib/os-release
             case ${ID,,} in
-                *suse*)
-                    INSTALLER_CMD+="zypper "
-                    if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                        INSTALLER_CMD+="-q "
-                    fi
-                    INSTALLER_CMD+="install -y --no-recommends"
+            *suse*)
+                INSTALLER_CMD+="zypper "
+                if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+                    INSTALLER_CMD+="-q "
+                fi
+                INSTALLER_CMD+="install -y --no-recommends"
                 ;;
-                ubuntu|debian)
-                    INSTALLER_CMD+="apt-get -y "
-                    if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                        INSTALLER_CMD+="-q=3 "
-                    fi
-                    INSTALLER_CMD+=" --no-install-recommends install"
+            ubuntu | debian)
+                INSTALLER_CMD+="apt-get -y "
+                if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+                    INSTALLER_CMD+="-q=3 "
+                fi
+                INSTALLER_CMD+=" --no-install-recommends install"
                 ;;
-                rhel|centos|fedora)
-                    INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
-                    if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                        INSTALLER_CMD+=" --quiet --errorlevel=0"
-                    fi
-                    INSTALLER_CMD+=" install"
+            rhel | centos | fedora)
+                INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
+                if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+                    INSTALLER_CMD+=" --quiet --errorlevel=0"
+                fi
+                INSTALLER_CMD+=" install"
                 ;;
             esac
             $INSTALLER_CMD unzip
         fi
         zip_file="terraform_${version#*v}_${OS}_$ARCH.zip"
         url="https://releases.hashicorp.com/terraform/${version#*v}/$zip_file"
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        if [[ ${PKG_DEBUG:-false} == "true" ]]; then
             curl -o terraform.zip "$url"
             unzip terraform.zip
         else
@@ -129,14 +129,14 @@ function main {
         else
             mkdir -p ~/.local/share/terraform/plugins/registry.terraform.io/
         fi
-        popd > /dev/null
+        popd >/dev/null
     fi
     if ! command -v terraform-docs || [ "$(terraform-docs version | awk '{ print $3}')" != "${docs_version#*v}" ]; then
         echo "INFO: Installing terraform-docs $docs_version version..."
 
         curl -s "https://i.jpillora.com/terraform-docs/terraform-docs@v${docs_version#*v}!!" | bash
         sudo mkdir -p /etc/bash_completion.d
-        terraform-docs completion bash | sudo tee /etc/bash_completion.d/terraform-docs > /dev/null
+        terraform-docs completion bash | sudo tee /etc/bash_completion.d/terraform-docs >/dev/null
     fi
     if ! command -v $ terrascan || [ "$(terrascan version | awk '{ print $NF}')" != "v${terrascan_version#*v}" ]; then
         echo "INFO: Installing terrascan $terrascan_version version..."

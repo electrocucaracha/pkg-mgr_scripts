@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -27,29 +27,29 @@ function _vercmp {
     result=$(echo -e "$v1\n$v2" | sort -V | head -1)
 
     case $op in
-        "==")
-            [ "$v1" = "$v2" ]
-            return
-            ;;
-        ">")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
-            return
-            ;;
-        "<")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
-            return
-            ;;
-        ">=")
-            [ "$result" = "$v2" ]
-            return
-            ;;
-        "<=")
-            [ "$result" = "$v1" ]
-            return
-            ;;
-        *)
-            die $LINENO "unrecognised op: $op"
-            ;;
+    "==")
+        [ "$v1" = "$v2" ]
+        return
+        ;;
+    ">")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+        return
+        ;;
+    "<")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+        return
+        ;;
+    ">=")
+        [ "$result" = "$v2" ]
+        return
+        ;;
+    "<=")
+        [ "$result" = "$v1" ]
+        return
+        ;;
+    *)
+        die $LINENO "unrecognised op: $op"
+        ;;
     esac
 }
 
@@ -65,46 +65,46 @@ function main {
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
-        opensuse*)
-            INSTALLER_CMD="zypper"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" -q"
-            fi
-            INSTALLER_CMD+=" install -y"
-            eval "sudo -H -E $INSTALLER_CMD -t pattern devel_C_C++"
-            INSTALLER_CMD+=" --no-recommends"
-            pkgs="pciutils libudev-devel openssl-devel gcc-c++ kernel-source kernel-syms insserv-compat"
-            if [[ "${ID,,}" == *tumbleweed* ]]; then
-                echo "WARN: QAT driver is not supported in openSUSE $VERSION_ID"
-                return
-            fi
+    opensuse*)
+        INSTALLER_CMD="zypper"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" -q"
+        fi
+        INSTALLER_CMD+=" install -y"
+        eval "sudo -H -E $INSTALLER_CMD -t pattern devel_C_C++"
+        INSTALLER_CMD+=" --no-recommends"
+        pkgs="pciutils libudev-devel openssl-devel gcc-c++ kernel-source kernel-syms insserv-compat"
+        if [[ ${ID,,} == *tumbleweed* ]]; then
+            echo "WARN: QAT driver is not supported in openSUSE $VERSION_ID"
+            return
+        fi
         ;;
-        ubuntu|debian)
-            INSTALLER_CMD="apt-get -y --no-install-recommends"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" -q=3"
-            fi
-            INSTALLER_CMD+=" install"
-            pkgs="linux-headers-$(uname -r) pciutils libudev-dev pkg-config build-essential"
-            echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
-            sudo apt-get update
+    ubuntu | debian)
+        INSTALLER_CMD="apt-get -y --no-install-recommends"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" -q=3"
+        fi
+        INSTALLER_CMD+=" install"
+        pkgs="linux-headers-$(uname -r) pciutils libudev-dev pkg-config build-essential"
+        echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
+        sudo apt-get update
         ;;
-        rhel|centos|fedora)
-            PKG_MANAGER=$(command -v dnf || command -v yum)
-            sudo "${PKG_MANAGER}" groups mark install -y "Development Tools"
-            sudo "${PKG_MANAGER}" groups install -y "Development Tools"
-            INSTALLER_CMD="${PKG_MANAGER} -y"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" --quiet --errorlevel=0"
-            fi
-            INSTALLER_CMD+=" install"
-            pkgs="kernel-devel-$(uname -r) pciutils libudev-devel gcc openssl-devel"
-            if [[ "${VERSION_ID}" == *7* ]]; then
-                pkgs+=" yum-plugin-fastestmirror"
-            else
-                echo "WARN: QAT driver is not supported in CentOS $VERSION_ID"
-                return
-            fi
+    rhel | centos | fedora)
+        PKG_MANAGER=$(command -v dnf || command -v yum)
+        sudo "${PKG_MANAGER}" groups mark install -y "Development Tools"
+        sudo "${PKG_MANAGER}" groups install -y "Development Tools"
+        INSTALLER_CMD="${PKG_MANAGER} -y"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" --quiet --errorlevel=0"
+        fi
+        INSTALLER_CMD+=" install"
+        pkgs="kernel-devel-$(uname -r) pciutils libudev-devel gcc openssl-devel"
+        if [[ ${VERSION_ID} == *7* ]]; then
+            pkgs+=" yum-plugin-fastestmirror"
+        else
+            echo "WARN: QAT driver is not supported in CentOS $VERSION_ID"
+            return
+        fi
         ;;
     esac
     echo "INFO: Installing building packages ($pkgs)"
@@ -120,7 +120,7 @@ function main {
     fi
 
     sudo mkdir -p /lib/modprobe.d/
-    sudo tee /lib/modprobe.d/quickassist-blacklist.conf  << EOF
+    sudo tee /lib/modprobe.d/quickassist-blacklist.conf <<EOF
 ### Blacklist in-kernel QAT drivers to avoid kernel boot problems.
 # Lewisburg QAT PF
 blacklist qat_c62x

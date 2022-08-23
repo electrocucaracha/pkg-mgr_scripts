@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 

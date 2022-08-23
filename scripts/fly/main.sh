@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -25,12 +25,12 @@ function get_github_latest_release {
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "${version#v}"
 }
@@ -45,22 +45,22 @@ function main {
         ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
         tarball="fly-$version-$OS-$ARCH.tgz"
         url="https://github.com/concourse/concourse/releases/download/v$version/$tarball"
-        pushd "$(mktemp -d)" > /dev/null
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        pushd "$(mktemp -d)" >/dev/null
+        if [[ ${PKG_DEBUG:-false} == "true" ]]; then
             curl -L -o fly.tgz "$url"
             tar xvf fly.tgz
         else
-            curl -sL -o fly.tgz "$url" 2> /dev/null
+            curl -sL -o fly.tgz "$url" 2>/dev/null
             tar xf fly.tgz
         fi
         chmod +x ./fly
-        sudo mkdir -p  /usr/local/bin/
+        sudo mkdir -p /usr/local/bin/
         sudo mv ./fly /usr/local/bin/fly
         export PATH=$PATH:/usr/local/bin/
-        popd > /dev/null
+        popd >/dev/null
     fi
     sudo mkdir -p /etc/bash_completion.d
-    fly completion --shell bash | sudo tee /etc/bash_completion.d/fly > /dev/null
+    fly completion --shell bash | sudo tee /etc/bash_completion.d/fly >/dev/null
 }
 
 main

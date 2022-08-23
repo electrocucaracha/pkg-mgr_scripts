@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -30,29 +30,29 @@ function _vercmp {
     result=$(echo -e "$v1\n$v2" | sort -V | head -1)
 
     case $op in
-        "==")
-            [ "$v1" = "$v2" ]
-            return
-            ;;
-        ">")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
-            return
-            ;;
-        "<")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
-            return
-            ;;
-        ">=")
-            [ "$result" = "$v2" ]
-            return
-            ;;
-        "<=")
-            [ "$result" = "$v1" ]
-            return
-            ;;
-        *)
-            die $LINENO "unrecognised op: $op"
-            ;;
+    "==")
+        [ "$v1" = "$v2" ]
+        return
+        ;;
+    ">")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+        return
+        ;;
+    "<")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+        return
+        ;;
+    ">=")
+        [ "$result" = "$v2" ]
+        return
+        ;;
+    "<=")
+        [ "$result" = "$v1" ]
+        return
+        ;;
+    *)
+        die $LINENO "unrecognised op: $op"
+        ;;
     esac
 }
 
@@ -66,12 +66,12 @@ function get_github_latest_release {
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "${version#v}"
 }
@@ -82,7 +82,7 @@ function _install_runc {
     if ! command -v runc || [[ "$(runc --version | awk 'NR==1{ print $NF }')" != "$version" ]]; then
         echo "INFO: Installing runc $version version..."
         url="https://github.com/opencontainers/runc/releases/download/v${version}/runc.$ARCH"
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        if [[ ${PKG_DEBUG:-false} == "true" ]]; then
             sudo curl -o /usr/bin/runc -sL "$url"
         else
             sudo curl -o /usr/bin/runc -sL "$url" 2>/dev/null
@@ -101,7 +101,7 @@ function _install_crun {
             binary="crun-${version}-static-$(uname -m)"
         fi
         url="https://github.com/containers/crun/releases/download/${version}/$binary"
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        if [[ ${PKG_DEBUG:-false} == "true" ]]; then
             sudo curl -o /usr/bin/crun -sL "$url"
         else
             sudo curl -o /usr/bin/crun -sL "$url" 2>/dev/null
@@ -114,18 +114,18 @@ function _install_youki {
     local version=${PKG_YOUKI_VERSION:-$(get_github_latest_release containers/youki)}
 
     if ! command -v youki || [[ "$(youki --version | awk 'NR==1{ print $NF }')" != "$version" ]]; then
-        if  _vercmp "${version}" '==' "0.0.3"; then
+        if _vercmp "${version}" '==' "0.0.3"; then
             path_checker=true
             case ${ID,,} in
-                ubuntu)
-                    if [ "${VERSION_ID}" == "20.04" ]; then
-                        path_checker=false
-                    fi
+            ubuntu)
+                if [ "${VERSION_ID}" == "20.04" ]; then
+                    path_checker=false
+                fi
                 ;;
-                *suse*)
-                    if [[ "${ID,,}" == *"tumbleweed"* ]]; then
-                        path_checker=false
-                    fi
+            *suse*)
+                if [[ ${ID,,} == *"tumbleweed"* ]]; then
+                    path_checker=false
+                fi
                 ;;
             esac
             if [ "$path_checker" == "false" ]; then
@@ -134,14 +134,14 @@ function _install_youki {
             fi
         fi
         case ${ID,,} in
-            ubuntu)
-                libc_version="$(apt-cache policy libc6 | grep Installed | awk 'NR==1{print $NF}')"
+        ubuntu)
+            libc_version="$(apt-cache policy libc6 | grep Installed | awk 'NR==1{print $NF}')"
             ;;
-            centos)
-                libc_version="$($(command -v dnf || command -v yum) info glibc | grep Version | awk 'NR==1{print $NF}')"
+        centos)
+            libc_version="$($(command -v dnf || command -v yum) info glibc | grep Version | awk 'NR==1{print $NF}')"
             ;;
-            *suse*)
-                libc_version="$(zypper info glibc | grep Version | awk 'NR==1{print $NF}')"
+        *suse*)
+            libc_version="$(zypper info glibc | grep Version | awk 'NR==1{print $NF}')"
             ;;
         esac
         if _vercmp "${libc_version%-*}" '<' "2.29"; then
@@ -149,24 +149,24 @@ function _install_youki {
             return 1
         fi
         echo "INFO: Installing youki $version version..."
-        pushd "$(mktemp -d)" > /dev/null
+        pushd "$(mktemp -d)" >/dev/null
         tarball="youki_${version//./_}_$OS.tar.gz"
         if _vercmp "${version}" '<=' "0.0.1"; then
             tarball="youki_v${version//./_}_$OS.tar.gz"
         fi
         url="https://github.com/containers/youki/releases/download/v${version}/${tarball}"
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        if [[ ${PKG_DEBUG:-false} == "true" ]]; then
             curl -fsSLO "$url"
             tar -vxzf "$tarball" --strip-components=2
         else
-            curl -fsSLO "$url" 2> /dev/null
+            curl -fsSLO "$url" 2>/dev/null
             tar -xzf "$tarball" --strip-components=2
         fi
         sudo mv youki /usr/bin/youki
         sudo chown root: /usr/bin/youki
         sudo mkdir -p /etc/bash_completion.d
-        youki completion --shell bash | sudo tee /etc/bash_completion.d/youki > /dev/null
-        popd > /dev/null
+        youki completion --shell bash | sudo tee /etc/bash_completion.d/youki >/dev/null
+        popd >/dev/null
     fi
 }
 
@@ -177,14 +177,14 @@ function main {
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
-        *suse*)
-            INSTALLER_CMD+="zypper "
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+="-q "
-            fi
-            INSTALLER_CMD+="install -y --no-recommends"
-            sudo mkdir -p /etc/cni/net.d/
-            sudo tee /etc/cni/net.d/87-podman-bridge.conflist <<EOF
+    *suse*)
+        INSTALLER_CMD+="zypper "
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+="-q "
+        fi
+        INSTALLER_CMD+="install -y --no-recommends"
+        sudo mkdir -p /etc/cni/net.d/
+        sudo tee /etc/cni/net.d/87-podman-bridge.conflist <<EOF
 {
   "cniVersion": "0.4.0",
   "name": "podman",
@@ -224,31 +224,31 @@ function main {
 }
 EOF
         ;;
-        ubuntu|debian)
-            if _vercmp "${VERSION_ID}" '<=' "16.04"; then
-                echo "WARN: Podman is not supported in Ubuntu $VERSION_ID"
-                return
-            fi
-            INSTALLER_CMD+="apt-get -y "
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+="-q=3 "
-            fi
-            INSTALLER_CMD+=" install"
-            echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-            curl -sL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
-            sudo apt-get update ||:
-            $INSTALLER_CMD --reinstall ca-certificates
-            sudo apt-get update
+    ubuntu | debian)
+        if _vercmp "${VERSION_ID}" '<=' "16.04"; then
+            echo "WARN: Podman is not supported in Ubuntu $VERSION_ID"
+            return
+        fi
+        INSTALLER_CMD+="apt-get -y "
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+="-q=3 "
+        fi
+        INSTALLER_CMD+=" install"
+        echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+        curl -sL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
+        sudo apt-get update || :
+        $INSTALLER_CMD --reinstall ca-certificates
+        sudo apt-get update
         ;;
-        rhel|centos|fedora)
-            PKG_MANAGER=$(command -v dnf || command -v yum)
-            INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" --quiet --errorlevel=0"
-            fi
-            INSTALLER_CMD+=" install"
-            $INSTALLER_CMD libseccomp-devel
-            echo 62460 | sudo tee /proc/sys/user/max_user_namespaces
+    rhel | centos | fedora)
+        PKG_MANAGER=$(command -v dnf || command -v yum)
+        INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" --quiet --errorlevel=0"
+        fi
+        INSTALLER_CMD+=" install"
+        $INSTALLER_CMD libseccomp-devel
+        echo 62460 | sudo tee /proc/sys/user/max_user_namespaces
         ;;
     esac
     echo "INFO: Installing podman..."
@@ -256,7 +256,7 @@ EOF
 
     # NOTE: metacopy=on is available since 4.19 and was backported to RHEL 4.18 kernel
     if _vercmp "$(uname -r | awk -F '-' '{print $1}')" '<' "4.19"; then
-        sudo sed -i "s/^mountopt =.*/mountopt = \"nodev\"/" /etc/containers/storage.conf
+        sudo sed -i 's/^mountopt =.*/mountopt = "nodev"/' /etc/containers/storage.conf
     fi
 
     if [ "${ID,,}" == "centos" ] && [ "${VERSION_ID}" == "7" ]; then
@@ -273,7 +273,7 @@ EOF
         fi
     fi
 
-    sudo tee /etc/containers/containers.conf << EOF
+    sudo tee /etc/containers/containers.conf <<EOF
 [containers]
 [network]
 [engine]
@@ -283,7 +283,7 @@ EOF
 
     for runtime in ${runtimes_list//,/ }; do
         if "_install_$runtime"; then
-            sudo tee --append /etc/containers/containers.conf << EOF
+            sudo tee --append /etc/containers/containers.conf <<EOF
 $runtime = [
         "$(command -v "$runtime")",
 ]

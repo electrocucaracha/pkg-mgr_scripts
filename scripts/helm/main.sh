@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -22,8 +22,8 @@ function main {
         # shellcheck disable=SC1091
         source /etc/os-release || source /usr/lib/os-release
         case ${ID,,} in
-            *suse*)
-                sudo zypper -q install -y --no-recommends openssl
+        *suse*)
+            sudo zypper -q install -y --no-recommends openssl
             ;;
         esac
     fi
@@ -43,7 +43,7 @@ function main {
 
         echo "INFO: Creating helm service"
         sudo su "$helm_user" -c "helm init --wait --client-only"
-        sudo tee <<EOF /etc/systemd/system/helm-serve.service >/dev/null
+        sudo tee /etc/systemd/system/helm-serve.service <<EOF >/dev/null
 [Unit]
 Description=Helm Server
 After=network.target
@@ -64,7 +64,7 @@ EOF
         curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
     fi
     sudo mkdir -p /etc/bash_completion.d
-    helm completion bash | sudo tee /etc/bash_completion.d/helm > /dev/null
+    helm completion bash | sudo tee /etc/bash_completion.d/helm >/dev/null
 }
 
 main

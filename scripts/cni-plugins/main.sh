@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -25,12 +25,12 @@ function get_github_latest_release {
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "${version#v}"
 }
@@ -45,25 +45,25 @@ function main {
         version=${PKG_CNI_PLUGINS_VERSION:-$(get_github_latest_release containernetworking/plugins)}
         echo "INFO: Installing CNI plugins $version version..."
 
-        pushd "$(mktemp -d)" > /dev/null
+        pushd "$(mktemp -d)" >/dev/null
         tarball="cni-plugins-$OS-$ARCH-v${version}.tgz"
         url="https://github.com/containernetworking/plugins/releases/download/v${version}/${tarball}"
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        if [[ ${PKG_DEBUG:-false} == "true" ]]; then
             curl -Lo cni-plugins.tgz "$url"
             sudo tar xvf cni-plugins.tgz -C "$cni_folder"
         else
-            curl -Lo cni-plugins.tgz "$url" > /dev/null
+            curl -Lo cni-plugins.tgz "$url" >/dev/null
             sudo tar xf cni-plugins.tgz -C "$cni_folder"
         fi
-        popd > /dev/null
+        popd >/dev/null
     fi
     if [ ! -f "${cni_folder}/flannel" ]; then
         flannel_version=${PKG_FLANNEL_VERSION:-$(get_github_latest_release flannel-io/cni-plugin)}
         url="https://github.com/flannel-io/cni-plugin/releases/download/v${flannel_version}/flannel-${ARCH}"
-        if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+        if [[ ${PKG_DEBUG:-false} == "true" ]]; then
             sudo curl -Lo "${cni_folder}/flannel" "$url"
         else
-            sudo curl -Lo "${cni_folder}/flannel" "$url" > /dev/null
+            sudo curl -Lo "${cni_folder}/flannel" "$url" >/dev/null
         fi
         sudo chmod +x "${cni_folder}/flannel"
     fi

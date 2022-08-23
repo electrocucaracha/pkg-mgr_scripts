@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -27,29 +27,29 @@ function _vercmp {
     result=$(echo -e "$v1\n$v2" | sort -V | head -1)
 
     case $op in
-        "==")
-            [ "$v1" = "$v2" ]
-            return
-            ;;
-        ">")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
-            return
-            ;;
-        "<")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
-            return
-            ;;
-        ">=")
-            [ "$result" = "$v2" ]
-            return
-            ;;
-        "<=")
-            [ "$result" = "$v1" ]
-            return
-            ;;
-        *)
-            die $LINENO "unrecognised op: $op"
-            ;;
+    "==")
+        [ "$v1" = "$v2" ]
+        return
+        ;;
+    ">")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+        return
+        ;;
+    "<")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+        return
+        ;;
+    ">=")
+        [ "$result" = "$v2" ]
+        return
+        ;;
+    "<=")
+        [ "$result" = "$v1" ]
+        return
+        ;;
+    *)
+        die $LINENO "unrecognised op: $op"
+        ;;
     esac
 }
 
@@ -58,19 +58,19 @@ function main {
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
-        *suse*)
-            sudo -H -E zypper install -y --no-recommends nfs-kernel-server
+    *suse*)
+        sudo -H -E zypper install -y --no-recommends nfs-kernel-server
         ;;
-        ubuntu|debian)
-            sudo apt update
-            sudo -H -E apt-get -y install --no-install-recommends nfs-kernel-server
+    ubuntu | debian)
+        sudo apt update
+        sudo -H -E apt-get -y install --no-install-recommends nfs-kernel-server
         ;;
-        rhel|centos|fedora)
-            INSTALLER_CMD="sudo -H -E $(command -v dnf || command -v yum) -y install nfs-utils"
-            if _vercmp "${VERSION_ID}" '<=' "7"; then
-                INSTALLER_CMD+=" nfs-utils-lib"
-            fi
-            $INSTALLER_CMD
+    rhel | centos | fedora)
+        INSTALLER_CMD="sudo -H -E $(command -v dnf || command -v yum) -y install nfs-utils"
+        if _vercmp "${VERSION_ID}" '<=' "7"; then
+            INSTALLER_CMD+=" nfs-utils-lib"
+        fi
+        $INSTALLER_CMD
         ;;
     esac
 

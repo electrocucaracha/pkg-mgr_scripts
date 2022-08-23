@@ -32,7 +32,7 @@ fi
 
 info "Validate QEMU image creation"
 rm -f ~/ubuntu.img
-if ! qemu-img create ~/ubuntu.img 10G > /dev/null; then
+if ! qemu-img create ~/ubuntu.img 10G >/dev/null; then
     error "Error during the QEMU image creation"
 fi
 qemu-img info ~/ubuntu.img

@@ -46,7 +46,7 @@ fi
 docker_image="quay.io/openshifttest/alpine:latest"
 for image in "$mgmt_ip:5000/bash:test" "$docker_image"; do
     docker_id=$(sudo docker images "$image" -q)
-    if [[ -n "$docker_id" ]]; then
+    if [[ -n $docker_id ]]; then
         info "Removing previous docker image with id = $docker_id"
         sudo docker rmi -f "$docker_id"
     fi
@@ -72,11 +72,11 @@ sudo docker run --rm --runtime=runsc "$docker_image" ping -c 1 localhost
 
 info "Validating Docker building process with $docker_image image"
 pushd "$(mktemp -d)"
-cat << EOF > Dockerfile
+cat <<EOF >Dockerfile
 FROM $docker_image
 RUN apk update && apk add bash
 EOF
-if ! sudo docker build --no-cache -t "$mgmt_ip:5000/bash:test" . ; then
+if ! sudo docker build --no-cache -t "$mgmt_ip:5000/bash:test" .; then
     error "Docker build action doesn't work"
 fi
 export DSLIM_HTTP_PROBE=false
@@ -90,7 +90,7 @@ info "Validating Docker pushing process with $docker_image image"
 if [[ -z $(sudo docker ps -aqf "name=registry") ]]; then
     info "Starting a local Docker registry"
     sudo docker run -d --name registry --restart=always \
-    -p 5000:5000 -v registry:/var/lib/registry registry:2
+        -p 5000:5000 -v registry:/var/lib/registry registry:2
 fi
 if ! sudo docker push "$mgmt_ip:5000/bash:test"; then
     error "Docker push action doesn't work"
@@ -143,17 +143,17 @@ else
     max_attempts=5
     # Only Ubuntu based distros support overlay filesystems in rootless mode.
     # https://medium.com/@tonistiigi/experimenting-with-rootless-docker-416c9ad8c0d6
-    nohup bash -c "$HOME/bin/dockerd-rootless.sh --experimental --storage-driver vfs" > /tmp/dockerd-rootless.log 2>&1 &
+    nohup bash -c "$HOME/bin/dockerd-rootless.sh --experimental --storage-driver vfs" >/tmp/dockerd-rootless.log 2>&1 &
     until [ -f /tmp/dockerd-rootless.log ] && grep -q "Daemon has completed initialization" /tmp/dockerd-rootless.log; do
-        if [ "${attempt_counter}" -eq "${max_attempts}" ];then
+        if [ "${attempt_counter}" -eq "${max_attempts}" ]; then
             cat /tmp/dockerd-rootless.log
             error "Max attempts reached"
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*5))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 5))
     done
     if [ -f /run/user/1000/docker.pid ]; then
-        trap "kill -s SIGTERM \$(cat /run/user/1000/docker.pid)" EXIT
+        trap 'kill -s SIGTERM $(cat /run/user/1000/docker.pid)' EXIT
     elif [ -f "$HOME/.docker/run/docker.pid" ]; then
         trap 'kill -s SIGTERM $(cat $HOME/.docker/run/docker.pid)' EXIT
     fi

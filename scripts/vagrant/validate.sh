@@ -26,21 +26,21 @@ function _print_msg {
 }
 
 function get_version {
-    local version=${PKG_VAGRANT_VERSION:-}
+    local version=${PKG_VAGRANT_VERSION-}
 
     attempt_counter=0
     max_attempts=5
     until [ "$version" ]; do
         tags="$(curl -s https://api.github.com/repos/hashicorp/vagrant/tags)"
         if [ "$tags" ]; then
-            version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+            version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F '"' 'NR==1{print $4}')"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "${version#*v}"
 }
@@ -50,7 +50,7 @@ if ! command -v vagrant; then
     error "Vagrant command line wasn't installed"
 fi
 
-pushd "$(mktemp -d)" > /dev/null
+pushd "$(mktemp -d)" >/dev/null
 
 info "Checking vagrant version"
 if [ "$(vagrant --version | awk '{ print $2}')" != "$(get_version)" ]; then
@@ -63,7 +63,7 @@ if ! [ -f Vagrantfile ]; then
     error "Vagrantfile wasn't created"
 fi
 
-popd > /dev/null
+popd >/dev/null
 
 info "Validate autocomplete functions"
 if declare -F | grep -q "_vagrant"; then

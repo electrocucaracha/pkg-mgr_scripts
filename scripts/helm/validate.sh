@@ -32,7 +32,7 @@ fi
 
 helm_version=$(helm version 2>/dev/null | awk -F '"' '{print substr($2,2); exit}' || true)
 info "Validating helm $helm_version version"
-if [[ "$helm_version" == "2"* ]]; then
+if [[ $helm_version == "2"* ]]; then
     info "Validating helm service"
     if ! systemctl is-enabled --quiet helm-serve; then
         error "Helm service is not enabled"

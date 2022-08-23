@@ -37,11 +37,11 @@ function setup_ftrace {
     ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
     curl -sL "https://github.com/KentaTada/oci-ftrace-syscall-analyzer/releases/download/v$ftrace_analyzer_version/oci-ftrace-syscall-analyzer-$ARCH.tar.gz" | sudo tar -xz -C "$ftrace_folder_path"
     sudo chmod a+x "$ftrace_analyzer_path"
-    if command -v setcap > /dev/null; then
+    if command -v setcap >/dev/null; then
         sudo setcap CAP_DAC_OVERRIDE+ep /"$ftrace_analyzer_path"
     fi
     sudo mkdir -p /etc/containers/oci/hooks.d/
-    sudo tee <<EOF /etc/containers/oci/hooks.d/ftrace-syscall-analyzer-prehook.json > /dev/null
+    sudo tee /etc/containers/oci/hooks.d/ftrace-syscall-analyzer-prehook.json <<EOF >/dev/null
     {
             "version": "1.0.0",
             "hook": {
@@ -58,7 +58,7 @@ function setup_ftrace {
             "stages": ["prestart"]
     }
 EOF
-    sudo tee <<EOF /etc/containers/oci/hooks.d/ftrace-syscall-analyzer-posthook.json > /dev/null
+    sudo tee /etc/containers/oci/hooks.d/ftrace-syscall-analyzer-posthook.json <<EOF >/dev/null
     {
             "version": "1.0.0",
             "hook": {
@@ -118,11 +118,10 @@ for runtime in ${runtimes_list//,/ }; do
     fi
 done
 
-
 info "Validate pod creation"
 podman pod rm single-pod --ignore
 pushd "$(mktemp -d)"
-cat << EOF > pod.yml
+cat <<EOF >pod.yml
 apiVersion: v1
 kind: Pod
 metadata:

@@ -26,7 +26,7 @@ function _print_msg {
 }
 
 function _get_version {
-    local version=${PKG_CNI_PLUGINS_VERSION:-}
+    local version=${PKG_CNI_PLUGINS_VERSION-}
     attempt_counter=0
     max_attempts=5
 
@@ -35,12 +35,12 @@ function _get_version {
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "v${version#*v}"
 }
@@ -56,29 +56,29 @@ function _vercmp {
     result=$(echo -e "$v1\n$v2" | sort -V | head -1)
 
     case $op in
-        "==")
-            [ "$v1" = "$v2" ]
-            return
-            ;;
-        ">")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
-            return
-            ;;
-        "<")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
-            return
-            ;;
-        ">=")
-            [ "$result" = "$v2" ]
-            return
-            ;;
-        "<=")
-            [ "$result" = "$v1" ]
-            return
-            ;;
-        *)
-            die $LINENO "unrecognised op: $op"
-            ;;
+    "==")
+        [ "$v1" = "$v2" ]
+        return
+        ;;
+    ">")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+        return
+        ;;
+    "<")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+        return
+        ;;
+    ">=")
+        [ "$result" = "$v2" ]
+        return
+        ;;
+    "<=")
+        [ "$result" = "$v1" ]
+        return
+        ;;
+    *)
+        die $LINENO "unrecognised op: $op"
+        ;;
     esac
 }
 
@@ -94,11 +94,11 @@ for plugin in bandwidth bridge dhcp firewall flannel host-device host-local ipvl
         error "$plugin CNI binary doesn't exist"
     fi
     cni_versions_supported="$(CNI_COMMAND=VERSION "${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}/$plugin")"
-    if [ -z "$cni_versions_supported"  ]; then
+    if [ -z "$cni_versions_supported" ]; then
         error "$plugin CNI binary doesn't support CNI version command"
     fi
     info "$plugin plugin supports $(echo "$cni_versions_supported" | awk -F ":" '{ gsub(/["\[\]}]/,""); gsub(/,/,", "); print $3}') CNI versions"
-    if [ "$plugin" != "flannel" ] || _vercmp "$cni_version" '<' "0.9.1" && [[ "$("${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}/$plugin" --help 2>&1 )" != *$cni_version* ]]; then
+    if [ "$plugin" != "flannel" ] || _vercmp "$cni_version" '<' "0.9.1" && [[ "$("${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}/$plugin" --help 2>&1)" != *$cni_version* ]]; then
         error "$plugin CNI binary version is different than expected"
     fi
 done

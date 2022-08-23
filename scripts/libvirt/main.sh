@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -27,29 +27,29 @@ function _vercmp {
     result=$(echo -e "$v1\n$v2" | sort -V | head -1)
 
     case $op in
-        "==")
-            [ "$v1" = "$v2" ]
-            return
-            ;;
-        ">")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
-            return
-            ;;
-        "<")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
-            return
-            ;;
-        ">=")
-            [ "$result" = "$v2" ]
-            return
-            ;;
-        "<=")
-            [ "$result" = "$v1" ]
-            return
-            ;;
-        *)
-            die $LINENO "unrecognised op: $op"
-            ;;
+    "==")
+        [ "$v1" = "$v2" ]
+        return
+        ;;
+    ">")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+        return
+        ;;
+    "<")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+        return
+        ;;
+    ">=")
+        [ "$result" = "$v2" ]
+        return
+        ;;
+    "<=")
+        [ "$result" = "$v1" ]
+        return
+        ;;
+    *)
+        die $LINENO "unrecognised op: $op"
+        ;;
     esac
 }
 
@@ -60,56 +60,56 @@ function main {
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
-        *suse*)
-            INSTALLER_CMD="zypper"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" -q"
-            fi
-            INSTALLER_CMD+=" install -y --no-recommends"
-            pkgs+=" libvirt libvirt-devel zlib-devel"
-            pkgs+=" libxml2-devel libxslt-devel"
-            sudo zypper -n ref
+    *suse*)
+        INSTALLER_CMD="zypper"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" -q"
+        fi
+        INSTALLER_CMD+=" install -y --no-recommends"
+        pkgs+=" libvirt libvirt-devel zlib-devel"
+        pkgs+=" libxml2-devel libxslt-devel"
+        sudo zypper -n ref
         ;;
-        ubuntu|debian)
-            INSTALLER_CMD="apt-get -y --no-install-recommends"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" -q=3"
-            fi
-            INSTALLER_CMD+=" install"
-            if _vercmp "${VERSION_ID}" '<=' "16.04"; then
-                libvirt_group+="d"
-            fi
-            if _vercmp "${VERSION_ID}" '<' "20.04"; then
-                pkgs+=" libvirt-bin"
-            else
-                pkgs+=" libvirt-daemon-system"
-            fi
-            pkgs+=" libvirt-dev libxslt-dev libxml2-dev"
-            pkgs+=" zlib1g-dev cpu-checker"
-            echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
-            sudo apt-get update
+    ubuntu | debian)
+        INSTALLER_CMD="apt-get -y --no-install-recommends"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" -q=3"
+        fi
+        INSTALLER_CMD+=" install"
+        if _vercmp "${VERSION_ID}" '<=' "16.04"; then
+            libvirt_group+="d"
+        fi
+        if _vercmp "${VERSION_ID}" '<' "20.04"; then
+            pkgs+=" libvirt-bin"
+        else
+            pkgs+=" libvirt-daemon-system"
+        fi
+        pkgs+=" libvirt-dev libxslt-dev libxml2-dev"
+        pkgs+=" zlib1g-dev cpu-checker"
+        echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
+        sudo apt-get update
         ;;
-        rhel|centos|fedora)
-            PKG_MANAGER=$(command -v dnf || command -v yum)
-            INSTALLER_CMD="${PKG_MANAGER} -y"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" --quiet --errorlevel=0"
-            fi
-            INSTALLER_CMD+=" install"
-            pkgs+=" libvirt libvirt-devel"
-            sudo "$PKG_MANAGER" updateinfo --assumeyes
+    rhel | centos | fedora)
+        PKG_MANAGER=$(command -v dnf || command -v yum)
+        INSTALLER_CMD="${PKG_MANAGER} -y"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" --quiet --errorlevel=0"
+        fi
+        INSTALLER_CMD+=" install"
+        pkgs+=" libvirt libvirt-devel"
+        sudo "$PKG_MANAGER" updateinfo --assumeyes
         ;;
-        *)
-            # MacOS
-            if command -v sw_vers; then
-                if ! command -v brew; then
-                    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-                fi
-                brew install qemu libvirt
-                sudo sed -i '' "s|^#unix_sock_rw_perms = .*\$|unix_sock_rw_perms = \"0770\"|g" /usr/local/etc/libvirt/libvirtd.conf
-                sudo brew services start libvirt
-                sudo ln -sf /usr/local/var/run/libvirt /var/run/libvirt
+    *)
+        # MacOS
+        if command -v sw_vers; then
+            if ! command -v brew; then
+                ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
             fi
+            brew install qemu libvirt
+            sudo sed -i '' 's|^#unix_sock_rw_perms = .*$|unix_sock_rw_perms = "0770"|g' /usr/local/etc/libvirt/libvirtd.conf
+            sudo brew services start libvirt
+            sudo ln -sf /usr/local/var/run/libvirt /var/run/libvirt
+        fi
         ;;
     esac
     echo "INFO: Installing libvirt packages ($pkgs)..."

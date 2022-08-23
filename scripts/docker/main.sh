@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -28,12 +28,12 @@ function get_github_latest_release {
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "${version#v}"
 }
@@ -50,12 +50,12 @@ function _install_regctl {
 
     binary="regctl-$OS-$ARCH"
     url="https://github.com/regclient/regclient/releases/download/v${version}/$binary"
-    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+    if [[ ${PKG_DEBUG:-false} == "true" ]]; then
         curl -Lo ./regctl "$url"
         curl -Lo ./docker-regclient "https://raw.githubusercontent.com/regclient/regclient/v${version}/docker-plugin/docker-regclient"
     else
-        curl -Lo ./regctl "$url" 2> /dev/null
-        curl -Lo ./docker-regclient "https://raw.githubusercontent.com/regclient/regclient/v${version}/docker-plugin/docker-regclient" 2> /dev/null
+        curl -Lo ./regctl "$url" 2>/dev/null
+        curl -Lo ./docker-regclient "https://raw.githubusercontent.com/regclient/regclient/v${version}/docker-plugin/docker-regclient" 2>/dev/null
     fi
     chmod +x ./regctl
     sudo mv ./regctl /usr/bin/regctl
@@ -87,68 +87,68 @@ function _install_dive {
 }
 
 function main {
-    echo insecure >> ~/.curlrc
+    echo insecure >>~/.curlrc
     trap 'sed -i "/^insecure\$/d" ~/.curlrc' EXIT
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     INSTALLER_CMD="sudo -H -E "
     case ${ID,,} in
-        *suse*)
-            INSTALLER_CMD+="zypper"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" -q"
-            fi
-            INSTALLER_CMD+=" install -y --no-recommends"
+    *suse*)
+        INSTALLER_CMD+="zypper"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" -q"
+        fi
+        INSTALLER_CMD+=" install -y --no-recommends"
         ;;
-        rhel|centos|fedora)
-            INSTALLER_CMD+="$(command -v dnf || command -v yum) -y install"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" --quiet --errorlevel=0"
-            fi
+    rhel | centos | fedora)
+        INSTALLER_CMD+="$(command -v dnf || command -v yum) -y install"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" --quiet --errorlevel=0"
+        fi
         ;;
-        ubuntu|debian)
-            INSTALLER_CMD+="apt-get -y "
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+="-q=3 "
-            fi
-            INSTALLER_CMD+="--no-install-recommends install"
+    ubuntu | debian)
+        INSTALLER_CMD+="apt-get -y "
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+="-q=3 "
+        fi
+        INSTALLER_CMD+="--no-install-recommends install"
         ;;
     esac
     # Install Chameleon Socks dependency
-    if ! command -v wget > /dev/null; then
+    if ! command -v wget >/dev/null; then
         $INSTALLER_CMD wget
     fi
-    if ! command -v docker > /dev/null; then
+    if ! command -v docker >/dev/null; then
         echo "Installing docker service..."
         case ${ID,,} in
-            *suse*)
-                sudo zypper --gpg-auto-import-keys refresh
-                $INSTALLER_CMD docker
-                for mod in ip_tables iptable_mangle iptable_nat iptable_filter; do
-                    sudo modprobe "$mod"
-                done
+        *suse*)
+            sudo zypper --gpg-auto-import-keys refresh
+            $INSTALLER_CMD docker
+            for mod in ip_tables iptable_mangle iptable_nat iptable_filter; do
+                sudo modprobe "$mod"
+            done
             ;;
-            rhel|centos|fedora)
-                if [[ "$VERSION_ID" == "7" ]]; then
-                    echo "user.max_user_namespaces = 28633" | sudo tee /etc/sysctl.d/51-rootless.conf
-                    sudo sysctl --system
-                fi
-                $INSTALLER_CMD https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
-                curl -fsSL https://get.docker.com/ | sh
-                sudo sed -i "s/FirewallBackend=.*/FirewallBackend=iptables/g" /etc/firewalld/firewalld.conf
-                sudo systemctl restart firewalld
+        rhel | centos | fedora)
+            if [[ $VERSION_ID == "7" ]]; then
+                echo "user.max_user_namespaces = 28633" | sudo tee /etc/sysctl.d/51-rootless.conf
+                sudo sysctl --system
+            fi
+            $INSTALLER_CMD https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+            curl -fsSL https://get.docker.com/ | sh
+            sudo sed -i "s/FirewallBackend=.*/FirewallBackend=iptables/g" /etc/firewalld/firewalld.conf
+            sudo systemctl restart firewalld
             ;;
-            ubuntu|debian)
+        ubuntu | debian)
+            sudo apt-get update
+            $INSTALLER_CMD uidmap
+            if [[ $VERSION_ID == "16.04" ]]; then
+                curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+                sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
                 sudo apt-get update
-                $INSTALLER_CMD uidmap
-                if [[ "$VERSION_ID" == "16.04" ]]; then
-                    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-                    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-                    sudo apt-get update
-                    $INSTALLER_CMD docker-ce
-                else
-                    curl -fsSL https://get.docker.com/ | sh
-                fi
+                $INSTALLER_CMD docker-ce
+            else
+                curl -fsSL https://get.docker.com/ | sh
+            fi
             ;;
         esac
     fi
@@ -164,33 +164,33 @@ function main {
     if ! getent group docker | grep -q "$USER"; then
         sudo usermod -aG docker "$USER"
     fi
-    if [ -n "${SOCKS_PROXY:-}" ]; then
+    if [ -n "${SOCKS_PROXY-}" ]; then
         socks_tmp="${SOCKS_PROXY#*//}"
         curl -sSL https://raw.githubusercontent.com/crops/chameleonsocks/master/chameleonsocks.sh | sudo PROXY="${socks_tmp%:*}" PORT="${socks_tmp#*:}" bash -s -- --install
     else
-        if [ -n "${HTTP_PROXY:-}" ]; then
+        if [ -n "${HTTP_PROXY-}" ]; then
             echo "[Service]" | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
             echo "Environment=\"HTTP_PROXY=$HTTP_PROXY\"" | sudo tee --append /etc/systemd/system/docker.service.d/http-proxy.conf
         fi
-        if [ -n "${HTTPS_PROXY:-}" ]; then
+        if [ -n "${HTTPS_PROXY-}" ]; then
             echo "[Service]" | sudo tee /etc/systemd/system/docker.service.d/https-proxy.conf
             echo "Environment=\"HTTPS_PROXY=$HTTPS_PROXY\"" | sudo tee --append /etc/systemd/system/docker.service.d/https-proxy.conf
         fi
-        if [ -n "${NO_PROXY:-}" ]; then
+        if [ -n "${NO_PROXY-}" ]; then
             echo "[Service]" | sudo tee /etc/systemd/system/docker.service.d/no-proxy.conf
             echo "Environment=\"NO_PROXY=$NO_PROXY\"" | sudo tee --append /etc/systemd/system/docker.service.d/no-proxy.conf
         fi
     fi
-    config="{ \"experimental\": \"enabled\","
-    if [ -n "${HTTP_PROXY:-}" ] || [ -n "${HTTPS_PROXY:-}" ] || [ -n "${NO_PROXY:-}" ]; then
-        config="\"proxies\": { \"default\": { "
-        if [ -n "${HTTP_PROXY:-}" ]; then
+    config='{ "experimental": "enabled",'
+    if [ -n "${HTTP_PROXY-}" ] || [ -n "${HTTPS_PROXY-}" ] || [ -n "${NO_PROXY-}" ]; then
+        config='"proxies": { "default": { '
+        if [ -n "${HTTP_PROXY-}" ]; then
             config+="\"httpProxy\": \"$HTTP_PROXY\","
         fi
-        if [ -n "${HTTPS_PROXY:-}" ]; then
+        if [ -n "${HTTPS_PROXY-}" ]; then
             config+="\"httpsProxy\": \"$HTTPS_PROXY\","
         fi
-        if [ -n "${NO_PROXY:-}" ]; then
+        if [ -n "${NO_PROXY-}" ]; then
             config+="\"noProxy\": \"$NO_PROXY\","
         fi
         config="${config::-1} } },"
@@ -200,26 +200,26 @@ function main {
         sudo cp "$HOME/.docker/config.json" /root/.docker/config.json
     fi
     sudo mkdir -p /etc/docker
-    insecure_registries="\"0.0.0.0/0\""
+    insecure_registries='"0.0.0.0/0"'
     for ip in $(ip addr | awk "/$(ip route | grep "^default" | head -n1 | awk '{ print $5 }')\$/ { sub(/\/[0-9]*/, \"\","' $2); print $2}'); do
         insecure_registries+=", \"$ip\""
     done
-    if [ -n "${PKG_DOCKER_INSECURE_REGISTRIES:-}" ]; then
+    if [ -n "${PKG_DOCKER_INSECURE_REGISTRIES-}" ]; then
         insecure_registries+=", \"${PKG_DOCKER_INSECURE_REGISTRIES}\""
     fi
     default_address_pools='{"base":"172.80.0.0/16","size":24},{"base":"172.90.0.0/16","size":24}'
-    if [ -n "${PKG_DOCKER_DEFAULT_ADDRESS_POOLS:-}" ]; then
+    if [ -n "${PKG_DOCKER_DEFAULT_ADDRESS_POOLS-}" ]; then
         default_address_pools="$PKG_DOCKER_DEFAULT_ADDRESS_POOLS"
     fi
     echo "{" | sudo tee /etc/docker/daemon.json
-    if [[ "${PKG_DOCKER_ENABLE_USERNS_REMAP:-false}" == "true" ]]; then
-        sudo tee --append /etc/docker/daemon.json << EOF
+    if [[ ${PKG_DOCKER_ENABLE_USERNS_REMAP:-false} == "true" ]]; then
+        sudo tee --append /etc/docker/daemon.json <<EOF
   "userns-remap": "default",
 EOF
     fi
-    sudo tee --append /etc/docker/daemon.json << EOF
+    sudo tee --append /etc/docker/daemon.json <<EOF
   "default-address-pools":[$default_address_pools],
-  "registry-mirrors" : [${PKG_DOCKER_REGISTRY_MIRRORS:-}],
+  "registry-mirrors" : [${PKG_DOCKER_REGISTRY_MIRRORS-}],
   "insecure-registries" : [$insecure_registries]
 }
 EOF
@@ -231,22 +231,22 @@ EOF
     sudo curl -s https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker.sh
 
     # Install client interface for the registry API
-    if [[ "${PKG_DOCKER_INSTALL_REGCTL:-false}" == "true" ]] && ! command -v regctl; then
+    if [[ ${PKG_DOCKER_INSTALL_REGCTL:-false} == "true" ]] && ! command -v regctl; then
         _install_regctl
     fi
 
     # Install minify docker image tool
-    if [[ "${PKG_DOCKER_INSTALL_DOCKER_SLIM:-false}" == "true" ]] && ! command -v docker-slim; then
+    if [[ ${PKG_DOCKER_INSTALL_DOCKER_SLIM:-false} == "true" ]] && ! command -v docker-slim; then
         _install_docker-slim
     fi
 
     # Install Rootless Docker
-    if [[ "${PKG_DOCKER_INSTALL_ROOTLESS:-false}" == "true" ]]; then
+    if [[ ${PKG_DOCKER_INSTALL_ROOTLESS:-false} == "true" ]]; then
         curl -fsSL https://get.docker.com/rootless | FORCE_ROOTLESS_INSTALL=1 sh
     fi
 
     # Install gVisor sandbox
-    if [[ "${PKG_DOCKER_INSTALL_GVISOR:-false}" == "true" ]]; then
+    if [[ ${PKG_DOCKER_INSTALL_GVISOR:-false} == "true" ]]; then
         if ! command -v runcsc; then
             _install_gvisor
         fi
@@ -255,19 +255,19 @@ EOF
     fi
 
     # Install dive tool
-    if [[ "${PKG_DOCKER_INSTALL_DIVE:-false}" == "true" ]]; then
+    if [[ ${PKG_DOCKER_INSTALL_DIVE:-false} == "true" ]]; then
         _install_dive
     fi
 
     printf "Waiting for docker service..."
-    until sudo docker info > /dev/null; do
+    until sudo docker info >/dev/null; do
         printf "."
         sleep 2
     done
-    if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+    if [[ ${PKG_DEBUG:-false} == "true" ]]; then
         sudo docker info
         if command -v ctr; then
-            sudo -E "$(command -v ctr)" --address "$(sudo find / -name containerd.sock  | head -n 1)" plugins ls
+            sudo -E "$(command -v ctr)" --address "$(sudo find / -name containerd.sock | head -n 1)" plugins ls
         fi
         #curl -fsSL https://raw.githubusercontent.com/moby/moby/master/contrib/check-config.sh | bash
     fi

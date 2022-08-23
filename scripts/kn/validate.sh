@@ -30,21 +30,21 @@ function _print_msg {
 }
 
 function get_version {
-    local version=${PKG_KN_VERSION:-}
+    local version=${PKG_KN_VERSION-}
 
     attempt_counter=0
     max_attempts=5
     until [ "$version" ]; do
         tags="$(curl -s https://api.github.com/repos/knative/client/tags)"
         if [ "$tags" ]; then
-            version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F  "\"" 'NR==1{print $4}')"
+            version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F '"' 'NR==1{print $4}')"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "${version#*v}"
 }

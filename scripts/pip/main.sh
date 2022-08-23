@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -27,29 +27,29 @@ function _vercmp {
     result=$(echo -e "$v1\n$v2" | sort -V | head -1)
 
     case $op in
-        "==")
-            [ "$v1" = "$v2" ]
-            return
-            ;;
-        ">")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
-            return
-            ;;
-        "<")
-            [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
-            return
-            ;;
-        ">=")
-            [ "$result" = "$v2" ]
-            return
-            ;;
-        "<=")
-            [ "$result" = "$v1" ]
-            return
-            ;;
-        *)
-            die $LINENO "unrecognised op: $op"
-            ;;
+    "==")
+        [ "$v1" = "$v2" ]
+        return
+        ;;
+    ">")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+        return
+        ;;
+    "<")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+        return
+        ;;
+    ">=")
+        [ "$result" = "$v2" ]
+        return
+        ;;
+    "<=")
+        [ "$result" = "$v1" ]
+        return
+        ;;
+    *)
+        die $LINENO "unrecognised op: $op"
+        ;;
     esac
 }
 
@@ -60,78 +60,78 @@ function main {
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
-        ubuntu|debian)
-            INSTALLER_CMD="sudo -H -E apt-get -y "
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+="-q=3 "
-            fi
-            INSTALLER_CMD+=" --no-install-recommends install"
+    ubuntu | debian)
+        INSTALLER_CMD="sudo -H -E apt-get -y "
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+="-q=3 "
+        fi
+        INSTALLER_CMD+=" --no-install-recommends install"
         ;;
-        rhel|centos|fedora)
-            PKG_MANAGER=$(command -v dnf || command -v yum)
-            INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
-            if [[ "${PKG_DEBUG:-false}" == "false" ]]; then
-                INSTALLER_CMD+=" --quiet --errorlevel=0"
-            fi
-            INSTALLER_CMD+=" install"
+    rhel | centos | fedora)
+        PKG_MANAGER=$(command -v dnf || command -v yum)
+        INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" --quiet --errorlevel=0"
+        fi
+        INSTALLER_CMD+=" install"
         ;;
     esac
 
     case $major_python_version in
-        2)
-            if ! command -v python || _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>' "3"; then
-                echo "INFO: Installing python $major_python_version version..."
-                case ${ID,,} in
-                    ubuntu|debian)
-                        pkgs="python-setuptools"
-                        if [ "${ID,,}" == "ubuntu" ]; then
-                            # shellcheck disable=SC2086
-                            $INSTALLER_CMD software-properties-common
-                            sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
-                            sudo apt-get update
-                            if _vercmp "${VERSION_ID}" '<=' "18.04"; then
-                                pkgs+=" python-minimal"
-                            fi
-                        fi
-                        # shellcheck disable=SC2086
-                        $INSTALLER_CMD $pkgs
-                ;;
-                rhel|centos|fedora)
-                    $INSTALLER_CMD yum-utils python2
-                    for file in yum yum-config-manager; do
-                        echo "INFO: Setting $file to use python 2"
-                        if [ -f "/usr/bin/$file" ]; then
-                            sudo sed -i "s|#\!/usr/bin/python|#!$(command -v python2)|g" "/usr/bin/$file"
-                        fi
-                    done
-                    if [ -f /usr/libexec/urlgrabber-ext-down ]; then
-                        echo "INFO: Setting urlgrabber-ext-down script to use python 2"
-                        sudo sed -i "s|#\! /usr/bin/python|#!$(command -v python2)|g" /usr/libexec/urlgrabber-ext-down
+    2)
+        if ! command -v python || _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>' "3"; then
+            echo "INFO: Installing python $major_python_version version..."
+            case ${ID,,} in
+            ubuntu | debian)
+                pkgs="python-setuptools"
+                if [ "${ID,,}" == "ubuntu" ]; then
+                    # shellcheck disable=SC2086
+                    $INSTALLER_CMD software-properties-common
+                    sudo -H -E add-apt-repository -y ppa:deadsnakes/ppa
+                    sudo apt-get update
+                    if _vercmp "${VERSION_ID}" '<=' "18.04"; then
+                        pkgs+=" python-minimal"
                     fi
-                ;;
-                esac
-            fi
-        ;;
-        3)
-            PYTHON_CMD=$(command -v python3 || command -v python ||:)
-            if [ -z "$PYTHON_CMD" ] || _vercmp "$($PYTHON_CMD -V 2>&1 | awk '{print $2}')" '<' "3"; then
-                echo "INFO: Installing python $major_python_version version..."
-                case ${ID,,} in
-                    debian)
-                        pkgs="python3-setuptools python3.4"
-                        sudo sed -i "s|#! /usr/bin/python|#! $(command -v python2)|g" "$(command -v lsb_release)"
-                    ;;
-                    rhel|centos|fedora)
-                        pkgs="python3"
-                    ;;
-                esac
+                fi
                 # shellcheck disable=SC2086
                 $INSTALLER_CMD $pkgs
-            fi
+                ;;
+            rhel | centos | fedora)
+                $INSTALLER_CMD yum-utils python2
+                for file in yum yum-config-manager; do
+                    echo "INFO: Setting $file to use python 2"
+                    if [ -f "/usr/bin/$file" ]; then
+                        sudo sed -i "s|#\!/usr/bin/python|#!$(command -v python2)|g" "/usr/bin/$file"
+                    fi
+                done
+                if [ -f /usr/libexec/urlgrabber-ext-down ]; then
+                    echo "INFO: Setting urlgrabber-ext-down script to use python 2"
+                    sudo sed -i "s|#\! /usr/bin/python|#!$(command -v python2)|g" /usr/libexec/urlgrabber-ext-down
+                fi
+                ;;
+            esac
+        fi
         ;;
-        *)
-            echo "ERROR: Unsupported Python $major_python_version version"
-            exit 1
+    3)
+        PYTHON_CMD=$(command -v python3 || command -v python || :)
+        if [ -z "$PYTHON_CMD" ] || _vercmp "$($PYTHON_CMD -V 2>&1 | awk '{print $2}')" '<' "3"; then
+            echo "INFO: Installing python $major_python_version version..."
+            case ${ID,,} in
+            debian)
+                pkgs="python3-setuptools python3.4"
+                sudo sed -i "s|#! /usr/bin/python|#! $(command -v python2)|g" "$(command -v lsb_release)"
+                ;;
+            rhel | centos | fedora)
+                pkgs="python3"
+                ;;
+            esac
+            # shellcheck disable=SC2086
+            $INSTALLER_CMD $pkgs
+        fi
+        ;;
+    *)
+        echo "ERROR: Unsupported Python $major_python_version version"
+        exit 1
         ;;
     esac
 
@@ -140,10 +140,10 @@ function main {
     sudo ln -s "/usr/bin/python${major_python_version}" /usr/bin/python
 
     if ! command -v pip || _vercmp "$(pip -V | awk '{print $2}')" '<' "$min_pip_version"; then
-        if _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>=' "3" && \
-        [[ "${ID,,}" == "debian" || "${ID,,}" == "ubuntu" ]]; then
+        if _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>=' "3" &&
+            [[ ${ID,,} == "debian" || ${ID,,} == "ubuntu" ]]; then
             # shellcheck disable=SC2086
-            $INSTALLER_CMD python3-distutils ||:
+            $INSTALLER_CMD python3-distutils || :
         fi
         echo "INFO: Installing PIP $min_pip_version version"
         current_version="$(python -V | awk '{print $2}')"

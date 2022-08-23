@@ -26,7 +26,7 @@ function _print_msg {
 }
 
 function get_version {
-    local version=${PKG_HADOLINT_VERSION:-}
+    local version=${PKG_HADOLINT_VERSION-}
     attempt_counter=0
     max_attempts=5
 
@@ -35,12 +35,12 @@ function get_version {
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "${version#*v}"
 }
@@ -52,7 +52,7 @@ fi
 
 info "Validating linting process..."
 pushd "$(mktemp -d)"
-cat << EOF > Dockerfile
+cat <<EOF >Dockerfile
 FROM alpine:3.12
 
 RUN apk add --no-cache tini=0.19.0

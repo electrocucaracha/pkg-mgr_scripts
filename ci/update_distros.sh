@@ -10,7 +10,7 @@
 
 set -o errexit
 set -o pipefail
-if [[ "${KRD_DEBUG:-false}" == "true" ]]; then
+if [[ ${KRD_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -31,12 +31,12 @@ function _get_box_version {
             if [ "$metadata" ]; then
                 version="$(echo "$metadata" | python -c 'import json,sys;print(json.load(sys.stdin)["current_version"]["version"])')"
                 break
-            elif [ ${attempt_counter} -eq ${max_attempts} ];then
+            elif [ ${attempt_counter} -eq ${max_attempts} ]; then
                 echo "Max attempts reached"
                 exit 1
             fi
-            attempt_counter=$((attempt_counter+1))
-            sleep $((attempt_counter*2))
+            attempt_counter=$((attempt_counter + 1))
+            sleep $((attempt_counter * 2))
         done
     fi
 
@@ -50,7 +50,7 @@ function _vagrant_pull {
     version=$(_get_box_version "$name")
 
     if [ "$(curl "https://app.vagrantup.com/${name%/*}/boxes/${name#*/}/versions/$version/providers/$PROVIDER.box" -o /dev/null -w '%{http_code}\n' -s)" == "302" ] && [ "$(vagrant box list | grep -c "$name .*$PROVIDER, $version")" != "1" ]; then
-        vagrant box remove --provider "$PROVIDER" --all --force "$name" ||:
+        vagrant box remove --provider "$PROVIDER" --all --force "$name" || :
         vagrant box add --provider "$PROVIDER" --box-version "$version" "$name"
     elif [ "$(vagrant box list | grep -c "$name .*$PROVIDER, $version")" == "1" ]; then
         echo "$name($version, $PROVIDER) box is already present in the host"
@@ -58,19 +58,19 @@ function _vagrant_pull {
         msg+="$name($version, $PROVIDER) box doesn't exist\n"
         return
     fi
-    cat << EOT >> .distros_supported.yml
+    cat <<EOT >>.distros_supported.yml
   - alias: $alias
     name: $name
     version: "$version"
 EOT
 }
 
-if ! command -v vagrant > /dev/null; then
+if ! command -v vagrant >/dev/null; then
     # NOTE: Shorten link -> https://github.com/electrocucaracha/bootstrap-vagrant
     curl -fsSL http://bit.ly/initVagrant | bash
 fi
 
-cat << EOT > .distros_supported.yml
+cat <<EOT >.distros_supported.yml
 ---
 # SPDX-license-identifier: Apache-2.0
 ##############################################################################

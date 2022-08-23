@@ -11,7 +11,7 @@
 set -o nounset
 set -o errexit
 set -o pipefail
-if [[ "${PKG_DEBUG:-false}" == "true" ]]; then
+if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
@@ -25,12 +25,12 @@ function get_github_latest_release {
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
-        elif [ ${attempt_counter} -eq ${max_attempts} ];then
+        elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
             exit 1
         fi
-        attempt_counter=$((attempt_counter+1))
-        sleep $((attempt_counter*2))
+        attempt_counter=$((attempt_counter + 1))
+        sleep $((attempt_counter * 2))
     done
     echo "${version#v}"
 }
@@ -45,7 +45,7 @@ function main {
         export PATH=$PATH:/usr/local/bin/
     fi
     sudo mkdir -p /etc/bash_completion.d
-    yq shell-completion bash | sudo tee /etc/bash_completion.d/yq > /dev/null
+    yq shell-completion bash | sudo tee /etc/bash_completion.d/yq >/dev/null
 }
 
 main
