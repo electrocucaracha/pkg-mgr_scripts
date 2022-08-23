@@ -17,8 +17,6 @@ on:
   pull_request_review:
     types:
       - submitted
-    paths:
-      - '**.sh'
 
 jobs:
   check-shellspec:
