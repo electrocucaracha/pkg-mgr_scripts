@@ -15,44 +15,6 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
-# _vercmp() - Function that compares two versions
-function _vercmp {
-    local v1=$1
-    local op=$2
-    local v2=$3
-    local result
-
-    # sort the two numbers with sort's "-V" argument.  Based on if v2
-    # swapped places with v1, we can determine ordering.
-    result=$(echo -e "$v1\n$v2" | sort -V | head -1)
-
-    case $op in
-    "==")
-        [ "$v1" = "$v2" ]
-        return
-        ;;
-    ">")
-        [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
-        return
-        ;;
-    "<")
-        [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
-        return
-        ;;
-    ">=")
-        [ "$result" = "$v2" ]
-        return
-        ;;
-    "<=")
-        [ "$result" = "$v1" ]
-        return
-        ;;
-    *)
-        die $LINENO "unrecognised op: $op"
-        ;;
-    esac
-}
-
 function main {
     local version=${PKG_QAT_DRIVER_VERSION:-"1.7.l.4.12.0-00011"} # Dec 17, 2020 https://01.org/intel-quick-assist-technology/downloads
     local qat_driver_tarball="qat${version}.tar.gz"
