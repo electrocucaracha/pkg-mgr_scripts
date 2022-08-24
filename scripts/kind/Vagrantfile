@@ -15,7 +15,7 @@ no_proxy = ENV["NO_PROXY"] || ENV["no_proxy"] || "127.0.0.1,localhost"
   no_proxy += ",10.0.2.#{i}"
 end
 driver = ENV["PKG_DRIVER"] || "qemu"
-version = ENV["PKG_KIND_VERSION"]
+version = ENV.fetch("PKG_KIND_VERSION", nil)
 
 distros = YAML.load_file("#{File.dirname(__FILE__)}/../../distros_supported.yml")
 
@@ -75,7 +75,7 @@ Vagrant.configure("2") do |config|
   %i[virtualbox libvirt].each do |provider|
     config.vm.provider provider do |p|
       p.cpus = 1
-      p.memory = ENV["MEMORY"] || mem / 1024 / 4
+      p.memory = ENV["MEMORY"] || (mem / 1024 / 4)
     end
   end
 

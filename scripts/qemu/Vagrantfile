@@ -36,9 +36,9 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: false do |sh|
     sh.env = {
       PKG_DEBUG: ENV["PKG_DEBUG"] || "false",
-      PKG_NINJA_VERSION: ENV["PKG_NINJA_VERSION"],
-      PKG_QEMU_VERSION: ENV["PKG_QEMU_VERSION"],
-      PKG_PMDK_VERSION: ENV["PKG_PMDK_VERSION"]
+      PKG_NINJA_VERSION: ENV.fetch("PKG_NINJA_VERSION", nil),
+      PKG_QEMU_VERSION: ENV.fetch("PKG_QEMU_VERSION", nil),
+      PKG_PMDK_VERSION: ENV.fetch("PKG_PMDK_VERSION", nil)
     }
     sh.inline = <<-SHELL
       set -o errexit
@@ -67,7 +67,7 @@ Vagrant.configure("2") do |config|
   %i[virtualbox libvirt].each do |provider|
     config.vm.provider provider do |p|
       p.cpus = 1
-      p.memory = ENV["MEMORY"] || mem / 1024 / 4
+      p.memory = ENV["MEMORY"] || (mem / 1024 / 4)
     end
   end
 
