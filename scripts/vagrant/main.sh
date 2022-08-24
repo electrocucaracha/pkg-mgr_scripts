@@ -36,6 +36,45 @@ function get_github_latest_tag {
     echo "${version#*v}"
 }
 
+# _vercmp() - Function that compares two versions
+function _vercmp {
+    local v1=$1
+    local op=$2
+    local v2=$3
+    local result
+
+    # sort the two numbers with sort's "-V" argument.  Based on if v2
+    # swapped places with v1, we can determine ordering.
+    result=$(echo -e "$v1\n$v2" | sort -V | head -1)
+
+    case $op in
+    "==")
+        [ "$v1" = "$v2" ]
+        return
+        ;;
+    ">")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v2" ]
+        return
+        ;;
+    "<")
+        [ "$v1" != "$v2" ] && [ "$result" = "$v1" ]
+        return
+        ;;
+    ">=")
+        [ "$result" = "$v2" ]
+        return
+        ;;
+    "<=")
+        [ "$result" = "$v1" ]
+        return
+        ;;
+    *)
+        echo "unrecognised op: $op"
+        exit 1
+        ;;
+    esac
+}
+
 function main {
     local version=${PKG_VAGRANT_VERSION:-$(get_github_latest_tag hashicorp/vagrant)}
 
@@ -43,6 +82,9 @@ function main {
         echo "INFO: Installing vagrant $version version..."
         pushd "$(mktemp -d)" >/dev/null
         vagrant_pkg="vagrant_${version#*v}_$(uname -m)."
+        if _vercmp "${version#*v}" '>=' "2.3.0"; then
+            vagrant_pkg="vagrant-${version#*v}-1.$(uname -m)."
+        fi
         vagrant_url_pkg="https://releases.hashicorp.com/vagrant/${version#*v}"
         # shellcheck disable=SC1091
         source /etc/os-release || source /usr/lib/os-release
@@ -64,13 +106,30 @@ function main {
             sudo rpm --install "$vagrant_pkg"
             ;;
         ubuntu | debian)
-            vagrant_pkg+="deb"
+            if _vercmp "${version#*v}" '>=' "2.3.0"; then
+                if _vercmp "$VERSION_ID" '<' "20.04"; then
+                    echo "Vagrant ${version#*v} requires +GLIBC_2.25 and XCRYPT_2.0 not provided by $PRETTY_NAME"
+                    exit 1
+                fi
+                vagrant_pkg="vagrant_${version#*v}_$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/').zip"
+            else
+                vagrant_pkg+="deb"
+            fi
             if [[ ${PKG_DEBUG:-false} == "true" ]]; then
                 curl -o "$vagrant_pkg" "$vagrant_url_pkg/$vagrant_pkg"
-                sudo dpkg -i "$vagrant_pkg"
             else
                 curl -o "$vagrant_pkg" "$vagrant_url_pkg/$vagrant_pkg" 2>/dev/null
-                sudo dpkg -i "$vagrant_pkg" 2>/dev/null
+            fi
+            if [[ $vagrant_pkg == *".zip" ]]; then
+                sudo unzip "$vagrant_pkg" -d /usr/bin
+                sudo apt-get update
+                sudo apt-get install -y --no-install-recommends libarchive-tools
+            else
+                if [[ ${PKG_DEBUG:-false} == "true" ]]; then
+                    sudo dpkg -i "$vagrant_pkg"
+                else
+                    sudo dpkg -i "$vagrant_pkg" 2>/dev/null
+                fi
             fi
             ;;
         rhel | centos | fedora)

@@ -62,6 +62,9 @@ vagrant init centos/7
 if ! [ -f Vagrantfile ]; then
     error "Vagrantfile wasn't created"
 fi
+if ! vagrant box add generic/alpine316 --provider virtualbox; then
+    error "Vagrant pull box failed"
+fi
 
 popd >/dev/null
 
