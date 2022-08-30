@@ -39,4 +39,4 @@ if ! systemctl is-active --quiet libvirtd; then
 fi
 
 info "Validating virsh execution..."
-virsh list
+sudo virsh list

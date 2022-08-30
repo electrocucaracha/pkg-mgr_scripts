@@ -117,6 +117,13 @@ function main {
     # shellcheck disable=SC2086
     sudo -H -E $INSTALLER_CMD $pkgs
     sudo usermod -a -G $libvirt_group "$USER"
+    if [ -f /etc/apparmor.d/usr.sbin.libvirtd ] && ! grep -q "/usr/local/bin/* PUx," /etc/apparmor.d/usr.sbin.libvirtd; then
+        echo "INFO: Enable discrete profile execution of local binaries"
+        sudo sed -i '/\/usr\/bin\/\* PUx,/a\/usr\/local\/bin\/\* PUx,' /etc/apparmor.d/usr.sbin.libvirtd
+        if systemctl is-active --quiet apparmor; then
+            sudo systemctl reload apparmor
+        fi
+    fi
 
     # Start libvirt service
     echo "INFO: Starting libvirt service..."
