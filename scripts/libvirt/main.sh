@@ -68,7 +68,7 @@ function main {
         fi
         INSTALLER_CMD+=" install -y --no-recommends"
         pkgs+=" libvirt libvirt-devel zlib-devel"
-        pkgs+=" libxml2-devel libxslt-devel"
+        pkgs+=" libxml2-devel libxslt-devel gcc"
         sudo zypper -n ref
         ;;
     ubuntu | debian)
