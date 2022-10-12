@@ -13,9 +13,11 @@ name: Scheduled Versions and Dictionary verification
 on:
   schedule:
     - cron: '0 0 * * *'
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
+
+permissions:
+  contents: write  # for technote-space/create-pr-action to push code
+  pull-requests: write  # for technote-space/create-pr-action to create a PR
 
 jobs:
   check-versions:
