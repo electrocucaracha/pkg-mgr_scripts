@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
       - name: Check broken links
-        uses: gaurav-nelson/github-action-markdown-link-check@1.0.13
+        uses: gaurav-nelson/github-action-markdown-link-check@1.0.14
   check-super-linter:
     name: Run GitHub super-linter tool for verify quality of code
     runs-on: ubuntu-latest
