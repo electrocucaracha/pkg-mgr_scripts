@@ -17,16 +17,16 @@ jobs:
     name: Check URL broken links into documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - name: Check broken links
-        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        uses: gaurav-nelson/github-action-markdown-link-check@1.0.13
   check-super-linter:
     name: Run GitHub super-linter tool for verify quality of code
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - name: Check super-linter
-        uses: github/super-linter@v4
+        uses: github/super-linter@v4.9.7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: /
@@ -35,7 +35,7 @@ jobs:
     name: Run additional linter tools from python tox
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - name: Install tox
         run: pip install tox
       - name: Run tox validation

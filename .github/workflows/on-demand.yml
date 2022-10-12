@@ -23,9 +23,9 @@ jobs:
     name: Check scripts format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - name: Run the sh-checker
-        uses: luizm/action-sh-checker@master
+        uses: luizm/action-sh-checker@v0.5.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHFMT_OPTS: -i 4 -s
@@ -35,7 +35,7 @@ jobs:
     name: Run BDD shell specs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
       - name: Install ShellSpec
         run: curl -fsSL https://github.com/shellspec/shellspec/releases/latest/download/shellspec-dist.tar.gz | tar -xz -C ..
       - name: Run Shellspec
@@ -58,8 +58,8 @@ jobs:
       utils: ${{ steps.filter.outputs.utils }}
       virt: ${{ steps.filter.outputs.virt }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
+      - uses: actions/checkout@v3.1.0
+      - uses: dorny/paths-filter@v2.11.0
         if: ${{ !env.ACT }}
         id: filter
         with:
@@ -121,7 +121,7 @@ jobs:
       matrix:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/check
         with:
           vagrant_name: ${{ matrix.name }}
@@ -137,7 +137,7 @@ jobs:
       matrix:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/check
         with:
           vagrant_name: ${{ matrix.name }}
@@ -153,7 +153,7 @@ jobs:
       matrix:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/check
         with:
           vagrant_name: ${{ matrix.name }}
@@ -169,7 +169,7 @@ jobs:
       matrix:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_7, opensuse_leap]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/check
         with:
           vagrant_name: ${{ matrix.name }}
@@ -185,7 +185,7 @@ jobs:
       matrix:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/check
         with:
           vagrant_name: ${{ matrix.name }}
@@ -201,7 +201,7 @@ jobs:
       matrix:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/check
         with:
           vagrant_name: ${{ matrix.name }}
@@ -217,7 +217,7 @@ jobs:
       matrix:
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/check
         with:
           vagrant_name: ${{ matrix.name }}
