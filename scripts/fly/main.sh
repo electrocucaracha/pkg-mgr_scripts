@@ -15,15 +15,15 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
-function get_github_latest_release {
+function get_github_latest_tag {
     version=""
     attempt_counter=0
     max_attempts=5
 
     until [ "$version" ]; do
-        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest")
-        if [ "$url_effective" ]; then
-            version="${url_effective##*/}"
+        tags="$(curl -s "https://api.github.com/repos/$1/tags")"
+        if [ "$tags" ]; then
+            version="$(echo "$tags" | grep -Po '"name":.*?[^\\]",' | awk -F '"' 'NR==1{print $4}')"
             break
         elif [ ${attempt_counter} -eq ${max_attempts} ]; then
             echo "Max attempts reached"
@@ -32,11 +32,12 @@ function get_github_latest_release {
         attempt_counter=$((attempt_counter + 1))
         sleep $((attempt_counter * 2))
     done
-    echo "${version#v}"
+
+    echo "${version#*v}"
 }
 
 function main {
-    local version=${PKG_FLY_VERSION:-$(get_github_latest_release concourse/concourse)}
+    local version=${PKG_FLY_VERSION:-$(get_github_latest_tag concourse/concourse)}
 
     if ! command -v fly || [[ "$(fly --version)" != "$version" ]]; then
         echo "INFO: Installing fly $version version..."
