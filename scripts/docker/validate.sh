@@ -32,7 +32,7 @@ function _print_msg {
 }
 
 info "Validating Docker installation..."
-for cmd in docker docker-slim runsc dive; do
+for cmd in docker docker-slim runsc; do
     if ! command -v "$cmd"; then
         error "$cmd command line wasn't installed"
     fi
@@ -59,9 +59,14 @@ info "Validating Docker pulling process with $docker_image image"
 if ! sudo docker pull "$docker_image"; then
     error "Docker pull action doesn't work"
 fi
-info "Validating Docker size image"
-if ! sudo "$(command -v dive)" --ci "$docker_image"; then
-    error "Dive command doesn't work"
+
+if ! command -v dive; then
+    warn "Dive command wasn't installed"
+else
+    info "Validating Docker size image"
+    if ! sudo "$(command -v dive)" --ci "$docker_image"; then
+        error "Dive command doesn't work"
+    fi
 fi
 
 info "Validating Docker running process with $docker_image image (runc runtime)"

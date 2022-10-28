@@ -139,6 +139,10 @@ function main {
             sudo systemctl restart firewalld
             ;;
         ubuntu | debian)
+            if [[ $VERSION_ID != "20.04" ]]; then
+                # Issue has been submitted for this case (https://github.com/wagoodman/dive/issues/418)
+                export PKG_DOCKER_INSTALL_DIVE=false
+            fi
             sudo apt-get update
             $INSTALLER_CMD uidmap
             if [[ $VERSION_ID == "16.04" ]]; then
