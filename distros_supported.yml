@@ -10,31 +10,31 @@
 linux:
   - alias: centos_7
     name: generic/centos7
-    version: "4.1.14"
+    version: "4.1.18"
   - alias: centos_8
     name: centos/stream8
     version: "20210210.0"
   - alias: ubuntu_xenial
     name: generic/ubuntu1604
-    version: "4.1.14"
+    version: "4.1.18"
   - alias: ubuntu_bionic
     name: generic/ubuntu1804
-    version: "4.1.14"
+    version: "4.1.18"
   - alias: ubuntu_focal
     name: generic/ubuntu2004
-    version: "4.1.14"
+    version: "4.1.18"
   - alias: opensuse_tumbleweed
     name: opensuse/Tumbleweed.x86_64
-    version: "1.0.20220929"
+    version: "1.0.20221030"
   - alias: opensuse_leap
     name: opensuse/Leap-15.2.x86_64
     version: "15.2.31.632"
   - alias: debian_jessie
     name: generic/debian8
-    version: "4.1.14"
+    version: "4.1.18"
   - alias: debian_stretch
     name: generic/debian9
-    version: "4.1.14"
+    version: "4.1.18"
   - alias: debian_buster
     name: generic/debian10
-    version: "4.1.14"
+    version: "4.1.18"
