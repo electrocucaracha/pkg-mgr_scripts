@@ -39,7 +39,7 @@ function main {
         if [[ ${ID,,} == *leap* ]]; then
             INSTALLER_CMD+="nodejs14"
         elif [[ ${ID,,} == *tumbleweed* ]]; then
-            INSTALLER_CMD+="nodejs16"
+            INSTALLER_CMD+="nodejs19"
         fi
         ;;
     ubuntu | debian)
