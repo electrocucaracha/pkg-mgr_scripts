@@ -19,7 +19,6 @@ source ./ci/_common.sh
 
 function info {
     _print_msg "INFO" "$1"
-    echo "::notice::$1"
 }
 
 function warn {
@@ -97,7 +96,10 @@ function _run_test {
     echo "=== Summary ==="
     $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log | grep "^INFO" | sed 's/^INFO: //'
     $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log | grep "^INFO" | sed 's/^INFO: //'
-    printf "%s secs - Duration time for %s in %s\n" "$(($(date +%s) - start))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
+
+    duration=$(($(date +%s) - start))
+    printf "%s secs - Duration time for %s in %s\n" "$duration" "$(basename "$(pwd)")" "$VAGRANT_NAME"
+    echo "$(basename "$(pwd)") ($VAGRANT_NAME) completed in $duration secs" >>"$GITHUB_STEP_SUMMARY"
     if [ -n "${rx_bytes_before-}" ] && [ -n "${rx_bytes_after-}" ]; then
         printf "%'.f MB downloaded - Network Usage for %s in %s\n" "$(((rx_bytes_after - rx_bytes_before) / ratio))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
     fi
