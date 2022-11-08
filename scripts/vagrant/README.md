@@ -14,7 +14,7 @@ development in a few languages.
 
 | Name       | Version    | Supported |
 |:-----------|:----------:|:---------:|
-| Ubuntu     | 16.04      | [x]       |
+| Ubuntu     | 16.04      | [ ]       |
 | Ubuntu     | 18.04      | [x]       |
 | Ubuntu     | 20.04      | [x]       |
 | CentOS     | 7          | [x]       |

@@ -107,8 +107,8 @@ function main {
             ;;
         ubuntu | debian)
             if _vercmp "${version#*v}" '>=' "2.3.0"; then
-                if _vercmp "$VERSION_ID" '<' "20.04"; then
-                    echo "Vagrant ${version#*v} requires +GLIBC_2.25 and XCRYPT_2.0 not provided by $PRETTY_NAME"
+                if _vercmp "$VERSION_ID" '<' "18.04"; then
+                    echo "Vagrant ${version#*v} requires +GLIBC_2.25 not provided by $PRETTY_NAME"
                     exit 1
                 fi
                 vagrant_pkg="vagrant_${version#*v}_$(uname | tr '[:upper:]' '[:lower:]')_$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/').zip"
