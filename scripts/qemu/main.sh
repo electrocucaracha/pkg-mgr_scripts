@@ -95,8 +95,8 @@ function _vercmp {
     esac
 }
 
-# install_pmdk() - Installs Persistent Memory Development Kit
-function install_pmdk {
+# _install_pmdk() - Installs Persistent Memory Development Kit
+function _install_pmdk {
     local pmdk_version=${PKG_PMDK_VERSION:-$(get_github_latest_release pmem/pmdk)}
 
     pmdk_url="https://github.com/pmem/pmdk/releases/download/$pmdk_version/pmdk-${pmdk_version}.tar.gz"
@@ -141,7 +141,7 @@ function main {
             pyenv install 3.8.10
             pyenv global 3.8.10
         fi
-        install_pmdk
+        _install_pmdk
         grep -q LD_LIBRARY_PATH /etc/environment || echo "LD_LIBRARY_PATH=/usr/local/lib64/" | sudo tee --append /etc/environment
         ;;
     ubuntu | debian)
