@@ -15,6 +15,10 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
+OS="$(uname | tr '[:upper:]' '[:lower:]')"
+ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+cni_folder=${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}
+
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -35,12 +39,20 @@ function get_github_latest_release {
     echo "${version#v}"
 }
 
-function main {
-    local cni_folder=${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}
+function _install_flannel {
+    local flannel_version=${PKG_FLANNEL_VERSION:-$(get_github_latest_release flannel-io/cni-plugin)}
+    local url="https://github.com/flannel-io/cni-plugin/releases/download/v${flannel_version}/flannel-${ARCH}"
 
+    if [[ ${PKG_DEBUG:-false} == "true" ]]; then
+        sudo curl -Lo "${cni_folder}/flannel" "$url"
+    else
+        sudo curl -Lo "${cni_folder}/flannel" "$url" >/dev/null
+    fi
+    sudo chmod +x "${cni_folder}/flannel"
+}
+
+function main {
     sudo mkdir -p "$cni_folder"
-    OS="$(uname | tr '[:upper:]' '[:lower:]')"
-    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
     if [ -z "$(ls -A "$cni_folder")" ]; then
         version=${PKG_CNI_PLUGINS_VERSION:-$(get_github_latest_release containernetworking/plugins)}
         echo "INFO: Installing CNI plugins $version version..."
@@ -57,15 +69,9 @@ function main {
         fi
         popd >/dev/null
     fi
-    if [ ! -f "${cni_folder}/flannel" ]; then
-        flannel_version=${PKG_FLANNEL_VERSION:-$(get_github_latest_release flannel-io/cni-plugin)}
-        url="https://github.com/flannel-io/cni-plugin/releases/download/v${flannel_version}/flannel-${ARCH}"
-        if [[ ${PKG_DEBUG:-false} == "true" ]]; then
-            sudo curl -Lo "${cni_folder}/flannel" "$url"
-        else
-            sudo curl -Lo "${cni_folder}/flannel" "$url" >/dev/null
-        fi
-        sudo chmod +x "${cni_folder}/flannel"
+    # Install flannel cni
+    if [[ ${PKG_CNI_PLUGINS_INSTALL_FLANNEL:-false} == "true" ]] && [ ! -f "${cni_folder}/flannel" ]; then
+        _install_flannel
     fi
     sudo chown "$USER" -R "$cni_folder"
 }

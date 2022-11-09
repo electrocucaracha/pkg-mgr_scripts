@@ -29,11 +29,12 @@ curl -fsSL http://bit.ly/install_pkg | PKG=cni-plugins bash
 ```
 ### Environment variables
 
-| Name                    | Default                          | Description                                                |
-|:------------------------|:---------------------------------|:-----------------------------------------------------------|
-| PKG_CNI_PLUGINS_VERSION |                                  | Specifies the CNI plugins version to be installed          |
-| PKG_CNI_PLUGINS_FOLDER  | /opt/containernetworking/plugins | Defines the destination folder for the CNI plugin binaries |
-| PKG_FLANNEL_VERSION     |                                  | Specifies the Flannel CNI version to be installed          |
+| Name                            | Default                          | Description                                                |
+|:--------------------------------|:---------------------------------|:-----------------------------------------------------------|
+| PKG_CNI_PLUGINS_VERSION         |                                  | Specifies the CNI plugins version to be installed          |
+| PKG_CNI_PLUGINS_FOLDER          | /opt/containernetworking/plugins | Defines the destination folder for the CNI plugin binaries |
+| PKG_FLANNEL_VERSION             |                                  | Specifies the Flannel CNI version to be installed          |
+| PKG_CNI_PLUGINS_INSTALL_FLANNEL | false                            | Installs Flannel CNI into the CNI folder                   |
 
 ## Used by
 
