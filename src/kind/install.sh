@@ -15,6 +15,41 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
+sudo_cmd=$(whoami | grep -q "root" || echo "sudo -H -E")
+
+function install_pkgs {
+    INSTALLER_CMD="$sudo_cmd "
+    # shellcheck disable=SC1091
+    source /etc/os-release || source /usr/lib/os-release
+    case ${ID,,} in
+    *suse*)
+        INSTALLER_CMD+="zypper "
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+="-q "
+        fi
+        # shellcheck disable=SC2068
+        $INSTALLER_CMD install -y --no-recommends $@
+        ;;
+    ubuntu | debian)
+        $sudo_cmd apt update
+        INSTALLER_CMD+="apt-get -y --force-yes "
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+="-q=3 "
+        fi
+        # shellcheck disable=SC2068
+        $INSTALLER_CMD --no-install-recommends install $@
+        ;;
+    rhel | centos | fedora)
+        INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" --quiet --errorlevel=0"
+        fi
+        # shellcheck disable=SC2068
+        $INSTALLER_CMD install $@
+        ;;
+    esac
+}
+
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -36,6 +71,11 @@ function get_github_latest_release {
 }
 
 function main {
+    if ! command -v curl >/dev/null; then
+        install_pkgs curl ca-certificates
+        $sudo_cmd update-ca-certificates
+    fi
+
     local version=${PKG_KIND_VERSION:-$(get_github_latest_release kubernetes-sigs/kind)}
 
     if ! command -v kind || [[ "v$(kind --version | awk '{print $3}')" != "$version" ]]; then
@@ -51,12 +91,12 @@ function main {
             curl -Lo ./kind "$url" 2>/dev/null
         fi
         chmod +x ./kind
-        sudo mkdir -p /usr/local/bin/
-        sudo mv ./kind /usr/local/bin/kind
+        $sudo_cmd mkdir -p /usr/local/bin/
+        $sudo_cmd mv ./kind /usr/local/bin/kind
         export PATH=$PATH:/usr/local/bin/
     fi
-    sudo mkdir -p /etc/bash_completion.d
-    kind completion bash | sudo tee /etc/bash_completion.d/kind >/dev/null
+    $sudo_cmd mkdir -p /etc/bash_completion.d
+    kind completion bash | $sudo_cmd tee /etc/bash_completion.d/kind >/dev/null
 }
 
 main

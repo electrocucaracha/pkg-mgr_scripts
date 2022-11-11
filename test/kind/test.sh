@@ -1,0 +1,1 @@
+../../src/kind/validate.sh
