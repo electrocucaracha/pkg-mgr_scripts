@@ -1,0 +1,17 @@
+{
+    "name": "Kubernetes IN Docker",
+    "id": "kind",
+    "version": "0.0.1",
+    "description": "kind is a tool for running local Kubernetes clusters using Docker container 'nodes'.",
+    "options": {
+        "pkg_kind_version": {
+            "type": "string",
+            "description": "Specifies the KinD version to be installed"
+        },
+        "pkg_debug": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Enables verbosity level"
+        }
+    }
+}
