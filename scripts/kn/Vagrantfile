@@ -46,7 +46,7 @@ Vagrant.configure("2") do |config|
       fi
 
       cd /vagrant
-      ./main.sh | tee ~/main.log 2>&1
+      ./install.sh | tee ~/install.log 2>&1
       ./validate.sh | tee ~/validate.log
       echo "Tests completed!!!"
     SHELL

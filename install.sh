@@ -192,11 +192,11 @@ function main {
                     echo "$pkg is not supported by $PKG_OS_FAMILY"
                     ;;
                 "$PKG_MGR_SUPPORTED")
-                    curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/${pkg}/main.sh" | bash
+                    curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/${pkg}/install.sh" | bash
                     ;;
                 "$PKG_MGR_PIP_REQUIRED")
                     if ! command -v pip; then
-                        curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/pip/main.sh" | bash
+                        curl -fsSL "https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/master/scripts/pip/install.sh" | bash
                     fi
                     PATH="$PATH:/usr/local/bin/"
                     export PATH

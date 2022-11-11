@@ -26,6 +26,6 @@ ci:
   - scripts/*/Vagrantfile
 
 scripts:
-  - scripts/*/main.sh
+  - scripts/*/install.sh
   - install.sh
   - bindep_install.sh

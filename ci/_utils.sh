@@ -37,7 +37,7 @@ function _print_msg {
 }
 
 function exit_trap {
-    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log
+    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat install.log
     $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log
 }
 
@@ -94,7 +94,7 @@ function _run_test {
     info "$(basename "$(pwd)") test completed for $VAGRANT_NAME"
 
     echo "=== Summary ==="
-    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log | grep "^INFO" | sed 's/^INFO: //'
+    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat install.log | grep "^INFO" | sed 's/^INFO: //'
     $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log | grep "^INFO" | sed 's/^INFO: //'
 
     duration=$(($(date +%s) - start))

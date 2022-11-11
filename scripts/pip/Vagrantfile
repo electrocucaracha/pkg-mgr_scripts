@@ -47,11 +47,11 @@ Vagrant.configure("2") do |config|
       fi
 
       cd /vagrant
-      PKG_PYTHON_MAJOR_VERSION=2 ./main.sh | tee ~/main.log 2>&1
+      PKG_PYTHON_MAJOR_VERSION=2 ./install.sh | tee ~/install.log 2>&1
       ./validate.sh | tee ~/validate.log
 
       # Python 3 installation
-      ./main.sh | tee --append ~/main.log 2>&1
+      ./install.sh | tee --append ~/install.log 2>&1
       ./validate.sh | tee --append ~/validate.log
       echo "Tests completed!!!"
     SHELL
