@@ -14,8 +14,8 @@ inputs:
   vagrant_name:
     description: 'Operating system and release number to be used during the test'
     default: ubuntu_xenial
-  profile:
-    description: 'CI Profile to perform the verification'
+  script:
+    description: 'Bash script to perform the verification'
     default: main
 
 runs:
@@ -29,7 +29,7 @@ runs:
       env:
         VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
         VAGRANT_NAME: ${{ inputs.vagrant_name }}
-        PROFILE: ${{ inputs.profile }}
+        SCRIPT: ${{ inputs.script }}
         MEMORY: 12288
       run: ./ci/check.sh
     - name: Check HW resources

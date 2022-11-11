@@ -50,13 +50,7 @@ jobs:
       ) ||
       github.event_name != 'pull_request_review'
     outputs:
-      main: ${{ steps.filter.outputs.main }}
-      cloud: ${{ steps.filter.outputs.cloud }}
-      devops: ${{ steps.filter.outputs.devops }}
-      drivers: ${{ steps.filter.outputs.drivers }}
-      lang: ${{ steps.filter.outputs.lang }}
-      utils: ${{ steps.filter.outputs.utils }}
-      virt: ${{ steps.filter.outputs.virt }}
+      scripts: ${{ steps.filter.outputs.changes }}
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: dorny/paths-filter@v2.11.1
@@ -70,155 +64,118 @@ jobs:
             main:
               - *versions
               - '*.sh'
-            cloud:
+            aws:
               - *versions
               - 'scripts/aws/*'
+            cni-plugins:
+              - *versions
               - 'scripts/cni-plugins/*'
+            helm:
+              - *versions
               - 'scripts/helm/*'
+            kn:
+              - *versions
               - 'scripts/kn/*'
+            kind:
+              - *versions
               - 'scripts/kind/*'
+            kubectl:
+              - *versions
               - 'scripts/kubectl/*'
+            kustomize:
+              - *versions
               - 'scripts/kustomize/*'
+            podman:
+              - *versions
               - 'scripts/podman/*'
+            skopeo:
+              - *versions
               - 'scripts/skopeo/*'
+            tkn:
+              - *versions
               - 'scripts/tkn/*'
-            devops:
+            act:
               - *versions
               - 'scripts/act/*'
+            docker:
+              - *versions
               - 'scripts/docker/*'
+            fly:
+              - *versions
               - 'scripts/fly/*'
+            terraform:
+              - *versions
               - 'scripts/terraform/*'
+            vagrant:
+              - *versions
               - 'scripts/vagrant/*'
-            drivers:
+            qat-driver:
               - *versions
               - 'scripts/qat-driver/*'
-            lang:
+            crystal-lang:
               - *versions
               - 'scripts/crystal-lang/*'
+            go-lang:
+              - *versions
               - 'scripts/go-lang/*'
+            nodejs:
+              - *versions
               - 'scripts/nodejs/*'
+            rust-lang:
+              - *versions
               - 'scripts/rust-lang/*'
-            utils:
+            gomplate:
               - *versions
               - 'scripts/gomplate/*'
+            hadolint:
+              - *versions
               - 'scripts/hadolint/*'
+            nfs:
+              - *versions
               - 'scripts/nfs/*'
+            pip:
+              - *versions
               - 'scripts/pip/*'
+            yq:
+              - *versions
               - 'scripts/yq/*'
-            virt:
+            libvirt:
               - *versions
               - 'scripts/libvirt/*'
+            qemu:
+              - *versions
               - 'scripts/qemu/*'
+            virtualbox:
+              - *versions
               - 'scripts/virtualbox/*'
-  check-main:
-    if: needs.changes.outputs.main == 'true'
-    name: Run main profile on all supported Linux distros
+  check:
+    name: Run script validation for all supported Linux distros
     runs-on: macos-12
     needs:
       - changes
     strategy:
       fail-fast: false
       matrix:
+        script: ${{ fromJSON(needs.changes.outputs.scripts) }}
         name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
     steps:
       - uses: actions/checkout@v3.1.0
+      - name: Check blacklist file
+        id: check_osblacklist
+        uses: andstor/file-existence-action@v2.0.0
+        with:
+          files: "src/${{ matrix.script }}/os-blacklist.conf"
+      - name: Get blacklist content
+        id: blacklist_content
+        if: steps.check_osblacklist.outputs.files_exists == 'true'
+        run: echo "::set-output name=deny::$(grep -q ${{ matrix.name }} src/${{ matrix.script }}/os-blacklist.conf && echo true || echo false)"
       - uses: ./.github/actions/check
+        if: >-
+          (
+            steps.check_osblacklist.outputs.files_exists == 'true' &&
+            steps.blacklist_content.outputs.deny == 'false'
+          ) ||
+          steps.check_osblacklist.outputs.files_exists == 'false'
         with:
           vagrant_name: ${{ matrix.name }}
-          profile: main
-  check-cloud:
-    if: needs.changes.outputs.cloud == 'true'
-    name: Run cloud profile on all supported Linux distros
-    runs-on: macos-12
-    needs:
-      - changes
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: cloud
-  check-devops:
-    if: needs.changes.outputs.devops == 'true'
-    name: Run devops profile on all supported Linux distros
-    runs-on: macos-12
-    needs:
-      - changes
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: devops
-  check-drivers:
-    if: needs.changes.outputs.drivers == 'true'
-    name: Run drivers profile on all supported Linux distros
-    needs:
-      - changes
-    runs-on: macos-12
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_7, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: drivers
-  check-lang:
-    if: needs.changes.outputs.lang == 'true'
-    name: Run lang profile on all supported Linux distros
-    runs-on: macos-12
-    needs:
-      - changes
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: lang
-  check-utils:
-    if: needs.changes.outputs.utils == 'true'
-    name: Run utils profile on all supported Linux distros
-    runs-on: macos-12
-    needs:
-      - changes
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: utils
-  check-virt:
-    if: needs.changes.outputs.virt == 'true'
-    name: Run virt profile on all supported Linux distros
-    runs-on: macos-12
-    needs:
-      - changes
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: virt
+          script: ${{ matrix.script }}

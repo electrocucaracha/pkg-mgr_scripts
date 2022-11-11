@@ -15,20 +15,16 @@ if [[ ${DEBUG:-false} == "true" ]]; then
 fi
 
 function run_integration_tests {
-    local profile="${PROFILE:-main}"
+    local script="${SCRIPT:-main}"
 
     # Start main install test
-    [[ $profile == "main" ]] && run_test
-
-    # shellcheck disable=SC2044
-    for vagrantfile in $(find . -mindepth 2 -type f -name Vagrantfile | sort); do
-        pushd "$(dirname "$vagrantfile")" >/dev/null
-        tests="profile_$profile"
-        if [[ (${profiles} == *"$profile"* && ${!tests} == *"$(basename "$(pwd)")"*) || ($profile == "main" && $ci_tests != *"$(basename "$(pwd)")"*) ]]; then
-            run_test
-        fi
+    if [[ $script == "main" ]]; then
+        run_test
+    else
+        pushd "./scripts/$script" >/dev/null
+        run_test
         popd >/dev/null
-    done
+    fi
 }
 
 if ! command -v vagrant; then
