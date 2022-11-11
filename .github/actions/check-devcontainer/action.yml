@@ -1,0 +1,40 @@
+---
+# SPDX-license-identifier: Apache-2.0
+##############################################################################
+# Copyright (c) 2022
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Apache License, Version 2.0
+# which accompanies this distribution, and is available at
+# http://www.apache.org/licenses/LICENSE-2.0
+##############################################################################
+
+name: Run devcontainers validations for CI profile
+
+inputs:
+  script:
+    description: 'Bash script to perform the verification'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install latest devcontainer CLI
+      shell: bash
+      run: npm install -g @devcontainers/cli
+    - name: Generating tests for '${{ inputs.script }}'
+      shell: bash
+      run: |
+        declare -a images
+        images=(
+        ubuntu:xenial
+        ubuntu:focal
+        ubuntu:bionic
+        centos:centos7
+        opensuse/leap
+        opensuse/tumbleweed
+        mcr.microsoft.com/devcontainers/base:focal
+        mcr.microsoft.com/devcontainers/base:bionic
+        )
+
+        for image in ${images[@]}; do
+            devcontainer features test --skip-scenarios -f ${{ inputs.script }} -i ${image} .
+        done

@@ -8,7 +8,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
-name: Run validations for CI profile
+name: Run vagrant validations for scripts
 
 inputs:
   vagrant_name:

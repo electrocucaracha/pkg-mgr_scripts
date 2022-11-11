@@ -148,8 +148,8 @@ jobs:
             virtualbox:
               - *versions
               - 'src/virtualbox/*'
-  check:
-    name: Run script validation for all supported Linux distros
+  check-vagrant:
+    name: Run vagrant validation for all supported Linux distros
     runs-on: macos-12
     needs:
       - changes
@@ -157,7 +157,14 @@ jobs:
       fail-fast: false
       matrix:
         script: ${{ fromJSON(needs.changes.outputs.scripts) }}
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
+        name:
+          - ubuntu_xenial
+          - ubuntu_focal
+          - ubuntu_bionic
+          - centos_8
+          - centos_7
+          - opensuse_tumbleweed
+          - opensuse_leap
     steps:
       - uses: actions/checkout@v3.1.0
       - name: Check blacklist file
@@ -169,7 +176,7 @@ jobs:
         id: blacklist_content
         if: steps.check_osblacklist.outputs.files_exists == 'true'
         run: echo "::set-output name=deny::$(grep -q ${{ matrix.name }} src/${{ matrix.script }}/os-blacklist.conf && echo true || echo false)"
-      - uses: ./.github/actions/check
+      - uses: ./.github/actions/check-vagrant
         if: >-
           (
             steps.check_osblacklist.outputs.files_exists == 'true' &&
@@ -178,4 +185,24 @@ jobs:
           steps.check_osblacklist.outputs.files_exists == 'false'
         with:
           vagrant_name: ${{ matrix.name }}
+          script: ${{ matrix.script }}
+  check-devcontainer:
+    name: Run devcontainer validation
+    runs-on: ubuntu-latest
+    needs:
+      - changes
+    strategy:
+      fail-fast: false
+      matrix:
+        script: ${{ fromJSON(needs.changes.outputs.scripts) }}
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - name: Check devcontainers support
+        id: check_files
+        uses: andstor/file-existence-action@v2.0.0
+        with:
+          files: "src/${{ matrix.script }}/devcontainer-feature.json"
+      - uses: ./.github/actions/check-devcontainer
+        if: steps.check_files.outputs.files_exists == 'true'
+        with:
           script: ${{ matrix.script }}
