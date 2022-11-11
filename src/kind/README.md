@@ -29,6 +29,21 @@ curl -fsSL http://bit.ly/install_pkg | PKG=kind bash
 |:-----------------|:--------|:-------------------------------------------|
 | PKG_KIND_VERSION |         | Specifies the KinD version to be installed |
 
+### [Dev Container](https://containers.dev/overview)
+
+This script can be consumed as Development container "Feature" through the
+following configuration:
+
+```json
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:1": {},
+        "ghcr.io/electrocucaracha/pkg-mgr_scripts/kind:latest": {}
+    }
+}
+```
+
 ## Used by
 
 - [Kubernetes NonPreemptingPriority gate feature demo](https://github.com/electrocucaracha/k8s-NonPreemptingPriority-demo)

@@ -22,6 +22,7 @@ datacenter
 datasources
 demostrates
 dev
+devcontainers
 Devstack
 DigitalOcean
 discoverable
@@ -37,6 +38,7 @@ EOF
 ESXi
 facto
 fsSL
+ghcr
 githubusercontent
 GOLANG
 GOMPLATE
@@ -73,6 +75,7 @@ Linode
 Linter
 lstopo
 ly
+mcr
 Microsystems
 mpi
 multinode
