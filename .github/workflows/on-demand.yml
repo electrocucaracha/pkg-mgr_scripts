@@ -148,34 +148,48 @@ jobs:
             virtualbox:
               - *versions
               - 'src/virtualbox/*'
-  check:
-    name: Run script validation for all supported Linux distros
-    runs-on: macos-12
+  generate-matrix:
+    name: Generate the Test matrix for vagrant and devcontainers
+    runs-on: ubuntu-latest
     needs:
       - changes
+    outputs:
+      matrix-alias: ${{ steps.set-matrices.outputs.matrix-alias }}
+      matrix-image: ${{ steps.set-matrices.outputs.matrix-image }}
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - id: set-matrices
+        run: ./ci/generate_matrix.sh '${{ needs.changes.outputs.scripts }}'
+  check-vagrant:
+    name: Run vagrant validation for all supported Linux distros
+    runs-on: macos-12
+    needs:
+      - generate-matrix
     strategy:
       fail-fast: false
       matrix:
-        script: ${{ fromJSON(needs.changes.outputs.scripts) }}
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
+        include: ${{ fromJson(needs.generate-matrix.outputs.matrix-alias) }}
     steps:
       - uses: actions/checkout@v3.1.0
-      - name: Check blacklist file
-        id: check_osblacklist
-        uses: andstor/file-existence-action@v2.0.0
-        with:
-          files: "src/${{ matrix.script }}/os-blacklist.conf"
-      - name: Get blacklist content
-        id: blacklist_content
-        if: steps.check_osblacklist.outputs.files_exists == 'true'
-        run: echo "::set-output name=deny::$(grep -q ${{ matrix.name }} src/${{ matrix.script }}/os-blacklist.conf && echo true || echo false)"
-      - uses: ./.github/actions/check
-        if: >-
-          (
-            steps.check_osblacklist.outputs.files_exists == 'true' &&
-            steps.blacklist_content.outputs.deny == 'false'
-          ) ||
-          steps.check_osblacklist.outputs.files_exists == 'false'
+      - uses: ./.github/actions/check-vagrant
         with:
           vagrant_name: ${{ matrix.name }}
           script: ${{ matrix.script }}
+  check-devcontainer:
+    name: Run devcontainer validation for all supported Linux distros
+    runs-on: ubuntu-latest
+    needs:
+      - generate-matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.generate-matrix.outputs.matrix-image) }}
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - name: Install latest devcontainer CLI
+        run: npm install -g @devcontainers/cli
+      - name: Generating tests for '${{ matrix.script }}'
+        run: |
+          rm -f test/${{ matrix.script }}/test.sh
+          cp src/${{ matrix.script }}/validate.sh test/${{ matrix.script }}/test.sh
+          devcontainer features test --skip-scenarios -f ${{ matrix.script }} -i ${{ matrix.image }} .
