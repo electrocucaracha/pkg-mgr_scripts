@@ -45,7 +45,7 @@ Vagrant.configure("2") do |config|
 
       cd /vagrant
       rm -f ~/{install,validate}.log
-      for test_script in $(ls tests/*sh ); do
+      for test_script in $(ls test/*sh ); do
           test_case=${test_script%.sh}
           bash $test_script | tee --append ~/validate.log ~/install.log | tee ~/${test_case##*/}.log
       done

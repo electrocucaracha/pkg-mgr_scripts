@@ -21,7 +21,7 @@ function run_integration_tests {
     if [[ $script == "main" ]]; then
         run_test
     else
-        pushd "./scripts/$script" >/dev/null
+        pushd "./src/$script" >/dev/null
         run_test
         popd >/dev/null
     fi

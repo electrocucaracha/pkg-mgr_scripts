@@ -66,88 +66,88 @@ jobs:
               - '*.sh'
             aws:
               - *versions
-              - 'scripts/aws/*'
+              - 'src/aws/*'
             cni-plugins:
               - *versions
-              - 'scripts/cni-plugins/*'
+              - 'src/cni-plugins/*'
             helm:
               - *versions
-              - 'scripts/helm/*'
+              - 'src/helm/*'
             kn:
               - *versions
-              - 'scripts/kn/*'
+              - 'src/kn/*'
             kind:
               - *versions
-              - 'scripts/kind/*'
+              - 'src/kind/*'
             kubectl:
               - *versions
-              - 'scripts/kubectl/*'
+              - 'src/kubectl/*'
             kustomize:
               - *versions
-              - 'scripts/kustomize/*'
+              - 'src/kustomize/*'
             podman:
               - *versions
-              - 'scripts/podman/*'
+              - 'src/podman/*'
             skopeo:
               - *versions
-              - 'scripts/skopeo/*'
+              - 'src/skopeo/*'
             tkn:
               - *versions
-              - 'scripts/tkn/*'
+              - 'src/tkn/*'
             act:
               - *versions
-              - 'scripts/act/*'
+              - 'src/act/*'
             docker:
               - *versions
-              - 'scripts/docker/*'
+              - 'src/docker/*'
             fly:
               - *versions
-              - 'scripts/fly/*'
+              - 'src/fly/*'
             terraform:
               - *versions
-              - 'scripts/terraform/*'
+              - 'src/terraform/*'
             vagrant:
               - *versions
-              - 'scripts/vagrant/*'
+              - 'src/vagrant/*'
             qat-driver:
               - *versions
-              - 'scripts/qat-driver/*'
+              - 'src/qat-driver/*'
             crystal-lang:
               - *versions
-              - 'scripts/crystal-lang/*'
+              - 'src/crystal-lang/*'
             go-lang:
               - *versions
-              - 'scripts/go-lang/*'
+              - 'src/go-lang/*'
             nodejs:
               - *versions
-              - 'scripts/nodejs/*'
+              - 'src/nodejs/*'
             rust-lang:
               - *versions
-              - 'scripts/rust-lang/*'
+              - 'src/rust-lang/*'
             gomplate:
               - *versions
-              - 'scripts/gomplate/*'
+              - 'src/gomplate/*'
             hadolint:
               - *versions
-              - 'scripts/hadolint/*'
+              - 'src/hadolint/*'
             nfs:
               - *versions
-              - 'scripts/nfs/*'
+              - 'src/nfs/*'
             pip:
               - *versions
-              - 'scripts/pip/*'
+              - 'src/pip/*'
             yq:
               - *versions
-              - 'scripts/yq/*'
+              - 'src/yq/*'
             libvirt:
               - *versions
-              - 'scripts/libvirt/*'
+              - 'src/libvirt/*'
             qemu:
               - *versions
-              - 'scripts/qemu/*'
+              - 'src/qemu/*'
             virtualbox:
               - *versions
-              - 'scripts/virtualbox/*'
+              - 'src/virtualbox/*'
   check:
     name: Run script validation for all supported Linux distros
     runs-on: macos-12
