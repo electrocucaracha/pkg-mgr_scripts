@@ -99,7 +99,7 @@ function _run_test {
 
     duration=$(($(date +%s) - start))
     printf "%s secs - Duration time for %s in %s\n" "$duration" "$(basename "$(pwd)")" "$VAGRANT_NAME"
-    echo "$(basename "$(pwd)") ($VAGRANT_NAME) completed in $duration secs" >>"$GITHUB_STEP_SUMMARY"
+    echo "$(basename "$(pwd)") ($VAGRANT_NAME) completed in $duration secs" >>"${GITHUB_STEP_SUMMARY:-/tmp/github_step_summary.log}"
     if [ -n "${rx_bytes_before-}" ] && [ -n "${rx_bytes_after-}" ]; then
         printf "%'.f MB downloaded - Network Usage for %s in %s\n" "$(((rx_bytes_after - rx_bytes_before) / ratio))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
     fi
