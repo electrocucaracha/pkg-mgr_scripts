@@ -47,6 +47,21 @@ curl -fsSL http://bit.ly/install_pkg | PKG=kubectl bash
 | PKG_INSTALL_FINALIZE_NAMESPACE | false                                           | Determines if `finalize_namespace` is going to be installed     |
 | PKG_FINALIZE_NAMESPACE_VERSION |                                                 | Specifies the finalize_namespace plugin version to be installed |
 
+### [Dev Container](https://containers.dev/overview)
+
+This script can be consumed as Development container "Feature" through the
+following configuration:
+
+```json
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/electrocucaracha/pkg-mgr_scripts/kubectl:latest": {}
+    }
+}
+```
+
+
 ## Used by
 
 - [K6 Grafana Dashboard](https://github.com/electrocucaracha/k6board)

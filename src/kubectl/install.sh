@@ -15,8 +15,42 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
+sudo_cmd=$(whoami | grep -q "root" || echo "sudo -H -E")
 OS="$(uname | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
+
+function install_pkgs {
+    INSTALLER_CMD="$sudo_cmd "
+    # shellcheck disable=SC1091
+    source /etc/os-release || source /usr/lib/os-release
+    case ${ID,,} in
+    *suse*)
+        INSTALLER_CMD+="zypper "
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+="-q "
+        fi
+        # shellcheck disable=SC2068
+        $INSTALLER_CMD install -y --no-recommends $@
+        ;;
+    ubuntu | debian)
+        $sudo_cmd apt update
+        INSTALLER_CMD+="apt-get -y --force-yes "
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+="-q=3 "
+        fi
+        # shellcheck disable=SC2068
+        $INSTALLER_CMD --no-install-recommends install $@
+        ;;
+    rhel | centos | fedora)
+        INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
+        if [[ ${PKG_DEBUG:-false} == "false" ]]; then
+            INSTALLER_CMD+=" --quiet --errorlevel=0"
+        fi
+        # shellcheck disable=SC2068
+        $INSTALLER_CMD install $@
+        ;;
+    esac
+}
 
 # _vercmp() - Function that compares two versions
 function _vercmp {
@@ -91,12 +125,29 @@ function _install_finalize_namespace {
             curl -fsSLO "$url" 2>/dev/null
             tar -xzf "$tarball" --strip-components=1
         fi
-        sudo mv kubectl-finalize_namespace /usr/local/bin/
+        $sudo_cmd mv kubectl-finalize_namespace /usr/local/bin/
         popd >/dev/null
     fi
 }
 
 function main {
+    cmds=()
+    for cmd in git tar gzip; do
+        if ! command -v $cmd >/dev/null; then
+            cmds+=("$cmd")
+        fi
+    done
+    if ! command -v curl >/dev/null; then
+        cmds+=(curl ca-certificates)
+    fi
+    if [ ${#cmds[@]} != 0 ]; then
+        # shellcheck disable=SC2068
+        install_pkgs ${cmds[@]}
+    fi
+    if command -v update-ca-certificates >/dev/null; then
+        $sudo_cmd update-ca-certificates
+    fi
+
     local version=${PKG_KUBECTL_VERSION:-$(curl -L -s https://dl.k8s.io/release/stable.txt)}
     local krew_version=${PKG_KREW_VERSION:-$(get_github_latest_release kubernetes-sigs/krew)}
     krew_plugins_list=${PKG_KREW_PLUGINS_LIST:-tree,access-matrix,score,sniff,view-utilization}
@@ -112,15 +163,15 @@ function main {
             curl -LO "$url/kubectl" -LO "$url/kubectl-convert" 2>/dev/null
         fi
         mkdir -p ~/{.local,}/bin
-        sudo mkdir -p /snap/bin
-        sudo mkdir -p /usr/local/bin/
+        $sudo_cmd mkdir -p /snap/bin
+        $sudo_cmd mkdir -p /usr/local/bin/
         for bin in kubectl kubectl-convert; do
             chmod +x "$bin"
-            sudo mv "$bin" "/usr/local/bin/$bin"
+            $sudo_cmd mv "$bin" "/usr/local/bin/$bin"
         done
         popd >/dev/null
-        sudo mkdir -p /etc/bash_completion.d
-        kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl >/dev/null
+        $sudo_cmd mkdir -p /etc/bash_completion.d
+        kubectl completion bash | $sudo_cmd tee /etc/bash_completion.d/kubectl >/dev/null
     fi
 
     if ! kubectl krew version &>/dev/null || [[ "$(kubectl krew version | grep GitTag | awk '{ print $2}')" != v"$krew_version" ]]; then
@@ -142,39 +193,11 @@ function main {
         fi
         ./krew-"${OS}_$ARCH" install --manifest=krew.yaml --archive="$tarball"
 
-        sudo mkdir -p /etc/profile.d/
+        $sudo_cmd mkdir -p /etc/profile.d/
         # shellcheck disable=SC2016
-        echo 'export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin' | sudo tee /etc/profile.d/krew_path.sh >/dev/null
+        echo 'export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin' | $sudo_cmd tee /etc/profile.d/krew_path.sh >/dev/null
         export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
         popd >/dev/null
-    fi
-    if ! command -v git; then
-        INSTALLER_CMD="sudo -H -E "
-        # shellcheck disable=SC1091
-        source /etc/os-release || source /usr/lib/os-release
-        case ${ID,,} in
-        *suse*)
-            INSTALLER_CMD+="zypper "
-            if [[ ${PKG_DEBUG:-false} == "false" ]]; then
-                INSTALLER_CMD+="-q "
-            fi
-            $INSTALLER_CMD install -y --no-recommends git
-            ;;
-        ubuntu | debian)
-            INSTALLER_CMD+="apt-get -y "
-            if [[ ${PKG_DEBUG:-false} == "false" ]]; then
-                INSTALLER_CMD+="-q=3 "
-            fi
-            $INSTALLER_CMD --no-install-recommends install git
-            ;;
-        rhel | centos | fedora)
-            INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
-            if [[ ${PKG_DEBUG:-false} == "false" ]]; then
-                INSTALLER_CMD+=" --quiet --errorlevel=0"
-            fi
-            $INSTALLER_CMD install git
-            ;;
-        esac
     fi
     kubectl krew update
     for plugin in ${krew_plugins_list//,/ }; do
