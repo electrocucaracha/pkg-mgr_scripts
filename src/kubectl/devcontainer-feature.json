@@ -1,0 +1,33 @@
+{
+    "name": "Kubernetes command-line tool",
+    "id": "kubectl",
+    "version": "0.0.1",
+    "description": "Kubernetes command-line tool",
+    "options": {
+        "pkg_kubectl_version": {
+            "type": "string",
+            "description": "Specifies the Kubectl version to be installed"
+        },
+        "pkg_krew_version": {
+            "type": "string",
+            "description": "Specifies the Krew version to be installed"
+        },
+        "pkg_krew_plugins_list": {
+            "type": "string",
+            "description": "List of Krew plugins to be installed"
+        },
+        "pkg_install_finalize_namespace": {
+            "type": "boolean",
+            "description": "Determines if finalize_namespace is going to be installed"
+        },
+        "pkg_finalize_namespace_version": {
+            "type": "string",
+            "description": "Specifies the finalize_namespace plugin version to be installed"
+        },
+        "pkg_debug": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Enables verbosity level"
+        }
+    }
+}

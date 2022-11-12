@@ -16,6 +16,10 @@ function info {
     _print_msg "INFO" "$1"
 }
 
+function warn {
+    _print_msg "WARN" "$1"
+}
+
 function error {
     _print_msg "ERROR" "$1"
     exit 1
@@ -69,10 +73,10 @@ fi
 
 info "Validating finalize_namespace installation..."
 if ! command -v kubectl-finalize_namespace; then
-    error "finalize_namespace plugin wasn't installed"
-fi
-
-info "Checking finalize_namespace version"
-if [ "$(kubectl finalize_namespace -V | awk '{ print $2}')" != "${PKG_FINALIZE_NAMESPACE_VERSION:-$(get_version mattn/kubectl-finalize_namespace)}" ]; then
-    error "finalize_namespace version installed is different that expected"
+    warn "finalize_namespace plugin wasn't installed"
+else
+    info "Checking finalize_namespace version"
+    if [ "$(kubectl finalize_namespace -V | awk '{ print $2}')" != "${PKG_FINALIZE_NAMESPACE_VERSION:-$(get_version mattn/kubectl-finalize_namespace)}" ]; then
+        error "finalize_namespace version installed is different that expected"
+    fi
 fi
