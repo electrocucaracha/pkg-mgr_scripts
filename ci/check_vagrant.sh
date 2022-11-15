@@ -14,6 +14,8 @@ if [[ ${DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
+source ./ci/_utils.sh
+
 function run_integration_tests {
     local script="${SCRIPT:-main}"
 
@@ -27,7 +29,7 @@ function run_integration_tests {
     fi
 }
 
-if ! command -v vagrant; then
+if ! command -v vagrant >/dev/null; then
     vagrant_version=2.2.16
 
     echo "Install Integration dependencies - $VAGRANT_NAME"
@@ -46,9 +48,6 @@ if ! command -v vagrant; then
     vagrant plugin install vagrant-libvirt
     vagrant plugin install vagrant-reload
 fi
-
-source ./ci/_utils.sh
-source ./ci/_common.sh
 
 trap exit_trap ERR
 
