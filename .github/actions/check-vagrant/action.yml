@@ -31,7 +31,7 @@ runs:
         VAGRANT_NAME: ${{ inputs.vagrant_name }}
         SCRIPT: ${{ inputs.script }}
         MEMORY: 12288
-      run: ./ci/check.sh
+      run: ./ci/check_vagrant.sh
     - name: Check HW resources
       shell: bash
       if: failure()
