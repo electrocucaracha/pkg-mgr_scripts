@@ -27,3 +27,22 @@ vagrant_up_cmd="$vagrant_cmd up --no-destroy-on-error $VAGRANT_NAME"
 vagrant_destroy_cmd="$vagrant_cmd destroy -f $VAGRANT_NAME"
 vagrant_halt_cmd="$vagrant_cmd halt $VAGRANT_NAME"
 export vagrant_cmd vagrant_up_cmd vagrant_destroy_cmd vagrant_halt_cmd
+
+function info {
+    _print_msg "INFO" "$1"
+}
+
+function warn {
+    _print_msg "WARN" "$1"
+    echo "::warning::$1"
+}
+
+function error {
+    _print_msg "ERROR" "$1"
+    echo "::error::$1"
+    exit 1
+}
+
+function _print_msg {
+    echo "$(date +%H:%M:%S) - $1: $2"
+}
