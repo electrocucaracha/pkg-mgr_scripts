@@ -46,6 +46,7 @@ function _get_box_version {
 function _vagrant_pull {
     local alias="$1"
     local name="$2"
+    local image="$3"
 
     version=$(_get_box_version "$name")
 
@@ -62,6 +63,7 @@ function _vagrant_pull {
   - alias: $alias
     name: $name
     version: "$version"
+    image: $image
 EOT
 }
 
@@ -83,16 +85,16 @@ cat <<EOT >.distros_supported.yml
 linux:
 EOT
 
-_vagrant_pull "centos_7" "generic/centos7"
-_vagrant_pull "centos_8" "centos/stream8"
-_vagrant_pull "ubuntu_xenial" "generic/ubuntu1604"
-_vagrant_pull "ubuntu_bionic" "generic/ubuntu1804"
-_vagrant_pull "ubuntu_focal" "generic/ubuntu2004"
-_vagrant_pull "opensuse_tumbleweed" "opensuse/Tumbleweed.x86_64"
-_vagrant_pull "opensuse_leap" "opensuse/Leap-15.2.x86_64"
-_vagrant_pull "debian_jessie" "generic/debian8"
-_vagrant_pull "debian_stretch" "generic/debian9"
-_vagrant_pull "debian_buster" "generic/debian10"
+_vagrant_pull "centos_7" "generic/centos7" "centos:centos7"
+_vagrant_pull "centos_8" "centos/stream8" "quay.io/centos/centos:stream8"
+_vagrant_pull "ubuntu_xenial" "generic/ubuntu1604" "ubuntu:xenial"
+_vagrant_pull "ubuntu_bionic" "generic/ubuntu1804" "mcr.microsoft.com/devcontainers/base:bionic"
+_vagrant_pull "ubuntu_focal" "generic/ubuntu2004" "mcr.microsoft.com/devcontainers/base:focal"
+_vagrant_pull "opensuse_tumbleweed" "opensuse/Tumbleweed.x86_64" "opensuse/tumbleweed"
+_vagrant_pull "opensuse_leap" "opensuse/Leap-15.2.x86_64" "opensuse/leap"
+_vagrant_pull "debian_jessie" "generic/debian8" "debian:jessie"
+_vagrant_pull "debian_stretch" "generic/debian9" "debian:stretch"
+_vagrant_pull "debian_buster" "generic/debian10" "debian:buster"
 
 if [ "$msg" ]; then
     echo -e "$msg"
