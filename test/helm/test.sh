@@ -1,0 +1,1 @@
+../../src/helm/validate.sh
