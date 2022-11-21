@@ -1,0 +1,1 @@
+../../src/cni-plugins/validate.sh
