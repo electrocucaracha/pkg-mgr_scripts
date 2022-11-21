@@ -1,0 +1,99 @@
+---
+# SPDX-license-identifier: Apache-2.0
+##############################################################################
+# Copyright (c) 2022
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Apache License, Version 2.0
+# which accompanies this distribution, and is available at
+# http://www.apache.org/licenses/LICENSE-2.0
+##############################################################################
+
+versions: &versions
+  - ci/pinned_versions.env
+main:
+  - *versions
+  - '*.sh'
+aws:
+  - *versions
+  - 'src/aws/*'
+cni-plugins:
+  - *versions
+  - 'src/cni-plugins/*'
+helm:
+  - *versions
+  - 'src/helm/*'
+kn:
+  - *versions
+  - 'src/kn/*'
+kind:
+  - *versions
+  - 'src/kind/*'
+kubectl:
+  - *versions
+  - 'src/kubectl/*'
+kustomize:
+  - *versions
+  - 'src/kustomize/*'
+podman:
+  - *versions
+  - 'src/podman/*'
+skopeo:
+  - *versions
+  - 'src/skopeo/*'
+tkn:
+  - *versions
+  - 'src/tkn/*'
+act:
+  - *versions
+  - 'src/act/*'
+docker:
+  - *versions
+  - 'src/docker/*'
+fly:
+  - *versions
+  - 'src/fly/*'
+terraform:
+  - *versions
+  - 'src/terraform/*'
+vagrant:
+  - *versions
+  - 'src/vagrant/*'
+qat-driver:
+  - *versions
+  - 'src/qat-driver/*'
+crystal-lang:
+  - *versions
+  - 'src/crystal-lang/*'
+go-lang:
+  - *versions
+  - 'src/go-lang/*'
+nodejs:
+  - *versions
+  - 'src/nodejs/*'
+rust-lang:
+  - *versions
+  - 'src/rust-lang/*'
+gomplate:
+  - *versions
+  - 'src/gomplate/*'
+hadolint:
+  - *versions
+  - 'src/hadolint/*'
+nfs:
+  - *versions
+  - 'src/nfs/*'
+pip:
+  - *versions
+  - 'src/pip/*'
+yq:
+  - *versions
+  - 'src/yq/*'
+libvirt:
+  - *versions
+  - 'src/libvirt/*'
+qemu:
+  - *versions
+  - 'src/qemu/*'
+virtualbox:
+  - *versions
+  - 'src/virtualbox/*'
