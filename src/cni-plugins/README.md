@@ -36,6 +36,20 @@ curl -fsSL http://bit.ly/install_pkg | PKG=cni-plugins bash
 | PKG_FLANNEL_VERSION             |                                  | Specifies the Flannel CNI version to be installed          |
 | PKG_CNI_PLUGINS_INSTALL_FLANNEL | false                            | Installs Flannel CNI into the CNI folder                   |
 
+### [Dev Container](https://containers.dev/overview)
+
+This script can be consumed as Development container "Feature" through the
+following configuration:
+
+```json
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/electrocucaracha/pkg-mgr_scripts/cni-plugins:latest": {}
+    }
+}
+```
+
 ## Used by
 
 - [GW Tester Demo](https://github.com/electrocucaracha/gw-tester/)

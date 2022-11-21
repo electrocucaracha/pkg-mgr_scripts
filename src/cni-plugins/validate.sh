@@ -83,14 +83,9 @@ function _vercmp {
     esac
 }
 
-info "Validating CNI plugin folder creation..."
-if [ ! -d "${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}" ]; then
-    error "CNI plugins folder wasn't created"
-fi
+function validate_plugin {
+    local plugin=$1
 
-info "Validating CNI plugin binaries installation..."
-cni_version="$(_get_version)"
-for plugin in bandwidth bridge dhcp firewall flannel host-device host-local ipvlan loopback macvlan portmap ptp sbr static tuning vlan; do
     if [ ! -f "${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}/$plugin" ]; then
         error "$plugin CNI binary doesn't exist"
     fi
@@ -99,7 +94,22 @@ for plugin in bandwidth bridge dhcp firewall flannel host-device host-local ipvl
         error "$plugin CNI binary doesn't support CNI version command"
     fi
     info "$plugin plugin supports $(echo "$cni_versions_supported" | awk -F ":" '{ gsub(/["\[\]}]/,""); gsub(/,/,", "); print $3}') CNI versions"
-    if [ "$plugin" != "flannel" ] || _vercmp "$cni_version" '<' "0.9.1" && [[ "$("${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}/$plugin" --help 2>&1)" != *$cni_version* ]]; then
+    if _vercmp "$cni_version" '<' "0.9.1" && [[ "$("${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}/$plugin" --help 2>&1)" != *$cni_version* ]]; then
         error "$plugin CNI binary version is different than expected"
     fi
+}
+
+info "Validating CNI plugin folder creation..."
+if [ ! -d "${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}" ]; then
+    error "CNI plugins folder wasn't created"
+fi
+
+info "Validating CNI plugin binaries installation..."
+cni_version="$(_get_version)"
+for plugin in bandwidth bridge dhcp firewall host-device host-local ipvlan loopback macvlan portmap ptp sbr static tuning vlan; do
+    validate_plugin "$plugin"
 done
+
+if [[ ${PKG_CNI_PLUGINS_INSTALL_FLANNEL:-false} == "true" ]]; then
+    validate_plugin flannel
+fi
