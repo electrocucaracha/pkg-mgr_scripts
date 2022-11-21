@@ -58,96 +58,7 @@ jobs:
         id: filter
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          filters: |
-            versions: &versions
-              - ci/pinned_versions.env
-            main:
-              - *versions
-              - '*.sh'
-            aws:
-              - *versions
-              - 'src/aws/*'
-            cni-plugins:
-              - *versions
-              - 'src/cni-plugins/*'
-            helm:
-              - *versions
-              - 'src/helm/*'
-            kn:
-              - *versions
-              - 'src/kn/*'
-            kind:
-              - *versions
-              - 'src/kind/*'
-            kubectl:
-              - *versions
-              - 'src/kubectl/*'
-            kustomize:
-              - *versions
-              - 'src/kustomize/*'
-            podman:
-              - *versions
-              - 'src/podman/*'
-            skopeo:
-              - *versions
-              - 'src/skopeo/*'
-            tkn:
-              - *versions
-              - 'src/tkn/*'
-            act:
-              - *versions
-              - 'src/act/*'
-            docker:
-              - *versions
-              - 'src/docker/*'
-            fly:
-              - *versions
-              - 'src/fly/*'
-            terraform:
-              - *versions
-              - 'src/terraform/*'
-            vagrant:
-              - *versions
-              - 'src/vagrant/*'
-            qat-driver:
-              - *versions
-              - 'src/qat-driver/*'
-            crystal-lang:
-              - *versions
-              - 'src/crystal-lang/*'
-            go-lang:
-              - *versions
-              - 'src/go-lang/*'
-            nodejs:
-              - *versions
-              - 'src/nodejs/*'
-            rust-lang:
-              - *versions
-              - 'src/rust-lang/*'
-            gomplate:
-              - *versions
-              - 'src/gomplate/*'
-            hadolint:
-              - *versions
-              - 'src/hadolint/*'
-            nfs:
-              - *versions
-              - 'src/nfs/*'
-            pip:
-              - *versions
-              - 'src/pip/*'
-            yq:
-              - *versions
-              - 'src/yq/*'
-            libvirt:
-              - *versions
-              - 'src/libvirt/*'
-            qemu:
-              - *versions
-              - 'src/qemu/*'
-            virtualbox:
-              - *versions
-              - 'src/virtualbox/*'
+          filters: .github/filters.yml
   generate-matrix:
     name: Generate the Test matrix for vagrant and devcontainers
     runs-on: ubuntu-latest
@@ -159,6 +70,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
       - id: set-matrices
+        env:
+          DEBUG: true
         run: ./ci/generate_matrix.sh '${{ needs.changes.outputs.scripts }}'
   check-vagrant:
     name: Run vagrant validation for all supported Linux distros
