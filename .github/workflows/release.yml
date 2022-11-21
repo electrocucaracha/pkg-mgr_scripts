@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
       - name: Publish Features
-        uses: devcontainers/action@v1.1.4
+        uses: devcontainers/action@v1.1.5
         with:
           publish-features: "true"
           base-path-to-features: "./src"
