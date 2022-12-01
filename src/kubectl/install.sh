@@ -192,10 +192,10 @@ function main {
             tar -xzf "$tarball"
         fi
         ./krew-"${OS}_$ARCH" install --manifest=krew.yaml --archive="$tarball"
-
-        $sudo_cmd mkdir -p /etc/profile.d/
         # shellcheck disable=SC2016
-        echo 'export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin' | $sudo_cmd tee /etc/profile.d/krew_path.sh >/dev/null
+        ([ -f "$HOME/.bashrc" ] && ! grep -q KREW_ROOT "$HOME/.bashrc") && echo '[ -d ${KREW_ROOT:-$HOME/.krew}/bin ] && export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin' | tee --append "$HOME/.bashrc" >/dev/null
+        # shellcheck disable=SC2016
+        ([ -f "$HOME/.zshrc" ] && ! grep -q KREW_ROOT "$HOME/.zshrc") && echo '[ -d ${KREW_ROOT:-$HOME/.krew}/bin ] && export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin' | tee --append "$HOME/.zshrc" >/dev/null
         export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
         popd >/dev/null
     fi

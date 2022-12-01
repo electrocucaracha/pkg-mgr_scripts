@@ -63,12 +63,12 @@ fi
 
 info "Validating krew installation..."
 if ! kubectl plugin list | grep "kubectl-krew"; then
-    error "Krew plugin wasn't installed"
-fi
-
-info "Checking krew version"
-if [ "$(kubectl krew version | grep GitTag | awk '{ print $2}')" != "v${PKG_KREW_VERSION:-$(get_version kubernetes-sigs/krew)}" ]; then
-    error "Krew version installed is different that expected"
+    warn "Krew plugin wasn't installed"
+else
+    info "Checking krew version"
+    if [ "$(kubectl krew version | grep GitTag | awk '{ print $2}')" != "v${PKG_KREW_VERSION:-$(get_version kubernetes-sigs/krew)}" ]; then
+        error "Krew version installed is different that expected"
+    fi
 fi
 
 info "Validating finalize_namespace installation..."
