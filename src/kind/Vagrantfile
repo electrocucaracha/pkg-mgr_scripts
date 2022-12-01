@@ -16,6 +16,7 @@ no_proxy = ENV["NO_PROXY"] || ENV["no_proxy"] || "127.0.0.1,localhost"
 end
 driver = ENV["PKG_DRIVER"] || "qemu"
 version = ENV.fetch("PKG_KIND_VERSION", nil)
+vagrant_root = File.dirname(__FILE__)
 
 distros = YAML.load_file("#{File.dirname(__FILE__)}/../../distros_supported.yml")
 
@@ -23,7 +24,8 @@ Vagrant.configure("2") do |config|
   config.vm.provider :libvirt
   config.vm.provider :virtualbox
 
-  config.vm.synced_folder "./", "/vagrant"
+  config.vm.synced_folder "./", "/vagrant_src"
+  config.vm.synced_folder "#{vagrant_root}/../../test/kind/", "/vagrant_test"
   distros["linux"].each do |distro|
     config.vm.define distro["alias"] do |node|
       node.vm.box = distro["name"]
@@ -32,7 +34,6 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  vagrant_root = File.dirname(__FILE__)
   config.vm.provision "shell", path: "#{vagrant_root}/../../_requirements.sh"
   config.vm.provision "shell", path: "#{vagrant_root}/_requirements.sh" if File.exist?("#{File.dirname(__FILE__)}/_requirements.sh")
   config.vm.provision "shell", privileged: false do |sh|
@@ -46,7 +47,7 @@ Vagrant.configure("2") do |config|
           set -o xtrace
       fi
 
-      cd /vagrant
+      cd /vagrant_src
       ./install.sh | tee ~/install.log 2>&1
     SHELL
   end
@@ -56,8 +57,8 @@ Vagrant.configure("2") do |config|
     }
     sh.inline = <<-SHELL
       set -o errexit
-      cd /vagrant
-      ./validate.sh | tee ~/validate.log
+      cd /vagrant_test
+      ./test.sh | tee ~/validate.log
       echo "Tests completed!!!"
     SHELL
   end
@@ -91,7 +92,8 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provider "libvirt" do |v, override|
-    override.vm.synced_folder "./", "/vagrant", type: "nfs", nfs_version: ENV.fetch("VAGRANT_NFS_VERSION", 3)
+    override.vm.synced_folder "./", "/vagrant_src", type: "nfs", nfs_version: ENV.fetch("VAGRANT_NFS_VERSION", 3)
+    override.vm.synced_folder "#{vagrant_root}/../../test/kind/", "/vagrant_test", type: "nfs", nfs_version: ENV.fetch("VAGRANT_NFS_VERSION", 3)
     v.random_hostname = true
     v.management_network_address = "10.0.2.0/24"
     v.management_network_name = "administration"
