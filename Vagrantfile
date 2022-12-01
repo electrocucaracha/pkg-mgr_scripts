@@ -44,10 +44,10 @@ Vagrant.configure("2") do |config|
       fi
 
       cd /vagrant
-      rm -f ~/{main,validate}.log
-      for test_script in $(ls tests/*sh ); do
+      rm -f ~/{install,validate}.log
+      for test_script in $(ls test/*sh ); do
           test_case=${test_script%.sh}
-          bash $test_script | tee --append ~/validate.log ~/main.log | tee ~/${test_case##*/}.log
+          bash $test_script | tee --append ~/validate.log ~/install.log | tee ~/${test_case##*/}.log
       done
       echo "Tests completed!!!"
     SHELL

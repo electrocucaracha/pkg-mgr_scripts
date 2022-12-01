@@ -1,0 +1,1 @@
+../../src/kubectl/validate.sh

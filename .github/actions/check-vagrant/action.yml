@@ -1,0 +1,54 @@
+---
+# SPDX-license-identifier: Apache-2.0
+##############################################################################
+# Copyright (c) 2022
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Apache License, Version 2.0
+# which accompanies this distribution, and is available at
+# http://www.apache.org/licenses/LICENSE-2.0
+##############################################################################
+
+name: Run vagrant validations for scripts
+
+inputs:
+  vagrant_name:
+    description: 'Operating system and release number to be used during the test'
+    default: ubuntu_xenial
+  script:
+    description: 'Bash script to perform the verification'
+    default: main
+
+runs:
+  using: "composite"
+  steps:
+    - uses: ./.github/actions/vagrant-setup
+      with:
+        vagrant_name: ${{ inputs.vagrant_name }}
+    - name: Run integration tests
+      shell: bash
+      env:
+        VAGRANT_DISABLE_VBOXSYMLINKCREATE: 1
+        VAGRANT_NAME: ${{ inputs.vagrant_name }}
+        SCRIPT: ${{ inputs.script }}
+        MEMORY: 12288
+      run: ./ci/check_vagrant.sh
+    - name: Check HW resources
+      shell: bash
+      if: failure()
+      run: |
+        vm_stat
+        top -l 1 -n 0
+        VBoxManage list runningvms --long
+    - name: Check VM logs
+      shell: bash
+      if: failure()
+      run: |
+        running_vm_info=$(vagrant global-status --prune | grep running)
+        if [ "$running_vm_info" ]; then
+            cd "$(echo "$running_vm_info" | awk '{ print $NF}')"
+            vagrant ssh "$(echo "$running_vm_info" | awk '{ print $2 }')" -- "cat ~/*.log"
+        fi
+    - name: Check All logs
+      shell: bash
+      if: always()
+      run: cat /tmp/check_*.log

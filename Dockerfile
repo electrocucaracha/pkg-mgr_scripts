@@ -9,7 +9,7 @@ ENV PKG_DB_DATABASE "pkg_db"
 ENV PKG_SCRIPTS_PATH "/var/pkg_mgr/scripts"
 ENV PKG_MAIN_FILE "/var/pkg_mgr/install.sh"
 
-COPY scripts /var/pkg_mgr/scripts
+COPY src /var/pkg_mgr/scripts
 COPY install.sh /var/pkg_mgr/install.sh
 
 ENTRYPOINT ["/pkg_mgr"]

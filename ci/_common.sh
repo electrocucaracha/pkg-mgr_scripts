@@ -28,17 +28,21 @@ vagrant_destroy_cmd="$vagrant_cmd destroy -f $VAGRANT_NAME"
 vagrant_halt_cmd="$vagrant_cmd halt $VAGRANT_NAME"
 export vagrant_cmd vagrant_up_cmd vagrant_destroy_cmd vagrant_halt_cmd
 
-# MacOS provides bash v3
-export profiles="cloud devops drivers lang utils virt"
-export profile_cloud="aws cni-plugins helm kn kind kubectl kustomize podman skopeo tkn"
-export profile_devops="act docker fly terraform vagrant"
-export profile_drivers="qat-driver"
-export profile_lang="crystal-lang go-lang nodejs rust-lang"
-export profile_utils="gomplate hadolint nfs pip yq"
-export profile_virt="libvirt qemu virtualbox"
-ci_tests=""
-for profile in $profiles; do
-    tests="profile_$profile"
-    ci_tests+=" ${!tests}"
-done
-export ci_tests
+function info {
+    _print_msg "INFO" "$1"
+}
+
+function warn {
+    _print_msg "WARN" "$1"
+    echo "::warning::$1"
+}
+
+function error {
+    _print_msg "ERROR" "$1"
+    echo "::error::$1"
+    exit 1
+}
+
+function _print_msg {
+    echo "$(date +%H:%M:%S) - $1: $2"
+}

@@ -50,13 +50,7 @@ jobs:
       ) ||
       github.event_name != 'pull_request_review'
     outputs:
-      main: ${{ steps.filter.outputs.main }}
-      cloud: ${{ steps.filter.outputs.cloud }}
-      devops: ${{ steps.filter.outputs.devops }}
-      drivers: ${{ steps.filter.outputs.drivers }}
-      lang: ${{ steps.filter.outputs.lang }}
-      utils: ${{ steps.filter.outputs.utils }}
-      virt: ${{ steps.filter.outputs.virt }}
+      scripts: ${{ steps.filter.outputs.changes }}
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: dorny/paths-filter@v2.11.1
@@ -64,161 +58,51 @@ jobs:
         id: filter
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          filters: |
-            versions: &versions
-              - ci/pinned_versions.env
-            main:
-              - *versions
-              - '*.sh'
-            cloud:
-              - *versions
-              - 'scripts/aws/*'
-              - 'scripts/cni-plugins/*'
-              - 'scripts/helm/*'
-              - 'scripts/kn/*'
-              - 'scripts/kind/*'
-              - 'scripts/kubectl/*'
-              - 'scripts/kustomize/*'
-              - 'scripts/podman/*'
-              - 'scripts/skopeo/*'
-              - 'scripts/tkn/*'
-            devops:
-              - *versions
-              - 'scripts/act/*'
-              - 'scripts/docker/*'
-              - 'scripts/fly/*'
-              - 'scripts/terraform/*'
-              - 'scripts/vagrant/*'
-            drivers:
-              - *versions
-              - 'scripts/qat-driver/*'
-            lang:
-              - *versions
-              - 'scripts/crystal-lang/*'
-              - 'scripts/go-lang/*'
-              - 'scripts/nodejs/*'
-              - 'scripts/rust-lang/*'
-            utils:
-              - *versions
-              - 'scripts/gomplate/*'
-              - 'scripts/hadolint/*'
-              - 'scripts/nfs/*'
-              - 'scripts/pip/*'
-              - 'scripts/yq/*'
-            virt:
-              - *versions
-              - 'scripts/libvirt/*'
-              - 'scripts/qemu/*'
-              - 'scripts/virtualbox/*'
-  check-main:
-    if: needs.changes.outputs.main == 'true'
-    name: Run main profile on all supported Linux distros
-    runs-on: macos-12
+          filters: .github/filters.yml
+  generate-matrix:
+    name: Generate the Test matrix for vagrant and devcontainers
+    runs-on: ubuntu-latest
     needs:
       - changes
+    outputs:
+      matrix-alias: ${{ steps.set-matrices.outputs.matrix-alias }}
+      matrix-image: ${{ steps.set-matrices.outputs.matrix-image }}
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - id: set-matrices
+        env:
+          DEBUG: true
+        run: ./ci/generate_matrix.sh '${{ needs.changes.outputs.scripts }}'
+  check-vagrant:
+    name: Run vagrant validation for all supported Linux distros
+    runs-on: macos-12
+    needs:
+      - generate-matrix
     strategy:
       fail-fast: false
       matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
+        include: ${{ fromJson(needs.generate-matrix.outputs.matrix-alias) }}
     steps:
       - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
+      - uses: ./.github/actions/check-vagrant
         with:
           vagrant_name: ${{ matrix.name }}
-          profile: main
-  check-cloud:
-    if: needs.changes.outputs.cloud == 'true'
-    name: Run cloud profile on all supported Linux distros
-    runs-on: macos-12
+          script: ${{ matrix.script }}
+  check-devcontainer:
+    name: Run devcontainer validation for all supported Linux distros
+    runs-on: ubuntu-latest
     needs:
-      - changes
+      - generate-matrix
     strategy:
       fail-fast: false
       matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
+        include: ${{ fromJson(needs.generate-matrix.outputs.matrix-image) }}
     steps:
       - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: cloud
-  check-devops:
-    if: needs.changes.outputs.devops == 'true'
-    name: Run devops profile on all supported Linux distros
-    runs-on: macos-12
-    needs:
-      - changes
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: devops
-  check-drivers:
-    if: needs.changes.outputs.drivers == 'true'
-    name: Run drivers profile on all supported Linux distros
-    needs:
-      - changes
-    runs-on: macos-12
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_7, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: drivers
-  check-lang:
-    if: needs.changes.outputs.lang == 'true'
-    name: Run lang profile on all supported Linux distros
-    runs-on: macos-12
-    needs:
-      - changes
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: lang
-  check-utils:
-    if: needs.changes.outputs.utils == 'true'
-    name: Run utils profile on all supported Linux distros
-    runs-on: macos-12
-    needs:
-      - changes
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: utils
-  check-virt:
-    if: needs.changes.outputs.virt == 'true'
-    name: Run virt profile on all supported Linux distros
-    runs-on: macos-12
-    needs:
-      - changes
-    strategy:
-      fail-fast: false
-      matrix:
-        name: [ubuntu_xenial, ubuntu_focal, ubuntu_bionic, centos_8, centos_7, opensuse_tumbleweed, opensuse_leap]
-    steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/check
-        with:
-          vagrant_name: ${{ matrix.name }}
-          profile: virt
+      - name: Install latest devcontainer CLI
+        run: npm install -g @devcontainers/cli
+      - name: Generating tests for '${{ matrix.script }}'
+        run: |
+          rm -f test/${{ matrix.script }}/test.sh
+          cp src/${{ matrix.script }}/validate.sh test/${{ matrix.script }}/test.sh
+          devcontainer features test --skip-scenarios -f ${{ matrix.script }} -i ${{ matrix.image }} .

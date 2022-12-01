@@ -17,27 +17,8 @@ fi
 
 source ./ci/_common.sh
 
-function info {
-    _print_msg "INFO" "$1"
-}
-
-function warn {
-    _print_msg "WARN" "$1"
-    echo "::warning::$1"
-}
-
-function error {
-    _print_msg "ERROR" "$1"
-    echo "::error::$1"
-    exit 1
-}
-
-function _print_msg {
-    echo "$(date +%H:%M:%S) - $1: $2"
-}
-
 function exit_trap {
-    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log
+    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat install.log
     $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log
 }
 
@@ -94,12 +75,12 @@ function _run_test {
     info "$(basename "$(pwd)") test completed for $VAGRANT_NAME"
 
     echo "=== Summary ==="
-    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat main.log | grep "^INFO" | sed 's/^INFO: //'
+    $vagrant_cmd ssh "$VAGRANT_NAME" -- cat install.log | grep "^INFO" | sed 's/^INFO: //'
     $vagrant_cmd ssh "$VAGRANT_NAME" -- cat validate.log | grep "^INFO" | sed 's/^INFO: //'
 
     duration=$(($(date +%s) - start))
     printf "%s secs - Duration time for %s in %s\n" "$duration" "$(basename "$(pwd)")" "$VAGRANT_NAME"
-    echo "$(basename "$(pwd)") ($VAGRANT_NAME) completed in $duration secs" >>"$GITHUB_STEP_SUMMARY"
+    echo "$(basename "$(pwd)") ($VAGRANT_NAME) completed in $duration secs" >>"${GITHUB_STEP_SUMMARY:-/tmp/github_step_summary.log}"
     if [ -n "${rx_bytes_before-}" ] && [ -n "${rx_bytes_after-}" ]; then
         printf "%'.f MB downloaded - Network Usage for %s in %s\n" "$(((rx_bytes_after - rx_bytes_before) / ratio))" "$(basename "$(pwd)")" "$VAGRANT_NAME"
     fi

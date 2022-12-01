@@ -13,8 +13,8 @@ documentation:
   - "*.md"
 
 tests:
-  - tests/*
-  - scripts/*/validate.sh
+  - test/*
+  - src/*/validate.sh
 
 ci:
   - .github/*
@@ -23,9 +23,9 @@ ci:
   - tox.ini
   - update_versions.sh
   - Vagrantfile
-  - scripts/*/Vagrantfile
+  - src/*/Vagrantfile
 
 scripts:
-  - scripts/*/main.sh
+  - src/*/install.sh
   - install.sh
   - bindep_install.sh

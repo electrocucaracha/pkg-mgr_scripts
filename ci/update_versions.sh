@@ -64,6 +64,6 @@ while IFS= read -r line; do
         func=$(echo "${line#*\$(}" | awk -F ')' '{ print $1}')
         echo "export ${var}=$($func)" >>./ci/pinned_versions.env
     fi
-done < <(grep -r "_VERSION.*get_github_latest" scripts/ | awk -F '=' '{print $2}')
+done < <(grep -r "_VERSION.*get_github_latest" src/ | awk -F '=' '{print $2}')
 echo "$blacklist" | tee --append ./ci/pinned_versions.env
 sort -o ./ci/pinned_versions.env ./ci/pinned_versions.env
