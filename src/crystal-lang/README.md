@@ -12,7 +12,7 @@ global type inference algorithm.
 
 | Name       | Version    | Supported |
 |:-----------|:----------:|:---------:|
-| Ubuntu     | 16.04      | [x]       |
+| Ubuntu     | 16.04      | [ ]       |
 | Ubuntu     | 18.04      | [x]       |
 | Ubuntu     | 20.04      | [x]       |
 | CentOS     | 7          | [x]       |
@@ -30,6 +30,20 @@ curl -fsSL http://bit.ly/install_pkg | PKG=crystal-lang bash
 
 | Name               | Default | Description                              |
 |:-------------------|:--------|:-----------------------------------------|
+
+### [Dev Container](https://containers.dev/overview)
+
+This script can be consumed as Development container "Feature" through the
+following configuration:
+
+```json
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/electrocucaracha/pkg-mgr_scripts/crystal-lang:latest": {}
+    }
+}
+```
 
 ## Used by
 
