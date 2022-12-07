@@ -1,0 +1,17 @@
+{
+    "name": "GitHub Actions client",
+    "id": "act",
+    "version": "0.0.1",
+    "description": "Act is an open source project that allows you to run your GitHub flow locally.",
+    "options": {
+        "pkg_act_version": {
+            "type": "string",
+            "description": "Specifies the act version to be installed"
+        },
+        "pkg_debug": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Enables verbosity level"
+        }
+    }
+}

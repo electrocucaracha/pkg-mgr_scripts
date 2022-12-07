@@ -27,4 +27,18 @@ curl -fsSL http://bit.ly/install_pkg | PKG=act bash
 |:----------------|:---------------------------------|:-------------------------------------------|
 | PKG_ACT_VERSION |                                  | Specifies the act version to be installed  |
 
+### [Dev Container](https://containers.dev/overview)
+
+This script can be consumed as Development container "Feature" through the
+following configuration:
+
+```json
+{
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/electrocucaracha/pkg-mgr_scripts/act:latest": {}
+    }
+}
+```
+
 ## Used by
