@@ -1,0 +1,17 @@
+{
+    "name": "AWS command-line",
+    "id": "aws",
+    "version": "0.0.1",
+    "description": "The AWS command-line Interface (AWS CLI) is an open source tool that enables you to interact with AWS services using commands in your command-line shell.",
+    "options": {
+        "pkg_aws_version": {
+            "type": "string",
+            "description": "Specifies the AWS CLI version to be installed"
+        },
+        "pkg_debug": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Enables verbosity level"
+        }
+    }
+}
