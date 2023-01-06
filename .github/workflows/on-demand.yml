@@ -23,7 +23,7 @@ jobs:
     name: Check scripts format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.2.0
+      - uses: actions/checkout@v3.3.0
       - name: Run the sh-checker
         uses: luizm/action-sh-checker@v0.5.0
         env:
@@ -35,7 +35,7 @@ jobs:
     name: Run BDD shell specs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.2.0
+      - uses: actions/checkout@v3.3.0
       - name: Install ShellSpec
         run: curl -fsSL https://github.com/shellspec/shellspec/releases/latest/download/shellspec-dist.tar.gz | tar -xz -C ..
       - name: Run Shellspec
@@ -52,7 +52,7 @@ jobs:
     outputs:
       scripts: ${{ steps.filter.outputs.changes }}
     steps:
-      - uses: actions/checkout@v3.2.0
+      - uses: actions/checkout@v3.3.0
       - uses: dorny/paths-filter@v2.11.1
         if: ${{ !env.ACT }}
         id: filter
@@ -68,7 +68,7 @@ jobs:
       matrix-alias: ${{ steps.set-matrices.outputs.matrix-alias }}
       matrix-image: ${{ steps.set-matrices.outputs.matrix-image }}
     steps:
-      - uses: actions/checkout@v3.2.0
+      - uses: actions/checkout@v3.3.0
       - id: set-matrices
         env:
           DEBUG: true
@@ -83,7 +83,7 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix-alias) }}
     steps:
-      - uses: actions/checkout@v3.2.0
+      - uses: actions/checkout@v3.3.0
       - uses: ./.github/actions/check-vagrant
         with:
           vagrant_name: ${{ matrix.name }}
@@ -98,7 +98,7 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix-image) }}
     steps:
-      - uses: actions/checkout@v3.2.0
+      - uses: actions/checkout@v3.3.0
       - name: Install latest devcontainer CLI
         run: npm install -g @devcontainers/cli
       - name: Generating tests for '${{ matrix.script }}'
