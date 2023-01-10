@@ -121,7 +121,7 @@ function main {
                 curl -o "$vagrant_pkg" "$vagrant_url_pkg/$vagrant_pkg" 2>/dev/null
             fi
             if [[ $vagrant_pkg == *".zip" ]]; then
-                sudo unzip "$vagrant_pkg" -d /usr/bin
+                sudo unzip -o "$vagrant_pkg" -d /usr/bin
                 sudo apt-get update
                 sudo apt-get install -y --no-install-recommends libarchive-tools
             else
