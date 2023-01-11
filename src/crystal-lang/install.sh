@@ -39,7 +39,7 @@ function install_pkgs {
         # shellcheck disable=SC2068
         $INSTALLER_CMD --no-install-recommends install $@
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
         if [[ ${PKG_DEBUG:-false} == "false" ]]; then
             INSTALLER_CMD+=" --quiet --errorlevel=0"

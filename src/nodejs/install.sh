@@ -56,7 +56,7 @@ function main {
         sudo update-ca-certificates
         INSTALLER_CMD+=" --no-install-recommends nodejs"
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         url="https://rpm"
         INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
         if [[ ${PKG_DEBUG:-false} == "false" ]]; then

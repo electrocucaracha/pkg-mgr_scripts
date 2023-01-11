@@ -66,7 +66,7 @@ function main {
         sudo apt update
         sudo -H -E apt-get -y install --no-install-recommends nfs-kernel-server
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         INSTALLER_CMD="sudo -H -E $(command -v dnf || command -v yum) -y install nfs-utils"
         if _vercmp "${VERSION_ID}" '<=' "7"; then
             INSTALLER_CMD+=" nfs-utils-lib"

@@ -51,7 +51,7 @@ function main {
         echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
         sudo apt-get update
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         PKG_MANAGER=$(command -v dnf || command -v yum)
         sudo "${PKG_MANAGER}" groups mark install -y "Development Tools"
         sudo "${PKG_MANAGER}" groups install -y "Development Tools"

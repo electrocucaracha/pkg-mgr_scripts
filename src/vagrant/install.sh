@@ -137,7 +137,7 @@ function main {
                 fi
             fi
             ;;
-        rhel | centos | fedora)
+        rhel | centos | fedora | rocky)
             vagrant_pkg+="rpm"
             PKG_MANAGER=$(command -v dnf || command -v yum)
             if [[ ${PKG_DEBUG:-false} == "true" ]]; then

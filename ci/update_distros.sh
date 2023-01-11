@@ -95,6 +95,8 @@ _vagrant_pull "opensuse_leap" "opensuse/Leap-15.2.x86_64" "opensuse/leap"
 _vagrant_pull "debian_jessie" "generic/debian8" "debian:jessie"
 _vagrant_pull "debian_stretch" "generic/debian9" "debian:stretch"
 _vagrant_pull "debian_buster" "generic/debian10" "debian:buster"
+_vagrant_pull "rocky_8" "rockylinux/8" "rockylinux:8"
+_vagrant_pull "rocky_9" "rockylinux/9" "rockylinux:9"
 
 if [ "$msg" ]; then
     echo -e "$msg"

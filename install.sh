@@ -78,7 +78,7 @@ function update_repos {
         echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
         sudo apt-get update
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         PKG_MANAGER=$(command -v dnf || command -v yum)
         if ! sudo "$PKG_MANAGER" repolist | grep "epel/"; then
             sudo -H -E "$PKG_MANAGER" -q -y install epel-release
@@ -171,7 +171,7 @@ function main {
         INSTALLER_CMD+=" install"
         PKG_OS_FAMILY="Debian"
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         INSTALLER_CMD="$(command -v dnf || command -v yum) -y"
         if [[ ${PKG_DEBUG:-false} == "false" ]]; then
             INSTALLER_CMD+=" --quiet --errorlevel=0"

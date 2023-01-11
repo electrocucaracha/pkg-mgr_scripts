@@ -68,7 +68,7 @@ function main {
         fi
         INSTALLER_CMD+=" --no-install-recommends install"
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         PKG_MANAGER=$(command -v dnf || command -v yum)
         INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
         if [[ ${PKG_DEBUG:-false} == "false" ]]; then
@@ -97,7 +97,7 @@ function main {
                 # shellcheck disable=SC2086
                 $INSTALLER_CMD $pkgs
                 ;;
-            rhel | centos | fedora)
+            rhel | centos | fedora | rocky)
                 $INSTALLER_CMD yum-utils python2
                 for file in yum yum-config-manager; do
                     echo "INFO: Setting $file to use python 2"
@@ -122,7 +122,7 @@ function main {
                 pkgs="python3-setuptools python3.4"
                 sudo sed -i "s|#! /usr/bin/python|#! $(command -v python2)|g" "$(command -v lsb_release)"
                 ;;
-            rhel | centos | fedora)
+            rhel | centos | fedora | rocky)
                 pkgs="python3"
                 ;;
             esac

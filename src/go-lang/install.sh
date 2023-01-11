@@ -60,7 +60,7 @@ function main {
             sudo apt autoremove -y -qq golang
         fi
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         if rpm -q golang &>/dev/null; then
             # shellcheck disable=SC2046
             sudo $(command -v dnf || command -v yum) -y --quiet --errorlevel=0 autoremove golang

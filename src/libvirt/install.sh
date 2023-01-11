@@ -90,7 +90,7 @@ function main {
         echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
         sudo apt-get update
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         PKG_MANAGER=$(command -v dnf || command -v yum)
         INSTALLER_CMD="${PKG_MANAGER} -y"
         if [[ ${PKG_DEBUG:-false} == "false" ]]; then

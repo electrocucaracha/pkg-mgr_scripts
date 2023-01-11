@@ -57,7 +57,7 @@ function main {
         sudo apt-get update -qq >/dev/null
         eval "sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 $pkgs"
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         PKG_MANAGER=$(command -v dnf || command -v yum)
         if [[ ${PKG_DEBUG:-false} == "true" ]]; then
             sudo curl -o /etc/yum.repos.d/virtualbox.repo https://download.virtualbox.org/virtualbox/rpm/el/virtualbox.repo

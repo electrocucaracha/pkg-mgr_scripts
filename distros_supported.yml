@@ -48,3 +48,11 @@ linux:
     name: generic/debian10
     version: "4.2.6"
     image: debian:buster
+  - alias: rocky_8
+    name: rockylinux/8
+    version: "7.0.0"
+    image: rockylinux:8
+  - alias: rocky_9
+    name: rockylinux/9
+    version: "1.0.0"
+    image: rockylinux:9

@@ -157,7 +157,7 @@ function main {
             install_pmdk
         fi
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         configure_flags+=" --enable-numa"
         PKG_MANAGER=$(command -v dnf || command -v yum)
         sudo -H -E "${PKG_MANAGER}" -y install python36 gcc make \

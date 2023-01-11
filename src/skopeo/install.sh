@@ -91,7 +91,7 @@ function main {
         $INSTALLER_CMD --reinstall ca-certificates
         sudo apt-get update
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
         if [[ ${PKG_DEBUG:-false} == "false" ]]; then
             INSTALLER_CMD+=" --quiet --errorlevel=0"

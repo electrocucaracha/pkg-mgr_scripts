@@ -241,7 +241,7 @@ EOF
         $INSTALLER_CMD --reinstall ca-certificates
         sudo apt-get update
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         PKG_MANAGER=$(command -v dnf || command -v yum)
         INSTALLER_CMD="sudo -H -E ${PKG_MANAGER} -y"
         if [[ ${PKG_DEBUG:-false} == "false" ]]; then

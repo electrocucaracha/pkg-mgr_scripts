@@ -100,7 +100,7 @@ function main {
         fi
         INSTALLER_CMD+=" install -y --no-recommends"
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         INSTALLER_CMD+="$(command -v dnf || command -v yum) -y install"
         if [[ ${PKG_DEBUG:-false} == "false" ]]; then
             INSTALLER_CMD+=" --quiet --errorlevel=0"
@@ -137,6 +137,11 @@ function main {
             curl -fsSL https://get.docker.com/ | sh
             sudo sed -i "s/FirewallBackend=.*/FirewallBackend=iptables/g" /etc/firewalld/firewalld.conf
             sudo systemctl restart firewalld
+            ;;
+        rocky)
+            export PKG_DOCKER_INSTALL_ROOTLESS=false
+            sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+            $INSTALLER_CMD docker-ce docker-ce-cli containerd.io
             ;;
         ubuntu | debian)
             if [[ $VERSION_ID != "20.04" ]]; then

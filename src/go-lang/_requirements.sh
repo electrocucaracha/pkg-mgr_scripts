@@ -23,7 +23,7 @@ if ! command -v go; then
         sudo apt-get update -qq >/dev/null
         sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 golang
         ;;
-    rhel | centos | fedora)
+    rhel | centos | fedora | rocky)
         # shellcheck disable=SC2046
         sudo $(command -v dnf || command -v yum) -y --quiet --errorlevel=0 install golang
         ;;
