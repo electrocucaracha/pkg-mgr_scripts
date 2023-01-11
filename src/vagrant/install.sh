@@ -107,7 +107,7 @@ function main {
             ;;
         ubuntu | debian)
             if _vercmp "${version#*v}" '>=' "2.3.0"; then
-                if _vercmp "$VERSION_ID" '<' "18.04"; then
+                if { [ "${ID,,}" == "ubuntu" ] && _vercmp "$VERSION_ID" '<' "18.04"; } || { [ "${ID,,}" == "debian" ] && _vercmp "$VERSION_ID" '<' "10"; }; then
                     echo "Vagrant ${version#*v} requires +GLIBC_2.25 not provided by $PRETTY_NAME"
                     exit 1
                 fi
@@ -121,9 +121,14 @@ function main {
                 curl -o "$vagrant_pkg" "$vagrant_url_pkg/$vagrant_pkg" 2>/dev/null
             fi
             if [[ $vagrant_pkg == *".zip" ]]; then
+                INSTALL_CMD='sudo apt-get install -y --no-install-recommends'
+                if ! command -v unzip >/dev/null; then
+                    sudo apt-get update
+                    $INSTALL_CMD unzip
+                fi
                 sudo unzip -o "$vagrant_pkg" -d /usr/bin
                 sudo apt-get update
-                sudo apt-get install -y --no-install-recommends libarchive-tools
+                $INSTALL_CMD libarchive-tools fuse
             else
                 if [[ ${PKG_DEBUG:-false} == "true" ]]; then
                     sudo dpkg -i "$vagrant_pkg"
