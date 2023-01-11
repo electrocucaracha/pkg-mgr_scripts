@@ -43,16 +43,24 @@ function get_query {
 
 matrix_alias="[  "
 matrix_image="[  "
+enable_vagrant_check="false"
+enable_devcontainers_check="false"
 for script in $(jq -r '.[]' <<<"$1"); do
     for _alias in $(yq "$(get_query "$script" "alias")" distros_supported.yml); do
+        enable_vagrant_check="true"
         matrix_alias+="{ \"script\": \"$script\", \"name\": \"$_alias\"}, "
     done
     if [ -f "src/$script/devcontainer-feature.json" ]; then
         for _alias in $(yq "$(get_query "$script" "image")" distros_supported.yml); do
+            enable_devcontainers_check="true"
             matrix_image+="{ \"script\": \"$script\", \"image\": \"$_alias\"}, "
         done
     fi
 done
 
-echo "matrix-alias=$(jq . -c <<<"${matrix_alias::-2}]")" >>"$GITHUB_OUTPUT"
-echo "matrix-image=$(jq . -c <<<"${matrix_image::-2}]")" >>"$GITHUB_OUTPUT"
+{
+    echo "enable-vagrant-check=$enable_vagrant_check"
+    echo "enable-devcontainers-check=$enable_devcontainers_check"
+    echo "matrix-alias=$(jq . -c <<<"${matrix_alias::-2}]")"
+    echo "matrix-image=$(jq . -c <<<"${matrix_image::-2}]")"
+} >>"$GITHUB_OUTPUT"
