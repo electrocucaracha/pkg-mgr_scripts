@@ -144,15 +144,25 @@ function main {
             $INSTALLER_CMD docker-ce docker-ce-cli containerd.io
             ;;
         ubuntu | debian)
-            if [[ $VERSION_ID != "20.04" ]]; then
-                # Issue has been submitted for this case (https://github.com/wagoodman/dive/issues/418)
-                export PKG_DOCKER_INSTALL_DIVE=false
+            if [ "${ID,,}" == "debian" ] && [ $VERSION_ID == "8" ]; then
+                echo "ERROR: Debian Jessie release has reached EOL in Docker"
+                exit 1
             fi
+            # Issue has been submitted for this case (https://github.com/wagoodman/dive/issues/418)
+            [ $VERSION_ID != "20.04" ] && export PKG_DOCKER_INSTALL_DIVE=false
             sudo apt-get update
-            $INSTALLER_CMD uidmap
-            if [[ $VERSION_ID == "16.04" ]]; then
-                curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-                sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+            $INSTALLER_CMD ca-certificates curl gnupg lsb-release software-properties-common apt-transport-https uidmap
+            if [ $VERSION_ID == "16.04" ] || [ "${ID,,}" == "debian" ]; then
+                if [ "${ID,,}" == "debian" ]; then
+                    cat <<EOF | sudo sh -x
+cat <<EOT > /etc/sysctl.d/50-rootless.conf
+kernel.unprivileged_userns_clone = 1
+EOT
+sysctl --system
+EOF
+                fi
+                curl -fsSL "https://download.docker.com/linux/${ID,,}/gpg" | sudo apt-key add -
+                sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/${ID,,} $(lsb_release -cs) stable"
                 sudo apt-get update
                 $INSTALLER_CMD docker-ce
             else
