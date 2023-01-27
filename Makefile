@@ -25,6 +25,7 @@ lint:
 	-e RUN_LOCAL=true \
 	-e LINTER_RULES_PATH=/ \
 	-e KUBERNETES_KUBEVAL_OPTIONS=--ignore-missing-schemas \
+	-e KUBERNETES_KUBECONFORM_OPTIONS='-ignore-missing-schemas' \
 	github/super-linter
 	tox -e lint
 

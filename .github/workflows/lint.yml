@@ -31,6 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: /
           KUBERNETES_KUBEVAL_OPTIONS: "--ignore-missing-schemas"
+          KUBERNETES_KUBECONFORM_OPTIONS: '-ignore-missing-schemas'
   check-tox:
     name: Run additional linter tools from python tox
     runs-on: ubuntu-latest
