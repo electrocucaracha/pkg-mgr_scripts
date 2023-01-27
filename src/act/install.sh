@@ -16,11 +16,11 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
 fi
 
 sudo_cmd=$(whoami | grep -q "root" || echo "sudo -H -E")
+# shellcheck disable=SC1091
+source /etc/os-release || source /usr/lib/os-release
 
 function install_pkgs {
     INSTALLER_CMD="$sudo_cmd "
-    # shellcheck disable=SC1091
-    source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
     *suse*)
         INSTALLER_CMD+="zypper "
@@ -73,11 +73,18 @@ function get_github_latest_release {
 
 function main {
     cmds=()
-    for cmd in which tar gzip find; do
+    for cmd in which tar gzip; do
         if ! command -v "$cmd" >/dev/null; then
             cmds+=("$cmd")
         fi
     done
+    if ! command -v find >/dev/null; then
+        if [[ ${ID,,} == "rocky" ]]; then
+            cmds+=("findutils")
+        else
+            cmds+=("find")
+        fi
+    fi
     if ! command -v curl >/dev/null; then
         cmds+=(curl ca-certificates)
     fi
