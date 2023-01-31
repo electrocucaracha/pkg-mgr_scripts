@@ -16,6 +16,10 @@ function info {
     _print_msg "INFO" "$1"
 }
 
+function warn {
+    _print_msg "WARN" "$1"
+}
+
 function error {
     _print_msg "ERROR" "$1"
     exit 1
@@ -51,3 +55,9 @@ info "Validating autocomplete functions"
 if declare -F | grep -q "_helm"; then
     error "Helm autocomplete install failed"
 fi
+
+info "Validating Helm plugins"
+helm_plugins=$(helm plugin list)
+for plugin in datree diff spray; do
+    [[ $helm_plugins == *"$plugin"* ]] || warn "$plugin helm plugin is not installed"
+done

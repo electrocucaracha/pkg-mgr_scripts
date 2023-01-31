@@ -51,6 +51,26 @@ function install_pkgs {
     export INSTALLER_CMD
 }
 
+function _install_helm_plugin {
+    local url="https://github.com/$1"
+    local repo="${url##*/}"
+
+    if ! helm plugin list | grep -q "${repo#helm-}"; then
+        cmds=()
+        for cmd in git wget; do
+            if ! command -v "$cmd" >/dev/null; then
+                cmds+=("$cmd")
+            fi
+        done
+        if [ ${#cmds[@]} != 0 ]; then
+            # shellcheck disable=SC2068
+            install_pkgs ${cmds[@]}
+        fi
+        mkdir -p "${HELM_HOME:="$HOME/.helm"}/plugins"
+        helm plugin install "$url" || :
+    fi
+}
+
 function main {
     local version=${PKG_HELM_VERSION:-3}
     cmds=()
@@ -107,6 +127,11 @@ EOF
     fi
     $sudo_cmd mkdir -p /etc/bash_completion.d
     helm completion bash | $sudo_cmd tee /etc/bash_completion.d/helm >/dev/null
+
+    # install helm plugins
+    for plugin in ThalesGroup/helm-spray databus23/helm-diff datreeio/helm-datree; do
+        _install_helm_plugin "$plugin"
+    done
 }
 
 main
