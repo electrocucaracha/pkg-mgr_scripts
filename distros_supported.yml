@@ -49,8 +49,8 @@ linux:
     version: "4.2.6"
     image: debian:buster
   - alias: rocky_8
-    name: rockylinux/8
-    version: "7.0.0"
+    name: generic/rocky8
+    version: "4.2.6"
     image: rockylinux:8
   - alias: rocky_9
     name: rockylinux/9
