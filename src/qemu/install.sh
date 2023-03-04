@@ -154,7 +154,7 @@ function main {
             libpmem-dev libnuma-dev unzip libndctl-dev libdaxctl-dev g++ cmake
 
         if _vercmp "${VERSION_ID}" '>=' "20.04"; then
-            install_pmdk
+            _install_pmdk
         fi
         ;;
     rhel | centos | fedora | rocky)
@@ -164,7 +164,7 @@ function main {
             glib2-devel pixman-devel zlib-devel libpmem-devel numactl-devel \
             bzip2 unzip perl ndctl-devel daxctl-devel gcc-c++ cmake
         if _vercmp "${VERSION_ID}" '>=' "8"; then
-            install_pmdk
+            _install_pmdk
         fi
         ;;
     esac
