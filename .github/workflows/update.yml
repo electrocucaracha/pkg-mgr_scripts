@@ -24,7 +24,7 @@ jobs:
     name: Check new versions for scripts supported
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@v3.4.0
       - uses: technote-space/create-pr-action@v2.1.4
         with:
           EXECUTE_COMMANDS: |
@@ -37,7 +37,7 @@ jobs:
     name: Update word list
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@v3.4.0
       - uses: technote-space/create-pr-action@v2.1.4
         with:
           EXECUTE_COMMANDS: |
