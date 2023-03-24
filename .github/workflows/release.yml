@@ -18,7 +18,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.4.0
+      - uses: actions/checkout@v3.5.0
       - name: Publish Features
         uses: devcontainers/action@v1.3.1
         with:
