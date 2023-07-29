@@ -4,7 +4,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/electrocucaracha/pkg_mgr-init.svg)](https://img.shields.io/docker/pulls/electrocucaracha/pkg_mgr-init)
 [![GitHub Super-Linter](https://github.com/electrocucaracha/pkg-mgr_scripts/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 <!-- markdown-link-check-disable-next-line -->
-![visitors](https://visitor-badge.glitch.me/badge?page_id=electrocucaracha.pkg-mgr_scripts)
+![visitors](https://visitor-badge.laobi.icu/badge?page_id=electrocucaracha.pkg-mgr_scripts)
 
 This project pretends to centralize and facilitate the process to
 install and configure some Linux projects on major different Linux

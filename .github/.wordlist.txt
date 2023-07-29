@@ -70,6 +70,7 @@ KUBECTL
 Kubernetes
 KUSTOMIZE
 KVM
+laobi
 Libvirt
 Linode
 Linter
