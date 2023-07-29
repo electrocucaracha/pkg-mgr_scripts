@@ -16,9 +16,13 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
 fi
 
 function main {
-    local version=${PKG_VIRTUALBOX_VERSION:-6.1}
+    # shellcheck disable=SC1091
+    source /etc/os-release || source /usr/lib/os-release
 
-    if command -v VBoxManage; then
+    local version=${PKG_VIRTUALBOX_VERSION:-7.0}
+    [[ ${VERSION_CODENAME:-} == "xenial" ]] && version="6.1"
+
+    if command -v VBoxManage >/dev/null && [[ $(VBoxManage --version) == "$version"* ]]; then
         return
     fi
 
@@ -26,8 +30,6 @@ function main {
     pushd "$(mktemp -d)" 2>/dev/null
     pkgs="VirtualBox-$version dkms"
     curl -o oracle_vbox.asc https://www.virtualbox.org/download/oracle_vbox.asc
-    # shellcheck disable=SC1091
-    source /etc/os-release || source /usr/lib/os-release
     case ${ID,,} in
     opensuse*)
         supported_versions="11.4 12.3 13.1 13.2 15.0 42.1 42.2 42.3"
