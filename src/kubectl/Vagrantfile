@@ -10,6 +10,8 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+require "yaml"
+
 no_proxy = ENV["NO_PROXY"] || ENV["no_proxy"] || "127.0.0.1,localhost"
 (1..254).each do |i|
   no_proxy += ",10.0.2.#{i}"
