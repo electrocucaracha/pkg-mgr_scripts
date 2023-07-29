@@ -51,7 +51,7 @@ if ! command -v kustomize >/dev/null; then
 fi
 
 info "Checking kustomize version"
-if [ "$(kustomize version | grep -o -P '(?<={Version:kustomize/v).*(?= GitCommit:)')" != "$(get_version)" ]; then
+if [ "$(kustomize version)" != "v$(get_version)" ]; then
     error "kustomize version installed is different that expected"
 fi
 
