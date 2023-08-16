@@ -14,7 +14,7 @@ linux:
     image: centos:centos7
   - alias: centos_8
     name: centos/stream8
-    version: "20210210.0"
+    version: "20230710.0"
     image: quay.io/centos/centos:stream8
   - alias: ubuntu_xenial
     name: generic/ubuntu1604
