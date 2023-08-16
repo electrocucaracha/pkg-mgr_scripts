@@ -21,7 +21,7 @@ function get_go_latest_version {
     max_attempts=5
 
     until [ "$version" ]; do
-        stable_version="$(curl -sL https://golang.org/VERSION?m=text)"
+        stable_version="$(curl -sL https://golang.org/VERSION?m=text | head -n 1)"
         if [ "$stable_version" ]; then
             echo "${stable_version#go}"
             break
@@ -73,10 +73,10 @@ function main {
     echo insecure >>~/.curlrc
     trap 'sed -i "/^insecure\$/d" ~/.curlrc' EXIT
     if [[ ${PKG_DEBUG:-false} == "true" ]]; then
-        curl -o "$tarball" "https://dl.google.com/go/$tarball"
+        curl -L -o "$tarball" "https://go.dev/dl/$tarball"
         sudo tar -C /usr/local -vxzf "$tarball"
     else
-        curl -o "$tarball" "https://dl.google.com/go/$tarball" 2>/dev/null
+        curl -sL -o "$tarball" "https://go.dev/dl/$tarball"
         sudo tar -C /usr/local -xzf "$tarball"
     fi
     popd >/dev/null
