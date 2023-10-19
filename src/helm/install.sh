@@ -73,6 +73,8 @@ function _install_helm_plugin {
 
 function main {
     local version=${PKG_HELM_VERSION:-3}
+    helm_plugins_list=${PKG_HELM_PLUGINS_LIST:-ThalesGroup/helm-spray,databus23/helm-diff,datreeio/helm-datree}
+
     cmds=()
     for cmd in openssl tar gzip; do
         if ! command -v $cmd >/dev/null; then
@@ -129,7 +131,7 @@ EOF
     helm completion bash | $sudo_cmd tee /etc/bash_completion.d/helm >/dev/null
 
     # install helm plugins
-    for plugin in ThalesGroup/helm-spray databus23/helm-diff datreeio/helm-datree; do
+    for plugin in ${helm_plugins_list//,/ }; do
         _install_helm_plugin "$plugin"
     done
 }

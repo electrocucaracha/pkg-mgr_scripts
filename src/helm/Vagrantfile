@@ -18,6 +18,7 @@ no_proxy = ENV["NO_PROXY"] || ENV["no_proxy"] || "127.0.0.1,localhost"
 end
 debug = ENV["PKG_DEBUG"] || "true"
 driver = ENV["PKG_DRIVER"] || "qemu"
+plugins_list = ENV.fetch("PKG_HELM_PLUGINS_LIST", nil)
 vagrant_root = File.dirname(__FILE__)
 
 distros = YAML.load_file("#{File.dirname(__FILE__)}/../../distros_supported.yml")
@@ -40,7 +41,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: "#{vagrant_root}/_requirements.sh" if File.exist?("#{File.dirname(__FILE__)}/_requirements.sh")
   config.vm.provision "shell", privileged: false do |sh|
     sh.env = {
-      PKG_DEBUG: debug.to_s
+      PKG_DEBUG: debug.to_s,
+      PKG_HELM_PLUGINS_LIST: plugins_list.to_s
     }
     sh.inline = <<-SHELL
       set -o errexit
@@ -52,16 +54,22 @@ Vagrant.configure("2") do |config|
       ./install.sh | tee ~/install.log 2>&1
     SHELL
   end
-  config.vm.provision "shell", privileged: false, inline: <<-SHELL
-    set -o errexit
-    cd /vagrant_test
-    ./test.sh | tee ~/validate.log
-    sudo rm -rf $(command -v helm)
-  SHELL
   config.vm.provision "shell", privileged: false do |sh|
     sh.env = {
       PKG_DEBUG: debug.to_s,
-      PKG_HELM_VERSION: "2"
+      PKG_HELM_PLUGINS_LIST: plugins_list.to_s
+    }
+    sh.inline = <<-SHELL
+      set -o errexit
+      cd /vagrant_test
+      ./test.sh | tee ~/validate.log
+      sudo rm -rf $(command -v helm)
+    SHELL
+  end
+  config.vm.provision "shell", privileged: false do |sh|
+    sh.env = {
+      PKG_DEBUG: debug.to_s,
+      PKG_HELM_VERSION: "2",
     }
     sh.inline = <<-SHELL
       set -o errexit

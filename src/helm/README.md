@@ -27,9 +27,10 @@ curl -fsSL http://bit.ly/install_pkg | PKG=helm bash
 ```
 ### Environment variables
 
-| Name             | Default | Description                                |
-|:-----------------|:--------|:-------------------------------------------|
-| PKG_HELM_VERSION | 3       | Specifies the Helm version to be installed |
+| Name                  | Default                                                         | Description                                |
+|:----------------------|:----------------------------------------------------------------|:-------------------------------------------|
+| PKG_HELM_VERSION      | 3                                                               | Specifies the Helm version to be installed |
+| PKG_HELM_PLUGINS_LIST | ThalesGroup/helm-spray,databus23/helm-diff,datreeio/helm-datree | List of Helm plugins to be installed       |
 
 ### [Dev Container](https://containers.dev/overview)
 
