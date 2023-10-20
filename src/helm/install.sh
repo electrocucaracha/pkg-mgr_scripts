@@ -76,7 +76,7 @@ function main {
     helm_plugins_list=${PKG_HELM_PLUGINS_LIST:-ThalesGroup/helm-spray,databus23/helm-diff,datreeio/helm-datree}
 
     cmds=()
-    for cmd in openssl tar gzip; do
+    for cmd in openssl tar gzip awk; do
         if ! command -v $cmd >/dev/null; then
             cmds+=("$cmd")
         fi
