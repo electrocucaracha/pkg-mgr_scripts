@@ -24,7 +24,7 @@ which results in additional undesired packages in the OS.
 | Name       | Version           |
 |:-----------|:-----------------:|
 | Ubuntu     | 16.04/18.04/20.04 |
-| CentOS     | 7/8 Stream        |
+| CentOS     | 7/8               |
 | OpenSUSE   | Tumbleweed/Leap   |
 
 ## How to use this script?
