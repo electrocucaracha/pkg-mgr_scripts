@@ -226,10 +226,9 @@ EOF
     if [ -n "${PKG_DOCKER_INSECURE_REGISTRIES-}" ]; then
         insecure_registries+=", \"${PKG_DOCKER_INSECURE_REGISTRIES}\""
     fi
-    default_address_pools='{"base":"172.80.0.0/16","size":24},{"base":"172.90.0.0/16","size":24}'
-    if [ -n "${PKG_DOCKER_DEFAULT_ADDRESS_POOLS-}" ]; then
-        default_address_pools="$PKG_DOCKER_DEFAULT_ADDRESS_POOLS"
-    fi
+    bip=${PKG_DOCKER_BIP:-'172.70.0.1/16'}
+    default_address_pools=${PKG_DOCKER_DEFAULT_ADDRESS_POOLS:-'{"base":"172.80.0.0/16","size":24},{"base":"172.90.0.0/16","size":24}'}
+    registry_mirrors=${PKG_DOCKER_REGISTRY_MIRRORS:-}
     echo "{" | sudo tee /etc/docker/daemon.json
     if [[ ${PKG_DOCKER_ENABLE_USERNS_REMAP:-false} == "true" ]]; then
         sudo tee --append /etc/docker/daemon.json <<EOF
@@ -237,8 +236,9 @@ EOF
 EOF
     fi
     sudo tee --append /etc/docker/daemon.json <<EOF
+  "bip": "$bip",
   "default-address-pools":[$default_address_pools],
-  "registry-mirrors" : [${PKG_DOCKER_REGISTRY_MIRRORS-}],
+  "registry-mirrors" : [$registry_mirrors],
   "insecure-registries" : [$insecure_registries]
 }
 EOF
