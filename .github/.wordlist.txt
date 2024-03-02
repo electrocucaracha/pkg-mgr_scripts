@@ -18,8 +18,11 @@ containernetworking
 CRUN
 CSP
 daemonless
+databus
 datacenter
 datasources
+datree
+datreeio
 demostrates
 Dev
 devcontainers
@@ -125,6 +128,7 @@ svg
 Tekton
 TERRAFORM
 TERRASCAN
+ThalesGroup
 TKN
 txt
 USERNS
