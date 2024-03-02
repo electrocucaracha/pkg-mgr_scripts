@@ -41,7 +41,8 @@ Vagrant.configure("2") do |config|
     sh.env = {
       PKG_DEBUG: ENV["PKG_DEBUG"] || "true",
       PKG_KREW_VERSION: ENV.fetch("PKG_KREW_VERSION", nil),
-      PKG_KREW_PLUGINS_LIST: ENV.fetch("PKG_KREW_PLUGINS_LIST", nil),
+      PKG_KREW_PLUGINS_LIST: "kubectl-prof/prof",
+      PKG_KREW_INDEX_LIST: "kubectl-prof=https://github.com/josepdcs/kubectl-prof,",
       PKG_FINALIZE_NAMESPACE_VERSION: ENV.fetch("PKG_FINALIZE_NAMESPACE_VERSION", nil),
       PKG_INSTALL_FINALIZE_NAMESPACE: "true"
     }

@@ -71,6 +71,11 @@ else
     fi
 fi
 
+info "Validating prof Krew plugin installation..."
+if ! kubectl prof --version; then
+    warn "prof Krew plugin wasn't installed"
+fi
+
 info "Validating finalize_namespace installation..."
 if ! command -v kubectl-finalize_namespace; then
     warn "finalize_namespace plugin wasn't installed"

@@ -44,6 +44,7 @@ curl -fsSL http://bit.ly/install_pkg | PKG=kubectl bash
 | PKG_KUBECTL_VERSION            |                                                 | Specifies the Kubectl version to be installed                   |
 | PKG_KREW_VERSION               |                                                 | Specifies the Krew version to be installed                      |
 | PKG_KREW_PLUGINS_LIST          | tree,access-matrix,score,sniff,view-utilization | List of Krew plugins to be installed                            |
+| PKG_KREW_INDEX_LIST            |                                                 | List of pair key-value literals of Krew indexes to be added     |
 | PKG_INSTALL_FINALIZE_NAMESPACE | false                                           | Determines if `finalize_namespace` is going to be installed     |
 | PKG_FINALIZE_NAMESPACE_VERSION |                                                 | Specifies the finalize_namespace plugin version to be installed |
 

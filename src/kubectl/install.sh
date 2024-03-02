@@ -42,6 +42,8 @@ function install_pkgs {
         $INSTALLER_CMD --no-install-recommends install $@
         ;;
     rhel | centos | fedora | rocky)
+        $sudo_cmd sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* || :
+        $sudo_cmd sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* || :
         INSTALLER_CMD+="$(command -v dnf || command -v yum) -y"
         if [[ ${PKG_DEBUG:-false} == "false" ]]; then
             INSTALLER_CMD+=" --quiet --errorlevel=0"
@@ -152,6 +154,7 @@ function main {
     local version=${PKG_KUBECTL_VERSION:-$(curl -L -s https://dl.k8s.io/release/stable.txt)}
     local krew_version=${PKG_KREW_VERSION:-$(get_github_latest_release kubernetes-sigs/krew)}
     krew_plugins_list=${PKG_KREW_PLUGINS_LIST:-tree,access-matrix,score,sniff,view-utilization}
+    krew_index_list=${PKG_KREW_INDEX_LIST:-}
 
     if ! command -v kubectl || [[ "$(kubectl version --short --client | awk '{print $3}')" != "$version" ]]; then
         echo "INFO: Installing kubectl $version version..."
@@ -200,6 +203,9 @@ function main {
         export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
         popd >/dev/null
     fi
+    for index in ${krew_index_list//,/ }; do
+        kubectl krew index add "${index%=*}" "${index#*=}"
+    done
     kubectl krew update
     for plugin in ${krew_plugins_list//,/ }; do
         kubectl krew install "$plugin" || true
