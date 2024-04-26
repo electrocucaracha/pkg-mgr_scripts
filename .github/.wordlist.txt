@@ -8,12 +8,14 @@ BINDEP
 Bluemix
 bmaas
 BoltDB
+boyter
 CentOS
 cFW
 CLI
 CMD
 cncf
 CNI
+COCOMO
 containernetworking
 CRUN
 CSP
@@ -114,10 +116,12 @@ RPC
 RUNC
 runtime
 RUNTIMES
+scc
 sed
 serverless
 ShellCheck
 skopeo
+sloc
 src
 Stenberg
 subgraph
@@ -141,6 +145,7 @@ wagoodman
 wget
 Xen
 xVM
+xyz
 YAML
 YOUKI
 YQ

@@ -5,6 +5,8 @@
 [![GitHub Super-Linter](https://github.com/electrocucaracha/pkg-mgr_scripts/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 <!-- markdown-link-check-disable-next-line -->
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=electrocucaracha.pkg-mgr_scripts)
+[![Scc Code Badge](https://sloc.xyz/github/electrocucaracha/pkg-mgr_scripts?category=code)](https://github.com/boyter/scc/)
+[![Scc COCOMO Badge](https://sloc.xyz/github/electrocucaracha/pkg-mgr_scripts?category=cocomo)](https://github.com/boyter/scc/)
 
 This project pretends to centralize and facilitate the process to
 install and configure some Linux projects on major different Linux
