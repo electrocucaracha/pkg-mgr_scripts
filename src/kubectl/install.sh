@@ -195,12 +195,13 @@ function main {
             curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/v${krew_version}/$krew_assets" 2>/dev/null
             tar -xzf "$tarball"
         fi
-        ./krew-"${OS}_$ARCH" install --manifest=krew.yaml --archive="$tarball"
+        $sudo_cmd chown "${_REMOTE_USER-$USER}:" .*
+        $sudo_cmd runuser "${_REMOTE_USER-$USER}" -c "./krew-${OS}_$ARCH install --manifest=krew.yaml --archive=$tarball"
         # shellcheck disable=SC2016
         ([ -f "$HOME/.bashrc" ] && ! grep -q KREW_ROOT "$HOME/.bashrc") && echo '[ -d ${KREW_ROOT:-$HOME/.krew}/bin ] && export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin' | tee --append "$HOME/.bashrc" >/dev/null
         # shellcheck disable=SC2016
         ([ -f "$HOME/.zshrc" ] && ! grep -q KREW_ROOT "$HOME/.zshrc") && echo '[ -d ${KREW_ROOT:-$HOME/.krew}/bin ] && export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin' | tee --append "$HOME/.zshrc" >/dev/null
-        export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
+        export PATH="$PATH:${KREW_ROOT:-${_REMOTE_USER_HOME-$HOME}/.krew}/bin"
         popd >/dev/null
     fi
     for index in ${krew_index_list//,/ }; do

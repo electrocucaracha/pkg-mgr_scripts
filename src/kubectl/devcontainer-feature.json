@@ -1,7 +1,7 @@
 {
     "name": "Kubernetes command-line tool",
     "id": "kubectl",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "kubectl allows you to run commands against Kubernetes clusters.",
     "options": {
         "pkg_kubectl_version": {
@@ -16,6 +16,10 @@
             "type": "string",
             "description": "List of Krew plugins to be installed"
         },
+        "pkg_krew_index_list": {
+            "type": "string",
+            "description": "List of pair key-value literals of Krew indexes to be added"
+        },
         "pkg_install_finalize_namespace": {
             "type": "boolean",
             "description": "Determines if finalize_namespace is going to be installed"
@@ -29,5 +33,8 @@
             "default": "true",
             "description": "Enables verbosity level"
         }
+    },
+    "containerEnv": {
+        "PATH": "$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
     }
 }
