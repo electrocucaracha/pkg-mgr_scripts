@@ -107,4 +107,4 @@ jobs:
         run: npm install -g @devcontainers/cli
       - name: Generating tests for '${{ matrix.script }}'
         run: |
-          devcontainer features test --skip-scenarios --features ${{ matrix.script }} --base-image ${{ matrix.image }} --project-folder .
+          devcontainer features test --features ${{ matrix.script }} --base-image ${{ matrix.image }} --project-folder .
