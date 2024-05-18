@@ -195,7 +195,7 @@ function main {
             curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/v${krew_version}/$krew_assets" 2>/dev/null
             tar -xzf "$tarball"
         fi
-        $sudo_cmd chown "${_REMOTE_USER-$USER}:" .*
+        $sudo_cmd chown -R "${_REMOTE_USER-$USER}:" .
         $sudo_cmd runuser "${_REMOTE_USER-$USER}" -c "./krew-${OS}_$ARCH install --manifest=krew.yaml --archive=$tarball"
         # shellcheck disable=SC2016
         ([ -f "$HOME/.bashrc" ] && ! grep -q KREW_ROOT "$HOME/.bashrc") && echo '[ -d ${KREW_ROOT:-$HOME/.krew}/bin ] && export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin' | tee --append "$HOME/.bashrc" >/dev/null
