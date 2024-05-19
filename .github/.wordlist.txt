@@ -116,7 +116,7 @@ RPC
 RUNC
 runtime
 RUNTIMES
-scc
+Scc
 sed
 serverless
 ShellCheck
