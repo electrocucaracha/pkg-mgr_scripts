@@ -18,19 +18,19 @@ linux:
     image: quay.io/centos/centos:stream8
   - alias: ubuntu_xenial
     name: generic/ubuntu1604
-    version: "4.3.2"
+    version: "4.3.12"
     image: ubuntu:xenial
   - alias: ubuntu_bionic
     name: generic/ubuntu1804
-    version: "4.3.2"
+    version: "4.3.12"
     image: mcr.microsoft.com/devcontainers/base:bionic
   - alias: ubuntu_focal
     name: generic/ubuntu2004
-    version: "4.3.2"
+    version: "4.3.12"
     image: mcr.microsoft.com/devcontainers/base:focal
   - alias: opensuse_tumbleweed
     name: opensuse/Tumbleweed.x86_64
-    version: "1.0.20231019"
+    version: "1.0.20240629"
     image: opensuse/tumbleweed
   - alias: opensuse_leap
     name: opensuse/Leap-15.2.x86_64
@@ -38,21 +38,21 @@ linux:
     image: opensuse/leap
   - alias: debian_buster
     name: debian/buster64
-    version: "10.20230615.1"
+    version: "10.20231211.1"
     image: debian:buster
   - alias: debian_bullseye
     name: debian/bullseye64
-    version: "11.20231009.1"
+    version: "11.20240503.1"
     image: debian:bullseye
   - alias: debian_bookworm
     name: debian/bookworm64
-    version: "12.20231009.1"
+    version: "12.20240503.1"
     image: debian:bookworm
   - alias: rocky_8
     name: generic/rocky8
-    version: "4.3.2"
+    version: "4.3.12"
     image: rockylinux:8
   - alias: rocky_9
     name: rockylinux/9
-    version: "2.0.0"
+    version: "4.0.0"
     image: rockylinux:9
