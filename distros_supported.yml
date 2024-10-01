@@ -30,7 +30,7 @@ linux:
     image: mcr.microsoft.com/devcontainers/base:focal
   - alias: opensuse_tumbleweed
     name: opensuse/Tumbleweed.x86_64
-    version: "1.0.20240829"
+    version: "1.0.20240929"
     image: opensuse/tumbleweed
   - alias: opensuse_leap
     name: opensuse/Leap-15.2.x86_64
@@ -42,11 +42,11 @@ linux:
     image: debian:buster
   - alias: debian_bullseye
     name: debian/bullseye64
-    version: "11.20240814.1"
+    version: "11.20240905.1"
     image: debian:bullseye
   - alias: debian_bookworm
     name: debian/bookworm64
-    version: "12.20240814.1"
+    version: "12.20240905.1"
     image: debian:bookworm
   - alias: rocky_8
     name: generic/rocky8
