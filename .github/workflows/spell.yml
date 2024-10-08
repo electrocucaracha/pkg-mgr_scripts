@@ -30,7 +30,7 @@ jobs:
     name: Check misspelling words with reviewdog tools
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.0
+      - uses: actions/checkout@v4.2.1
       - uses: reviewdog/action-misspell@v1.23.0
         with:
           github_token: ${{ secrets.github_token }}
@@ -38,6 +38,6 @@ jobs:
     name: Check misspelling words with pySpelling tool
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.0
+      - uses: actions/checkout@v4.2.1
       - uses: igsekor/pyspelling-any@v1.0.4
         name: Spellcheck
