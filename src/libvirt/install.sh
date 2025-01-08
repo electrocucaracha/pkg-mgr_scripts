@@ -72,7 +72,7 @@ function main {
         sudo zypper -n ref
         ;;
     ubuntu | debian)
-        INSTALLER_CMD="apt-get -y --no-install-recommends"
+        INSTALLER_CMD="DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends"
         if [[ ${PKG_DEBUG:-false} == "false" ]]; then
             INSTALLER_CMD+=" -q=3"
         fi
@@ -97,7 +97,10 @@ function main {
             INSTALLER_CMD+=" --quiet --errorlevel=0"
         fi
         INSTALLER_CMD+=" install"
-        pkgs+=" libvirt libvirt-devel"
+        pkgs+=" libvirt"
+        if [[ ${ID,,} != "rocky" ]]; then
+            pkgs+=" libvirt-devel"
+        fi
         sudo "$PKG_MANAGER" updateinfo --assumeyes
         ;;
     *)
@@ -107,12 +110,17 @@ function main {
                 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
             fi
             brew install qemu libvirt
-            sudo sed -i '' 's|^#unix_sock_rw_perms = .*$|unix_sock_rw_perms = "0770"|g' /usr/local/etc/libvirt/libvirtd.conf
             sudo brew services start libvirt
             sudo ln -sf /usr/local/var/run/libvirt /var/run/libvirt
         fi
         ;;
     esac
+    if [ -f /etc/libvirt/libvirtd.conf ]; then
+        sudo sed -i 's|^#unix_sock_rw_perms = .*$|unix_sock_rw_perms = "0770"|g' /etc/libvirt/libvirtd.conf
+    fi
+    if [ -f /usr/local/etc/libvirt/libvirtd.conf ]; then
+        sudo sed -i '' 's|^#unix_sock_rw_perms = .*$|unix_sock_rw_perms = "0770"|g' /usr/local/etc/libvirt/libvirtd.conf
+    fi
     echo "INFO: Installing libvirt packages ($pkgs)..."
     # shellcheck disable=SC2086
     sudo -H -E $INSTALLER_CMD $pkgs
