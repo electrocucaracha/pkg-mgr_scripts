@@ -7,15 +7,12 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
 documentation:
   - docs/*
   - "*.md"
-
 tests:
   - test/*
   - src/*/validate.sh
-
 ci:
   - .github/*
   - check.sh
@@ -24,7 +21,6 @@ ci:
   - update_versions.sh
   - Vagrantfile
   - src/*/Vagrantfile
-
 scripts:
   - src/*/install.sh
   - install.sh

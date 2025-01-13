@@ -7,22 +7,21 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
 name: Compress Images
 # yamllint disable-line rule:truthy
 on:
   push:
     paths:
-      - '**.jpg'
-      - '**.jpeg'
-      - '**.png'
-      - '**.webp'
+      - "**.jpg"
+      - "**.jpeg"
+      - "**.png"
+      - "**.webp"
   pull_request:
     paths:
-      - '**.jpg'
-      - '**.jpeg'
-      - '**.png'
-      - '**.webp'
+      - "**.jpg"
+      - "**.jpeg"
+      - "**.png"
+      - "**.webp"
 jobs:
   compress-img:
     name: Compress size of repository images

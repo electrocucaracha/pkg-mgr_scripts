@@ -7,12 +7,10 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
 name: Release dev container features
 # yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
-
 jobs:
   deploy:
     if: ${{ github.ref == 'refs/heads/master' }}

@@ -7,11 +7,9 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
 name: Triage
 # yamllint disable-line rule:truthy
 on: [push, pull_request]
-
 jobs:
   assign-label:
     name: Run GitHub action to assing labels to Pull Requests

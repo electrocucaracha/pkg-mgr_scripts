@@ -7,17 +7,15 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
 name: Check All
 # yamllint disable-line rule:truthy
 on:
   push:
     paths:
-      - '**.sh'
+      - "**.sh"
   pull_request_review:
     types:
       - submitted
-
 jobs:
   check-format:
     name: Check scripts format
@@ -44,11 +42,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     if: >-
-      (
-        github.event_name == 'pull_request_review' &&
-        github.event.review.state == 'approved'
-      ) ||
-      github.event_name != 'pull_request_review'
+      ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) || github.event_name != 'pull_request_review'
     outputs:
       scripts: ${{ steps.filter.outputs.changes }}
     steps:

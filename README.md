@@ -1,9 +1,13 @@
 # cURL package installer
+
 <!-- markdown-link-check-disable-next-line -->
+
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Docker Pulls](https://img.shields.io/docker/pulls/electrocucaracha/pkg_mgr-init.svg)](https://img.shields.io/docker/pulls/electrocucaracha/pkg_mgr-init)
 [![GitHub Super-Linter](https://github.com/electrocucaracha/pkg-mgr_scripts/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 <!-- markdown-link-check-disable-next-line -->
+
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=electrocucaracha.pkg-mgr_scripts)
 [![Scc Code Badge](https://sloc.xyz/github/electrocucaracha/pkg-mgr_scripts?category=code)](https://github.com/boyter/scc/)
 [![Scc COCOMO Badge](https://sloc.xyz/github/electrocucaracha/pkg-mgr_scripts?category=cocomo)](https://github.com/boyter/scc/)
@@ -23,11 +27,11 @@ which results in additional undesired packages in the OS.
 
 ## Supported distributions
 
-| Name       | Version           |
-|:-----------|:-----------------:|
-| Ubuntu     | 16.04/18.04/20.04 |
-| CentOS     | 7/8               |
-| OpenSUSE   | Tumbleweed/Leap   |
+| Name     |      Version      |
+| :------- | :---------------: |
+| Ubuntu   | 16.04/18.04/20.04 |
+| CentOS   |        7/8        |
+| OpenSUSE |  Tumbleweed/Leap  |
 
 ## How to use this script?
 
@@ -77,11 +81,11 @@ curl -fsSL https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/ma
 
 ### Program environment variables
 
-| Name         | Description                                                               |
-|:-------------|:--------------------------------------------------------------------------|
-| PKG          | Package name(s) to be installed on the requester.(String value)           |
-| PKG_UPDATE   | Update package manager metadata information.(Boolean value)               |
-| PKG_DEBUG    | Enable verbose output during the execution.(Boolean value)                |
+| Name       | Description                                                     |
+| :--------- | :-------------------------------------------------------------- |
+| PKG        | Package name(s) to be installed on the requester.(String value) |
+| PKG_UPDATE | Update package manager metadata information.(Boolean value)     |
+| PKG_DEBUG  | Enable verbose output during the execution.(Boolean value)      |
 
 ### Bindep usage
 

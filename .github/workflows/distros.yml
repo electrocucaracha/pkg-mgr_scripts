@@ -7,20 +7,18 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
 name: Scheduled Latest Vagrant Boxes verification
 # yamllint disable-line rule:truthy
 on:
   schedule:
-    - cron: '0 0 1 * *'
+    - cron: "0 0 1 * *"
   workflow_dispatch:
-
 jobs:
   check-versions:
     name: Check latest versions of Vagrant boxes
     permissions:
-      contents: write  # for technote-space/create-pr-action to push code
-      pull-requests: write  # for technote-space/create-pr-action to create a PR
+      contents: write # for technote-space/create-pr-action to push code
+      pull-requests: write # for technote-space/create-pr-action to create a PR
     runs-on: vm-self-hosted
     steps:
       - uses: actions/checkout@v4.2.2
@@ -34,7 +32,7 @@ jobs:
         with:
           EXECUTE_COMMANDS: |
             ./ci/update_distros.sh
-          COMMIT_MESSAGE: 'Upgrade distro list versions'
-          COMMIT_NAME: 'electrocucaracha bot'
+          COMMIT_MESSAGE: "Upgrade distro list versions"
+          COMMIT_NAME: "electrocucaracha bot"
           PR_BRANCH_NAME: "versions-update-${PR_ID}"
-          PR_TITLE: 'chore: update distro versions'
+          PR_TITLE: "chore: update distro versions"

@@ -9,25 +9,26 @@ to lint the Bash code inside RUN instructions.
 
 ## Operating System Support Matrix
 
-| Name       | Version    | Supported |
-|:-----------|:----------:|:---------:|
-| Ubuntu     | 16.04      | [ ]       |
-| Ubuntu     | 18.04      | [x]       |
-| Ubuntu     | 20.04      | [x]       |
-| CentOS     | 7          | [ ]       |
-| CentOS     | 8          | [x]       |
-| OpenSUSE   | Tumbleweed | [x]       |
-| OpenSUSE   | Leap       | [x]       |
+| Name     |  Version   | Supported |
+| :------- | :--------: | :-------: |
+| Ubuntu   |   16.04    |    [ ]    |
+| Ubuntu   |   18.04    |    [x]    |
+| Ubuntu   |   20.04    |    [x]    |
+| CentOS   |     7      |    [ ]    |
+| CentOS   |     8      |    [x]    |
+| OpenSUSE | Tumbleweed |    [x]    |
+| OpenSUSE |    Leap    |    [x]    |
 
 ## How to use it
 
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=hadolint bash
 ```
+
 ### Environment variables
 
 | Name                 | Default | Description                                    |
-|:---------------------|:--------|:-----------------------------------------------|
+| :------------------- | :------ | :--------------------------------------------- |
 | PKG_HADOLINT_VERSION |         | Specifies the Hadolint version to be installed |
 
 ## Used by

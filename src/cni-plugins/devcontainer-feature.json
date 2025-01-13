@@ -1,29 +1,29 @@
 {
-    "name": "Container Network Interface plugins",
-    "id": "cni-plugins",
-    "version": "0.0.1",
-    "description": "CNI (Container Network Interface), a Cloud Native Computing Foundation project, consists of a specification and libraries for writing plugins to configure network interfaces in Linux containers, along with a number of supported plugins.",
-    "options": {
-        "pkg_cni_plugins_version": {
-            "type": "string",
-            "description": "Specifies the CNI plugins version to be installed"
-        },
-        "pkg_cni_plugins_folder": {
-            "type": "string",
-            "description": "Defines the destination folder for the CNI plugin binaries"
-        },
-        "pkg_flannel_version": {
-            "type": "string",
-            "description": "Specifies the Flannel CNI version to be installed"
-        },
-        "pkg_cni_plugins_install_flannel": {
-            "type": "boolean",
-            "description": "Installs Flannel CNI into the CNI folder"
-        },
-        "pkg_debug": {
-            "type": "boolean",
-            "default": "true",
-            "description": "Enables verbosity level"
-        }
+  "name": "Container Network Interface plugins",
+  "id": "cni-plugins",
+  "version": "0.0.1",
+  "description": "CNI (Container Network Interface), a Cloud Native Computing Foundation project, consists of a specification and libraries for writing plugins to configure network interfaces in Linux containers, along with a number of supported plugins.",
+  "options": {
+    "pkg_cni_plugins_version": {
+      "type": "string",
+      "description": "Specifies the CNI plugins version to be installed"
+    },
+    "pkg_cni_plugins_folder": {
+      "type": "string",
+      "description": "Defines the destination folder for the CNI plugin binaries"
+    },
+    "pkg_flannel_version": {
+      "type": "string",
+      "description": "Specifies the Flannel CNI version to be installed"
+    },
+    "pkg_cni_plugins_install_flannel": {
+      "type": "boolean",
+      "description": "Installs Flannel CNI into the CNI folder"
+    },
+    "pkg_debug": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Enables verbosity level"
     }
+  }
 }

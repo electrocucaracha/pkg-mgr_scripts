@@ -9,26 +9,27 @@ and reduced operational costs.
 
 ## Operating System Support Matrix
 
-| Name       | Version    | Supported |
-|:-----------|:----------:|:---------:|
-| Ubuntu     | 16.04      | [x]       |
-| Ubuntu     | 18.04      | [x]       |
-| Ubuntu     | 20.04      | [x]       |
-| CentOS     | 7          | [x]       |
-| CentOS     | 8          | [x]       |
-| OpenSUSE   | Tumbleweed | [x]       |
-| OpenSUSE   | Leap       | [x]       |
+| Name     |  Version   | Supported |
+| :------- | :--------: | :-------: |
+| Ubuntu   |   16.04    |    [x]    |
+| Ubuntu   |   18.04    |    [x]    |
+| Ubuntu   |   20.04    |    [x]    |
+| CentOS   |     7      |    [x]    |
+| CentOS   |     8      |    [x]    |
+| OpenSUSE | Tumbleweed |    [x]    |
+| OpenSUSE |    Leap    |    [x]    |
 
 ## How to use it
 
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=kn bash
 ```
+
 ### Environment variables
 
-| Name           | Default                          | Description                                    |
-|:---------------|:---------------------------------|:-----------------------------------------------|
-| PKG_KN_VERSION |                                  | Specifies the Knative version to be installed  |
+| Name           | Default | Description                                   |
+| :------------- | :------ | :-------------------------------------------- |
+| PKG_KN_VERSION |         | Specifies the Knative version to be installed |
 
 ## Used by
 

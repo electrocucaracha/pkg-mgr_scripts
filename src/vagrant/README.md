@@ -12,25 +12,26 @@ development in a few languages.
 
 ## Operating System Support Matrix
 
-| Name       | Version    | Supported |
-|:-----------|:----------:|:---------:|
-| Ubuntu     | 16.04      | [ ]       |
-| Ubuntu     | 18.04      | [x]       |
-| Ubuntu     | 20.04      | [x]       |
-| CentOS     | 7          | [x]       |
-| CentOS     | 8          | [x]       |
-| OpenSUSE   | Tumbleweed | [x]       |
-| OpenSUSE   | Leap       | [x]       |
+| Name     |  Version   | Supported |
+| :------- | :--------: | :-------: |
+| Ubuntu   |   16.04    |    [ ]    |
+| Ubuntu   |   18.04    |    [x]    |
+| Ubuntu   |   20.04    |    [x]    |
+| CentOS   |     7      |    [x]    |
+| CentOS   |     8      |    [x]    |
+| OpenSUSE | Tumbleweed |    [x]    |
+| OpenSUSE |    Leap    |    [x]    |
 
 ## How to use it
 
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=vagrant bash
 ```
+
 ### Environment variables
 
 | Name                | Default | Description                                   |
-|:--------------------|:--------|:----------------------------------------------|
+| :------------------ | :------ | :-------------------------------------------- |
 | PKG_VAGRANT_VERSION |         | Specifies the Vagrant version to be installed |
 
 ## Used by

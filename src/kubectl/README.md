@@ -15,32 +15,33 @@ you discover plugins, install and manage them on your machine. It is
 similar to tools like apt, dnf or brew. Today, over 70 kubectl plugins
 are available on Krew.
 
-* For kubectl users: Krew helps you find, install and manage kubectl
-plugins in a consistent way.
-* For plugin developers: Krew helps you package and distribute your
-plugins on multiple platforms and makes them discoverable.
+- For kubectl users: Krew helps you find, install and manage kubectl
+  plugins in a consistent way.
+- For plugin developers: Krew helps you package and distribute your
+  plugins on multiple platforms and makes them discoverable.
 
 ## Operating System Support Matrix
 
-| Name       | Version    | Supported |
-|:-----------|:----------:|:---------:|
-| Ubuntu     | 16.04      | [x]       |
-| Ubuntu     | 18.04      | [x]       |
-| Ubuntu     | 20.04      | [x]       |
-| CentOS     | 7          | [ ]       |
-| CentOS     | 8          | [ ]       |
-| OpenSUSE   | Tumbleweed | [x]       |
-| OpenSUSE   | Leap       | [x]       |
+| Name     |  Version   | Supported |
+| :------- | :--------: | :-------: |
+| Ubuntu   |   16.04    |    [x]    |
+| Ubuntu   |   18.04    |    [x]    |
+| Ubuntu   |   20.04    |    [x]    |
+| CentOS   |     7      |    [ ]    |
+| CentOS   |     8      |    [ ]    |
+| OpenSUSE | Tumbleweed |    [x]    |
+| OpenSUSE |    Leap    |    [x]    |
 
 ## How to use it
 
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=kubectl bash
 ```
+
 ### Environment variables
 
 | Name                           | Default                                         | Description                                                     |
-|:-------------------------------|:------------------------------------------------|:----------------------------------------------------------------|
+| :----------------------------- | :---------------------------------------------- | :-------------------------------------------------------------- |
 | PKG_KUBECTL_VERSION            |                                                 | Specifies the Kubectl version to be installed                   |
 | PKG_KREW_VERSION               |                                                 | Specifies the Krew version to be installed                      |
 | PKG_KREW_PLUGINS_LIST          | tree,access-matrix,score,sniff,view-utilization | List of Krew plugins to be installed                            |
@@ -55,13 +56,12 @@ following configuration:
 
 ```json
 {
-    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-    "features": {
-        "ghcr.io/electrocucaracha/pkg-mgr_scripts/kubectl:latest": {}
-    }
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/electrocucaracha/pkg-mgr_scripts/kubectl:latest": {}
+  }
 }
 ```
-
 
 ## Used by
 

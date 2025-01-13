@@ -10,15 +10,15 @@ collection, and reference counting is optional.
 
 ## Operating System Support Matrix
 
-| Name       | Version    | Supported |
-|:-----------|:----------:|:---------:|
-| Ubuntu     | 16.04      | [x]       |
-| Ubuntu     | 18.04      | [x]       |
-| Ubuntu     | 20.04      | [x]       |
-| CentOS     | 7          | [x]       |
-| CentOS     | 8          | [x]       |
-| OpenSUSE   | Tumbleweed | [x]       |
-| OpenSUSE   | Leap       | [x]       |
+| Name     |  Version   | Supported |
+| :------- | :--------: | :-------: |
+| Ubuntu   |   16.04    |    [x]    |
+| Ubuntu   |   18.04    |    [x]    |
+| Ubuntu   |   20.04    |    [x]    |
+| CentOS   |     7      |    [x]    |
+| CentOS   |     8      |    [x]    |
+| OpenSUSE | Tumbleweed |    [x]    |
+| OpenSUSE |    Leap    |    [x]    |
 
 ## How to use it
 
@@ -28,7 +28,7 @@ curl -fsSL http://bit.ly/install_pkg | PKG=rust-lang bash
 
 ### Environment variables
 
-| Name               | Default | Description                              |
-|:-------------------|:--------|:-----------------------------------------|
+| Name | Default | Description |
+| :--- | :------ | :---------- |
 
 ## Used by

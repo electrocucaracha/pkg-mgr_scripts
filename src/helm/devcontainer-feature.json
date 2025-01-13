@@ -1,17 +1,17 @@
 {
-    "name": "Helm",
-    "id": "helm",
-    "version": "0.0.1",
-    "description": "Helm helps you manage Kubernetes applications — Helm Charts help you define, install, and upgrade even the most complex Kubernetes application.",
-    "options": {
-        "pkg_helm_version": {
-            "type": "string",
-            "description": "Specifies the Helm version to be installed"
-        },
-        "pkg_debug": {
-            "type": "boolean",
-            "default": "true",
-            "description": "Enables verbosity level"
-        }
+  "name": "Helm",
+  "id": "helm",
+  "version": "0.0.1",
+  "description": "Helm helps you manage Kubernetes applications — Helm Charts help you define, install, and upgrade even the most complex Kubernetes application.",
+  "options": {
+    "pkg_helm_version": {
+      "type": "string",
+      "description": "Specifies the Helm version to be installed"
+    },
+    "pkg_debug": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Enables verbosity level"
     }
+  }
 }

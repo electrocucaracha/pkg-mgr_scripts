@@ -1,26 +1,26 @@
 {
-    "prof": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "kubectl": {
-                "pkg_krew_plugins_list": "kubectl-prof/prof",
-                "pkg_krew_index_list": "kubectl-prof=https://github.com/josepdcs/kubectl-prof,"
-            }
-        },
-        "remoteUser": "root"
+  "prof": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "kubectl": {
+        "pkg_krew_plugins_list": "kubectl-prof/prof",
+        "pkg_krew_index_list": "kubectl-prof=https://github.com/josepdcs/kubectl-prof,"
+      }
     },
-    "finalize_namespace": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "kubectl": {
-                "pkg_install_finalize_namespace": true
-            }
-        }
-    },
-    "krew": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-        "features": {
-            "kubectl": {}
-        }
+    "remoteUser": "root"
+  },
+  "finalize_namespace": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "kubectl": {
+        "pkg_install_finalize_namespace": true
+      }
     }
+  },
+  "krew": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "kubectl": {}
+    }
+  }
 }

@@ -7,17 +7,14 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
 name: Run vagrant validations for scripts
-
 inputs:
   vagrant_name:
-    description: 'Operating system and release number to be used during the test'
+    description: "Operating system and release number to be used during the test"
     default: ubuntu_xenial
   script:
-    description: 'Bash script to perform the verification'
+    description: "Bash script to perform the verification"
     default: main
-
 runs:
   using: "composite"
   steps:

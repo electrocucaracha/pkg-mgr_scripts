@@ -9,15 +9,15 @@ garbage collection, structural typing, and CSP-style concurrency.
 
 ## Operating System Support Matrix
 
-| Name       | Version    | Supported |
-|:-----------|:----------:|:---------:|
-| Ubuntu     | 16.04      | [x]       |
-| Ubuntu     | 18.04      | [x]       |
-| Ubuntu     | 20.04      | [x]       |
-| CentOS     | 7          | [x]       |
-| CentOS     | 8          | [x]       |
-| OpenSUSE   | Tumbleweed | [x]       |
-| OpenSUSE   | Leap       | [x]       |
+| Name     |  Version   | Supported |
+| :------- | :--------: | :-------: |
+| Ubuntu   |   16.04    |    [x]    |
+| Ubuntu   |   18.04    |    [x]    |
+| Ubuntu   |   20.04    |    [x]    |
+| CentOS   |     7      |    [x]    |
+| CentOS   |     8      |    [x]    |
+| OpenSUSE | Tumbleweed |    [x]    |
+| OpenSUSE |    Leap    |    [x]    |
 
 ## How to use it
 
@@ -25,10 +25,11 @@ garbage collection, structural typing, and CSP-style concurrency.
 curl -fsSL http://bit.ly/install_pkg | PKG=go-lang bash
 source /etc/profile.d/path.sh
 ```
+
 ### Environment variables
 
 | Name               | Default | Description                              |
-|:-------------------|:--------|:-----------------------------------------|
+| :----------------- | :------ | :--------------------------------------- |
 | PKG_GOLANG_VERSION |         | Specifies the Go version to be installed |
 
 ## Used by

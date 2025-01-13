@@ -7,24 +7,22 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
 name: Run misspell
 # yamllint disable-line rule:truthy
 on:
   push:
     paths:
-      - '**.md'
-      - '!.github/*'
+      - "**.md"
+      - "!.github/*"
   pull_request:
     branches:
       - master
     paths:
-      - '**.md'
-      - '!.github/*'
+      - "**.md"
+      - "!.github/*"
   pull_request_review:
     types:
       - submitted
-
 jobs:
   check-reviewdog:
     name: Check misspelling words with reviewdog tools

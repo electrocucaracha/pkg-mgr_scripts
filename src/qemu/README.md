@@ -13,25 +13,26 @@ architecture to run on another.
 
 ## Operating System Support Matrix
 
-| Name       | Version    | Supported |
-|:-----------|:----------:|:---------:|
-| Ubuntu     | 16.04      | [ ]       |
-| Ubuntu     | 18.04      | [x]       |
-| Ubuntu     | 20.04      | [x]       |
-| CentOS     | 7          | [ ]       |
-| CentOS     | 8          | [x]       |
-| OpenSUSE   | Tumbleweed | [ ]       |
-| OpenSUSE   | Leap       | [x]       |
+| Name     |  Version   | Supported |
+| :------- | :--------: | :-------: |
+| Ubuntu   |   16.04    |    [ ]    |
+| Ubuntu   |   18.04    |    [x]    |
+| Ubuntu   |   20.04    |    [x]    |
+| CentOS   |     7      |    [ ]    |
+| CentOS   |     8      |    [x]    |
+| OpenSUSE | Tumbleweed |    [ ]    |
+| OpenSUSE |    Leap    |    [x]    |
 
 ## How to use it
 
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=qemu bash
 ```
+
 ### Environment variables
 
 | Name              | Default | Description                                 |
-|:------------------|:--------|:--------------------------------------------|
+| :---------------- | :------ | :------------------------------------------ |
 | PKG_QEMU_VERSION  |         | Specifies the QEMU version to be installed  |
 | PKG_PMDK_VERSION  |         | Specifies the PMDK version to be installed  |
 | PKG_NINJA_VERSION |         | Specifies the Ninja version to be installed |

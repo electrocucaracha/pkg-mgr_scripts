@@ -7,18 +7,15 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
 name: Scheduled Versions and Dictionary verification
 # yamllint disable-line rule:truthy
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   workflow_dispatch:
-
 permissions:
-  contents: write  # for technote-space/create-pr-action to push code
-  pull-requests: write  # for technote-space/create-pr-action to create a PR
-
+  contents: write # for technote-space/create-pr-action to push code
+  pull-requests: write # for technote-space/create-pr-action to create a PR
 jobs:
   check-versions:
     name: Check new versions for scripts supported
@@ -29,10 +26,10 @@ jobs:
         with:
           EXECUTE_COMMANDS: |
             ./ci/update_versions.sh
-          COMMIT_MESSAGE: 'Upgrade pinned versions file'
-          COMMIT_NAME: 'electrocucaracha bot'
+          COMMIT_MESSAGE: "Upgrade pinned versions file"
+          COMMIT_NAME: "electrocucaracha bot"
           PR_BRANCH_NAME: "versions-update-${PR_ID}"
-          PR_TITLE: 'chore: update versions in pinned_versions.env'
+          PR_TITLE: "chore: update versions in pinned_versions.env"
   check-dictionary:
     name: Update word list
     runs-on: ubuntu-latest
@@ -55,7 +52,7 @@ jobs:
             # Add missing words
             pyspelling -c .spellcheck.yml | sed '/^<.*>/d;/^!!!/d;/^--/d;/^Misspelled words:/d;/^$/d;/^Spelling check passed :)$/d' | sort --ignore-case | uniq --ignore-case | tee --append .github/.wordlist.txt
             sort --ignore-case --output=.github/.wordlist.txt .github/.wordlist.txt
-          COMMIT_MESSAGE: 'Update dictionary definitions'
-          COMMIT_NAME: 'spellchecker bot'
+          COMMIT_MESSAGE: "Update dictionary definitions"
+          COMMIT_NAME: "spellchecker bot"
           PR_BRANCH_NAME: "versions-update-${PR_ID}"
-          PR_TITLE: 'chore: update dictionary'
+          PR_TITLE: "chore: update dictionary"

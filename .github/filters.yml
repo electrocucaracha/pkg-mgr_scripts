@@ -7,93 +7,92 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-
 versions: &versions
   - ci/pinned_versions.env
 main:
   - *versions
-  - '*.sh'
+  - "*.sh"
 aws:
   - *versions
-  - 'src/aws/*'
+  - "src/aws/*"
 cni-plugins:
   - *versions
-  - 'src/cni-plugins/*'
+  - "src/cni-plugins/*"
 helm:
   - *versions
-  - 'src/helm/*'
+  - "src/helm/*"
 kn:
   - *versions
-  - 'src/kn/*'
+  - "src/kn/*"
 kind:
   - *versions
-  - 'src/kind/*'
+  - "src/kind/*"
 kubectl:
   - *versions
-  - 'src/kubectl/*'
+  - "src/kubectl/*"
 kustomize:
   - *versions
-  - 'src/kustomize/*'
+  - "src/kustomize/*"
 podman:
   - *versions
-  - 'src/podman/*'
+  - "src/podman/*"
 skopeo:
   - *versions
-  - 'src/skopeo/*'
+  - "src/skopeo/*"
 tkn:
   - *versions
-  - 'src/tkn/*'
+  - "src/tkn/*"
 act:
   - *versions
-  - 'src/act/*'
+  - "src/act/*"
 docker:
   - *versions
-  - 'src/docker/*'
+  - "src/docker/*"
 fly:
   - *versions
-  - 'src/fly/*'
+  - "src/fly/*"
 terraform:
   - *versions
-  - 'src/terraform/*'
+  - "src/terraform/*"
 vagrant:
   - *versions
-  - 'src/vagrant/*'
+  - "src/vagrant/*"
 qat-driver:
   - *versions
-  - 'src/qat-driver/*'
+  - "src/qat-driver/*"
 crystal-lang:
   - *versions
-  - 'src/crystal-lang/*'
+  - "src/crystal-lang/*"
 go-lang:
   - *versions
-  - 'src/go-lang/*'
+  - "src/go-lang/*"
 nodejs:
   - *versions
-  - 'src/nodejs/*'
+  - "src/nodejs/*"
 rust-lang:
   - *versions
-  - 'src/rust-lang/*'
+  - "src/rust-lang/*"
 gomplate:
   - *versions
-  - 'src/gomplate/*'
+  - "src/gomplate/*"
 hadolint:
   - *versions
-  - 'src/hadolint/*'
+  - "src/hadolint/*"
 nfs:
   - *versions
-  - 'src/nfs/*'
+  - "src/nfs/*"
 pip:
   - *versions
-  - 'src/pip/*'
+  - "src/pip/*"
 yq:
   - *versions
-  - 'src/yq/*'
+  - "src/yq/*"
 libvirt:
   - *versions
-  - 'src/libvirt/*'
+  - "src/libvirt/*"
 qemu:
   - *versions
-  - 'src/qemu/*'
+  - "src/qemu/*"
 virtualbox:
   - *versions
-  - 'src/virtualbox/*'
+  - "src/virtualbox/*"
