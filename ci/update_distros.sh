@@ -85,8 +85,6 @@ cat <<EOT >.distros_supported.yml
 linux:
 EOT
 
-_vagrant_pull "centos_7" "centos/7" "centos:centos7"
-_vagrant_pull "centos_8" "centos/8" "quay.io/centos/centos:stream8"
 _vagrant_pull "ubuntu_xenial" "generic/ubuntu1604" "ubuntu:xenial"
 _vagrant_pull "ubuntu_bionic" "generic/ubuntu1804" "mcr.microsoft.com/devcontainers/base:bionic"
 _vagrant_pull "ubuntu_focal" "generic/ubuntu2004" "mcr.microsoft.com/devcontainers/base:focal"

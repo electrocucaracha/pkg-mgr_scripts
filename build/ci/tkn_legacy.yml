@@ -14,7 +14,7 @@ metadata:
 spec:
   params:
     - name: vagrant-name
-      description: the vagrant box image to be used (centos_7,centos_8,ubuntu_xenial,ubuntu_bionic,ubuntu_focal,opensuse)
+      description: the vagrant box image to be used (ubuntu_xenial,ubuntu_bionic,ubuntu_focal,opensuse)
       default: ubuntu_xenial
       type: string
   resources:
@@ -92,19 +92,6 @@ spec:
       runAfter:
         - tox-linting
         - shellcheck-linting
-    - name: check-centos-7
-      taskRef:
-        name: check-task
-      params:
-        - name: vagrant-name
-          value: centos_7
-      resources:
-        inputs:
-          - name: repo
-            resource: src
-      runAfter:
-        - tox-linting
-        - shellcheck-linting
     - name: check-opensuse
       taskRef:
         name: check-task
@@ -130,18 +117,6 @@ spec:
             resource: src
       runAfter:
         - check-ubuntu-xenial
-    - name: check-centos-8
-      taskRef:
-        name: check-task
-      params:
-        - name: vagrant-name
-          value: centos_8
-      resources:
-        inputs:
-          - name: repo
-            resource: src
-      runAfter:
-        - check-centos-7
     - name: check-ubuntu-focal
       taskRef:
         name: check-task

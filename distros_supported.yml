@@ -8,14 +8,6 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 linux:
-  - alias: centos_7
-    name: centos/7
-    version: "2004.01"
-    image: centos:centos7
-  - alias: centos_8
-    name: centos/8
-    version: "2011.0"
-    image: quay.io/centos/centos:stream8
   - alias: ubuntu_xenial
     name: generic/ubuntu1604
     version: "4.3.2"

@@ -17,8 +17,6 @@ virtual machines.
 | Ubuntu   |   16.04    |    [x]    |
 | Ubuntu   |   18.04    |    [x]    |
 | Ubuntu   |   20.04    |    [x]    |
-| CentOS   |     7      |    [x]    |
-| CentOS   |     8      |    [x]    |
 | OpenSUSE | Tumbleweed |    [x]    |
 | OpenSUSE |    Leap    |    [x]    |
 
@@ -56,6 +54,5 @@ curl -fsSL http://bit.ly/install_pkg | PKG=docker bash
 - [Firewall Cloud-Native Network Function Demo](https://github.com/electrocucaracha/cFW-demo)
 - [Kubernetes Development Environment](https://github.com/electrocucaracha/kubernetes-dev)
 - [Kubernetes NonPreemptingPriority gate feature demo](https://github.com/electrocucaracha/k8s-NonPreemptingPriority-demo)
-- [CentOS Mirror Server](https://github.com/electrocucaracha/centos-mirror)
 - [QAT enablement on OKD](https://github.com/electrocucaracha/okd)
 - [Bare Metal as a Service](https://github.com/electrocucaracha/bmaas)

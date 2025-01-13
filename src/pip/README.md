@@ -14,8 +14,6 @@ Python Package Index (PyPI).
 | Ubuntu   |   16.04    |    [x]    |
 | Ubuntu   |   18.04    |    [x]    |
 | Ubuntu   |   20.04    |    [x]    |
-| CentOS   |     7      |    [x]    |
-| CentOS   |     8      |    [x]    |
 | OpenSUSE | Tumbleweed |    [x]    |
 | OpenSUSE |    Leap    |    [x]    |
 | Debian   |     8      |    [ ]    |
@@ -37,4 +35,3 @@ curl -fsSL http://bit.ly/install_pkg | PKG=pip bash
 ## Used by
 
 - [OpenStack Multi-Node Deployment](https://github.com/electrocucaracha/openstack-multinode)
-- [CentOS Mirror Server](https://github.com/electrocucaracha/centos-mirror)

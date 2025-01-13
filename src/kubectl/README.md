@@ -27,8 +27,6 @@ are available on Krew.
 | Ubuntu   |   16.04    |    [x]    |
 | Ubuntu   |   18.04    |    [x]    |
 | Ubuntu   |   20.04    |    [x]    |
-| CentOS   |     7      |    [ ]    |
-| CentOS   |     8      |    [ ]    |
 | OpenSUSE | Tumbleweed |    [x]    |
 | OpenSUSE |    Leap    |    [x]    |
 

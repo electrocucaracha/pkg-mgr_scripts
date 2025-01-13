@@ -9,8 +9,6 @@ A command-line interface that runs a build in a container with ATC.
 | Ubuntu   |   16.04    |    [x]    |
 | Ubuntu   |   18.04    |    [x]    |
 | Ubuntu   |   20.04    |    [x]    |
-| CentOS   |     7      |    [x]    |
-| CentOS   |     8      |    [x]    |
 | OpenSUSE | Tumbleweed |    [x]    |
 | OpenSUSE |    Leap    |    [x]    |
 
