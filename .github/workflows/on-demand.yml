@@ -21,9 +21,9 @@ jobs:
     name: Check scripts format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - name: Run the sh-checker
-        uses: luizm/action-sh-checker@v0.9.0
+        uses: luizm/action-sh-checker@17bd25a6ee188d2b91f677060038f4ba37ba14b2 # 0.9.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHFMT_OPTS: -i 4 -s
@@ -33,7 +33,7 @@ jobs:
     name: Run BDD shell specs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - name: Install ShellSpec
         run: curl -fsSL https://github.com/shellspec/shellspec/releases/latest/download/shellspec-dist.tar.gz | tar -xz -C ..
       - name: Run Shellspec
@@ -46,8 +46,8 @@ jobs:
     outputs:
       scripts: ${{ steps.filter.outputs.changes }}
     steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: dorny/paths-filter@v3.0.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # 3.0.2
         if: ${{ !env.ACT }}
         id: filter
         with:
@@ -64,7 +64,7 @@ jobs:
       enable-vagrant-check: ${{ steps.set-matrices.outputs.enable-vagrant-check }}
       enable-devcontainers-check: ${{ steps.set-matrices.outputs.enable-devcontainers-check }}
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - id: set-matrices
         env:
           DEBUG: true
@@ -80,7 +80,7 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix-alias) }}
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - uses: ./.github/actions/check-vagrant
         with:
           vagrant_name: ${{ matrix.name }}
@@ -96,7 +96,7 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix-image) }}
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - name: Install latest devcontainer CLI
         run: npm install -g @devcontainers/cli
       - name: Generating tests for '${{ matrix.script }}'

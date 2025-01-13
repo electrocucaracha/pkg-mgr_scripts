@@ -14,6 +14,8 @@ if [[ ${DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
+trap "make fmt" EXIT
+
 function get_github_latest_release {
     version=""
     attempt_counter=0
@@ -67,3 +69,11 @@ while IFS= read -r line; do
 done < <(grep -r "_VERSION.*get_github_latest" src/ | awk -F '=' '{print $2}')
 echo "$blacklist" | tee --append ./ci/pinned_versions.env
 sort -o ./ci/pinned_versions.env ./ci/pinned_versions.env
+
+# Update GitHub Action commit hashes
+gh_actions=$(grep -r "uses: [a-zA-Z\-]*/[\_a-z\-]*@" .github/ | sed 's/@.*//' | awk -F ': ' '{ print $3 }' | sort -u)
+for action in $gh_actions; do
+    commit_hash=$(git ls-remote "https://github.com/$action" | grep 'refs/tags/[v]\?[0-9][0-9\.]*$' | sed 's|refs/tags/[vV]\?[\.]\?||g' | sort -u -k2 -V | tail -1 | awk '{ printf "%s # %s\n",$1,$2 }')
+    # shellcheck disable=SC2267
+    grep -ElRZ "uses: $action@" .github/ | xargs -0 -l sed -i -e "s|uses: $action@.*|uses: $action@$commit_hash|g"
+done

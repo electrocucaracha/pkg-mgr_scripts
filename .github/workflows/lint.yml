@@ -15,9 +15,9 @@ jobs:
     name: Count Lines of Code
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - name: Setup Go
-        uses: actions/setup-go@v5.2.0
+        uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a # 5.2.0
         with:
           go-version: ">=1.20.0"
       - name: Install dependencies
@@ -28,16 +28,16 @@ jobs:
     name: Check URL broken links into documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - name: Check broken links
-        uses: gaurav-nelson/github-action-markdown-link-check@1.0.15
+        uses: gaurav-nelson/github-action-markdown-link-check@d53a906aa6b22b8979d33bc86170567e619495ec # 1.0.15
   check-super-linter:
     name: Run GitHub super-linter tool for verify quality of code
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - name: Check super-linter
-        uses: github/super-linter@v5.0.0
+        uses: github/super-linter@b807e99ddd37e444d189cfd2c2ca1274d8ae8ef1 # 7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: /
@@ -47,7 +47,7 @@ jobs:
     name: Run additional linter tools from python tox
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - name: Install tox
         run: pip install tox
       - name: Run tox validation

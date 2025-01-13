@@ -28,14 +28,14 @@ jobs:
     name: Check misspelling words with reviewdog tools
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: reviewdog/action-misspell@v1.26.1
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - uses: reviewdog/action-misspell@e2af6e5f797b1a26b3ccabfb316a3317c965a53d # 1.26.1
         with:
           github_token: ${{ secrets.github_token }}
   check-spellcheck:
     name: Check misspelling words with pySpelling tool
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: igsekor/pyspelling-any@v1.0.4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - uses: igsekor/pyspelling-any@155eb06641bb9259cab59b5126a40be943ecb4f7 # 1.0.4
         name: Spellcheck

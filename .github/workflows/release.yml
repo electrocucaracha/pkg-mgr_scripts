@@ -16,9 +16,9 @@ jobs:
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - name: Publish Features
-        uses: devcontainers/action@v1.4.3
+        uses: devcontainers/action@1082abd5d2bf3a11abccba70eef98df068277772 # 1.4.3
         with:
           publish-features: "true"
           base-path-to-features: "./src"

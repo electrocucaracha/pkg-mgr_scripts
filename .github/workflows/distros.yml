@@ -21,14 +21,14 @@ jobs:
       pull-requests: write # for technote-space/create-pr-action to create a PR
     runs-on: vm-self-hosted
     steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: actions/cache@v4.2.0
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # 4.2.0
         with:
           path: ~/.vagrant.d/boxes
           key: ${{ runner.os }}-vagrant-${{ hashFiles('distros_supported.yml') }}
           restore-keys: |
             ${{ runner.os }}-vagrant-
-      - uses: technote-space/create-pr-action@v2.1.4
+      - uses: technote-space/create-pr-action@91114507cf92349bec0a9a501c2edf1635427bc5 # 2.1.4
         with:
           EXECUTE_COMMANDS: |
             ./ci/update_distros.sh
