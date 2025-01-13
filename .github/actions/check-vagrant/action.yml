@@ -8,6 +8,7 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 name: Run vagrant validations for scripts
+description: Configures runner to be able to execute vagrant boxes
 inputs:
   vagrant_name:
     description: "Operating system and release number to be used during the test"
