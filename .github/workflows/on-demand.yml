@@ -78,7 +78,7 @@ jobs:
   check-vagrant:
     name: Run vagrant validation for all supported Linux distros
     if: needs.generate-matrix.outputs.enable-vagrant-check == 'true'
-    runs-on: macos-12
+    runs-on: vm-self-hosted
     needs:
       - generate-matrix
     strategy:
