@@ -95,7 +95,7 @@ function main {
                     fi
                 fi
                 # shellcheck disable=SC2086
-                $INSTALLER_CMD $pkgs
+                $INSTALLER_CMD $pkgs || :
                 ;;
             rhel | centos | fedora | rocky)
                 $INSTALLER_CMD yum-utils python2
@@ -141,10 +141,13 @@ function main {
     sudo ln -s "/usr/bin/python${major_python_version}" /usr/bin/python
 
     if ! command -v pip || _vercmp "$(pip -V | awk '{print $2}')" '<' "$min_pip_version"; then
-        if _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>=' "3" &&
-            [[ ${ID,,} == "debian" || ${ID,,} == "ubuntu" ]]; then
+        if _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>=' "3" && [[ ${ID,,} == "debian" ]]; then
             # shellcheck disable=SC2086
-            $INSTALLER_CMD python3-distutils || :
+            $INSTALLER_CMD python3-pip || :
+            python3 -m pip config set global.break-system-packages true
+        elif _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>=' "3" && [[ ${ID,,} == "ubuntu" ]]; then
+            # shellcheck disable=SC2086
+            $INSTALLER_CMD python3-distutils python3-distlib || :
         fi
         echo "INFO: Installing PIP $min_pip_version version"
         current_version="$(python -V | awk '{print $2}')"
