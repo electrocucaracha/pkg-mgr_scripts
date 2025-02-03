@@ -65,6 +65,7 @@ while IFS= read -r line; do
     if [[ ${blacklist} != *"${var}"* ]]; then
         func=$(echo "${line#*\$(}" | awk -F ')' '{ print $1}')
         echo "export ${var}=$($func)" >>./ci/pinned_versions.env
+        find . -name devcontainer-feature.json -exec sed -i "s/default\": \".* \/\/ $var/default\": \"$($func)\" \/\/ $var/g" {} \;
     fi
 done < <(grep -r "_VERSION.*get_github_latest" src/ | awk -F '=' '{print $2}')
 echo "$blacklist" | tee --append ./ci/pinned_versions.env

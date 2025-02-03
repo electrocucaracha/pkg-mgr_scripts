@@ -6,7 +6,8 @@
   "options": {
     "pkg_helm_version": {
       "type": "string",
-      "description": "Specifies the Helm version to be installed"
+      "description": "Specifies the Helm version to be installed",
+      "default": "3" // PKG_HELM_VERSION
     },
     "pkg_debug": {
       "type": "boolean",

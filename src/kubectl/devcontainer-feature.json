@@ -6,27 +6,33 @@
   "options": {
     "pkg_kubectl_version": {
       "type": "string",
-      "description": "Specifies the Kubectl version to be installed"
+      "description": "Specifies the Kubectl version to be installed",
+      "default": "v1.32.1" // PKG_KUBECTL_VERSION
     },
     "pkg_krew_version": {
       "type": "string",
-      "description": "Specifies the Krew version to be installed"
+      "description": "Specifies the Krew version to be installed",
+      "default": "0.4.4" // PKG_KREW_VERSION
     },
     "pkg_krew_plugins_list": {
       "type": "string",
-      "description": "List of Krew plugins to be installed"
+      "description": "List of Krew plugins to be installed",
+      "default": "tree,access-matrix,score,sniff,view-utilization"
     },
     "pkg_krew_index_list": {
       "type": "string",
-      "description": "List of pair key-value literals of Krew indexes to be added"
+      "description": "List of pair key-value literals of Krew indexes to be added",
+      "default": ""
     },
     "pkg_install_finalize_namespace": {
       "type": "boolean",
-      "description": "Determines if finalize_namespace is going to be installed"
+      "description": "Determines if finalize_namespace is going to be installed",
+      "default": "false"
     },
     "pkg_finalize_namespace_version": {
       "type": "string",
-      "description": "Specifies the finalize_namespace plugin version to be installed"
+      "description": "Specifies the finalize_namespace plugin version to be installed",
+      "default": "0.0.2" // PKG_FINALIZE_NAMESPACE_VERSION
     },
     "pkg_debug": {
       "type": "boolean",

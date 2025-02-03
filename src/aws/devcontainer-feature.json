@@ -6,7 +6,8 @@
   "options": {
     "pkg_aws_version": {
       "type": "string",
-      "description": "Specifies the AWS CLI version to be installed"
+      "description": "Specifies the AWS CLI version to be installed",
+      "default": "2.23.11" // PKG_AWS_VERSION
     },
     "pkg_debug": {
       "type": "boolean",
