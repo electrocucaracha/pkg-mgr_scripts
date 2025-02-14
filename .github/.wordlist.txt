@@ -9,7 +9,6 @@ Bluemix
 bmaas
 BoltDB
 boyter
-CentOS
 cFW
 CLI
 CMD
