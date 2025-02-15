@@ -17,7 +17,7 @@
     "pkg_flannel_version": {
       "type": "string",
       "description": "Specifies the Flannel CNI version to be installed",
-      "default": "1.6.0-flannel1" // PKG_FLANNEL_VERSION
+      "default": "1.6.2-flannel1" // PKG_FLANNEL_VERSION
     },
     "pkg_cni_plugins_install_flannel": {
       "type": "boolean",
