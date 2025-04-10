@@ -24,6 +24,7 @@ lint:
 	sudo -E $(DOCKER_CMD) run --rm -v $$(pwd):/tmp/lint \
 	-e RUN_LOCAL=true \
 	-e LINTER_RULES_PATH=/ \
+	-e EDITORCONFIG_FILE_NAME=.editorconfig \
 	-e KUBERNETES_KUBEVAL_OPTIONS=--ignore-missing-schemas \
 	-e KUBERNETES_KUBECONFORM_OPTIONS='-ignore-missing-schemas' \
 	ghcr.io/super-linter/super-linter
