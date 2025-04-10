@@ -22,6 +22,7 @@ on:
   pull_request_review:
     types:
       - submitted
+permissions: read-all
 jobs:
   check-reviewdog:
     name: Check misspelling words with reviewdog tools

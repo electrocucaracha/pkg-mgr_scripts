@@ -12,6 +12,7 @@ on:
   schedule:
     - cron: "0 0 1 * *"
   workflow_dispatch:
+permissions: read-all
 jobs:
   check-versions:
     name: Check latest versions of Vagrant boxes

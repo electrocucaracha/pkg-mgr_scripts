@@ -21,6 +21,7 @@ on:
       - "**.jpeg"
       - "**.png"
       - "**.webp"
+permissions: read-all
 jobs:
   compress-img:
     name: Compress size of repository images

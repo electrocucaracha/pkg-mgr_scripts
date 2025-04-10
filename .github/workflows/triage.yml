@@ -9,6 +9,7 @@
 name: Triage
 # yamllint disable-line rule:truthy
 on: [push, pull_request]
+permissions: read-all
 jobs:
   assign-label:
     name: Run GitHub action to assing labels to Pull Requests

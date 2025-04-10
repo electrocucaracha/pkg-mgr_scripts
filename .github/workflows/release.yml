@@ -10,6 +10,7 @@ name: Release dev container features
 # yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
+permissions: read-all
 jobs:
   deploy:
     if: ${{ github.ref == 'refs/heads/master' }}
