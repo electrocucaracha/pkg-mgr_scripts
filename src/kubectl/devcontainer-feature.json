@@ -12,7 +12,7 @@
     "pkg_krew_version": {
       "type": "string",
       "description": "Specifies the Krew version to be installed",
-      "default": "0.4.4" // PKG_KREW_VERSION
+      "default": "0.4.5" // PKG_KREW_VERSION
     },
     "pkg_krew_plugins_list": {
       "type": "string",
