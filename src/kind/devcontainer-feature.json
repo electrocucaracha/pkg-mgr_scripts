@@ -7,7 +7,7 @@
     "pkg_kind_version": {
       "type": "string",
       "description": "Specifies the KinD version to be installed",
-      "default": "0.28.0" // PKG_KIND_VERSION
+      "default": "0.29.0" // PKG_KIND_VERSION
     },
     "pkg_debug": {
       "type": "boolean",
