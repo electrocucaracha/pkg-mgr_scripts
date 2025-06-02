@@ -7,7 +7,7 @@
     "pkg_act_version": {
       "type": "string",
       "description": "Specifies the act version to be installed",
-      "default": "0.2.77" // PKG_ACT_VERSION
+      "default": "0.2.78" // PKG_ACT_VERSION
     },
     "pkg_debug": {
       "type": "boolean",
