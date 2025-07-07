@@ -13,18 +13,18 @@ set -o nounset
 set -o pipefail
 
 if [ -f /etc/netplan/01-netcfg.yaml ]; then
-    sudo sed -i "s/addresses: .*/addresses: [1.1.1.1, 8.8.8.8, 8.8.4.4]/g" /etc/netplan/01-netcfg.yaml
-    sudo netplan apply
+	sudo sed -i "s/addresses: .*/addresses: [1.1.1.1, 8.8.8.8, 8.8.4.4]/g" /etc/netplan/01-netcfg.yaml
+	sudo netplan apply
 fi
 sudo date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)Z"
 
 if ! command -v curl; then
-    # shellcheck disable=SC1091
-    source /etc/os-release || source /usr/lib/os-release
-    case ${ID,,} in
-    ubuntu | debian)
-        sudo apt-get update -qq >/dev/null
-        sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 curl
-        ;;
-    esac
+	# shellcheck disable=SC1091
+	source /etc/os-release || source /usr/lib/os-release
+	case ${ID,,} in
+	ubuntu | debian)
+		sudo apt-get update -qq >/dev/null
+		sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 curl
+		;;
+	esac
 fi

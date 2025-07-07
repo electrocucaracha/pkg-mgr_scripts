@@ -13,23 +13,23 @@ set -o errexit
 set -o pipefail
 
 if command -v wget; then
-    echo "wget is already installed"
+	echo "wget is already installed"
 fi
 
 PKG=wget ./install.sh
 
 if ! command -v wget; then
-    echo "wget package wasn't installed"
-    exit 1
+	echo "wget package wasn't installed"
+	exit 1
 fi
 
 if command -v mkpasswd; then
-    echo "vim is already installed"
+	echo "vim is already installed"
 fi
 
 PKG="wget mkpasswd" ./install.sh
 
 if ! command -v mkpasswd; then
-    echo "vim package wasn't installed"
-    exit 1
+	echo "vim package wasn't installed"
+	exit 1
 fi

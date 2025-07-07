@@ -13,21 +13,21 @@ set -o errexit
 set -o pipefail
 
 function info {
-    _print_msg "INFO" "$1"
+	_print_msg "INFO" "$1"
 }
 
 function error {
-    _print_msg "ERROR" "$1"
-    exit 1
+	_print_msg "ERROR" "$1"
+	exit 1
 }
 
 function _print_msg {
-    echo "$1: $2"
+	echo "$1: $2"
 }
 
 info "Validating gomplate installation..."
 if ! command -v gomplate; then
-    error "gomplate command line wasn't installed"
+	error "gomplate command line wasn't installed"
 fi
 
 info "Validating gomplate execution..."

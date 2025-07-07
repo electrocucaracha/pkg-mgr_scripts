@@ -13,29 +13,29 @@ set -o errexit
 set -o pipefail
 
 function info {
-    _print_msg "INFO" "$1"
+	_print_msg "INFO" "$1"
 }
 
 function error {
-    _print_msg "ERROR" "$1"
-    exit 1
+	_print_msg "ERROR" "$1"
+	exit 1
 }
 
 function _print_msg {
-    echo "$1: $2"
+	echo "$1: $2"
 }
 
 info "Validating virsh installation..."
 if ! command -v virsh; then
-    error "Libvirt command line wasn't installed"
+	error "Libvirt command line wasn't installed"
 fi
 
 info "Validating libvirt service"
 if ! systemctl is-enabled --quiet libvirtd; then
-    error "Libvirt service is not enabled"
+	error "Libvirt service is not enabled"
 fi
 if ! systemctl is-active --quiet libvirtd; then
-    error "Libvirt service is not active"
+	error "Libvirt service is not active"
 fi
 
 info "Validating virsh execution..."

@@ -13,21 +13,21 @@ set -o errexit
 set -o pipefail
 
 function info {
-    _print_msg "INFO" "$1"
+	_print_msg "INFO" "$1"
 }
 
 function error {
-    _print_msg "ERROR" "$1"
-    exit 1
+	_print_msg "ERROR" "$1"
+	exit 1
 }
 
 function _print_msg {
-    echo "$1: $2"
+	echo "$1: $2"
 }
 
 info "Validating VirtualBox installation..."
 if ! command -v VBoxManage; then
-    error "VirtualBox command line wasn't installed"
+	error "VirtualBox command line wasn't installed"
 fi
 
 sudo systemctl restart vboxdrv
