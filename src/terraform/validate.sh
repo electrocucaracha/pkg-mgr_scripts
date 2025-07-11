@@ -108,6 +108,7 @@ if declare -F | grep -q "_terraform-docs"; then
 fi
 
 pushd "$(mktemp -d)"
+# editorconfig-checker-disable
 cat <<EOF >main.tf
 terraform {
 }
@@ -116,6 +117,7 @@ output "hello_world" {
   value = "Hello, World!"
 }
 EOF
+# editorconfig-checker-enable
 if ! terraform init; then
     error "Terraform didn't initialize properly"
 fi
@@ -127,6 +129,7 @@ terraform destroy -auto-approve
 if _vercmp "$terraform_version" '>=' "0.15.0"; then
     info "Running Terraform Experimental Test feature"
     mkdir -p tests/defaults/
+    # editorconfig-checker-disable
     cat <<EOF >tests/defaults/test_defaults.tf
 terraform {
   required_providers {
@@ -150,6 +153,7 @@ resource "test_assertions" "hello_world_msg" {
   }
 }
 EOF
+    # editorconfig-checker-enable
     terraform test
 fi
 

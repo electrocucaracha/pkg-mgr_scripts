@@ -185,6 +185,7 @@ function main {
         fi
         INSTALLER_CMD+="install -y --no-recommends"
         sudo mkdir -p /etc/cni/net.d/
+        # editorconfig-checker-disable
         sudo tee /etc/cni/net.d/87-podman-bridge.conflist <<EOF
 {
   "cniVersion": "0.4.0",
@@ -224,6 +225,7 @@ function main {
   ]
 }
 EOF
+        # editorconfig-checker-enable
         ;;
     ubuntu | debian)
         if _vercmp "${VERSION_ID}" '<=' "16.04"; then

@@ -121,6 +121,7 @@ done
 info "Validate pod creation"
 podman pod rm single-pod --ignore
 pushd "$(mktemp -d)"
+# editorconfig-checker-disable
 cat <<EOF >pod.yml
 apiVersion: v1
 kind: Pod
@@ -133,6 +134,7 @@ spec:
       command: ["sleep"]
       args: ["infity"]
 EOF
+# editorconfig-checker-enable
 if ! podman play kube pod.yml; then
     error "Podman can't create a pod using a yaml file"
 fi

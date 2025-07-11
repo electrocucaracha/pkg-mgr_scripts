@@ -31,9 +31,11 @@ if ! command -v gomplate; then
 fi
 
 info "Validating gomplate execution..."
+# editorconfig-checker-disable
 cat <<EOF >/tmp/config.yaml
 foo:
   bar:
     baz: qux
 EOF
+# editorconfig-checker-enable
 gomplate -d config=/tmp/config.yaml -i 'the value we want is: {{ (datasource "config").foo.bar.baz }}'

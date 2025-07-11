@@ -43,7 +43,7 @@ jobs:
           LINTER_RULES_PATH: /
           KUBERNETES_KUBEVAL_OPTIONS: "--ignore-missing-schemas"
           KUBERNETES_KUBECONFORM_OPTIONS: "-ignore-missing-schemas"
-          EDITORCONFIG_FILE_NAME: .editorconfig
+          EDITORCONFIG_FILE_NAME: .editorconfig-checker.json
   check-tox:
     name: Run additional linter tools from python tox
     runs-on: ubuntu-latest

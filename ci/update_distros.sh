@@ -59,12 +59,14 @@ function _vagrant_pull {
         msg+="$name($version, $PROVIDER) box doesn't exist\n"
         return
     fi
+    # editorconfig-checker-disable
     cat <<EOT >>.distros_supported.yml
   - alias: $alias
     name: $name
     version: "$version"
     image: $image
 EOT
+    # editorconfig-checker-enable
 }
 
 if ! command -v vagrant >/dev/null; then

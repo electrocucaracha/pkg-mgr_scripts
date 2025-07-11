@@ -231,6 +231,7 @@ EOF
     registry_mirrors=${PKG_DOCKER_REGISTRY_MIRRORS:-}
     echo "{" | sudo tee /etc/docker/daemon.json
     if [[ ${PKG_DOCKER_ENABLE_USERNS_REMAP:-false} == "true" ]]; then
+        # editorconfig-checker-disable
         sudo tee --append /etc/docker/daemon.json <<EOF
   "userns-remap": "default",
 EOF
@@ -242,6 +243,7 @@ EOF
   "insecure-registries" : [$insecure_registries]
 }
 EOF
+    # editorconfig-checker-enable
     sudo systemctl daemon-reload
     sudo systemctl restart docker
 
