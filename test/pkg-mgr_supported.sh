@@ -13,20 +13,20 @@ set -o errexit
 set -o pipefail
 
 if command -v docker; then
-    echo "docker package is already installed"
-    exit 1
+	echo "docker package is already installed"
+	exit 1
 fi
 
 PKG=docker ./install.sh
 
 if ! command -v docker; then
-    echo "docker package wasn't installed"
-    exit 1
+	echo "docker package wasn't installed"
+	exit 1
 fi
 
 if command -v go; then
-    echo "go-lang package is already installed"
-    exit 1
+	echo "go-lang package is already installed"
+	exit 1
 fi
 
 PKG="docker go-lang" ./install.sh
@@ -34,6 +34,6 @@ PKG="docker go-lang" ./install.sh
 # shellcheck disable=SC1091
 source /etc/profile.d/path.sh
 if ! command -v go; then
-    echo "go-lang package wasn't installed"
-    exit 1
+	echo "go-lang package wasn't installed"
+	exit 1
 fi

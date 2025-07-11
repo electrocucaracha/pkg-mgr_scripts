@@ -13,26 +13,26 @@ set -o errexit
 set -o pipefail
 
 function info {
-    _print_msg "INFO" "$1"
+	_print_msg "INFO" "$1"
 }
 
 function error {
-    _print_msg "ERROR" "$1"
-    exit 1
+	_print_msg "ERROR" "$1"
+	exit 1
 }
 
 function _print_msg {
-    echo "$1: $2"
+	echo "$1: $2"
 }
 
 export PATH="$PATH:${KREW_ROOT:-${_REMOTE_USER_HOME-$HOME}/.krew}/bin"
 
 info "Validating prof index addition"
 if ! kubectl krew index list | grep -q "kubectl-prof"; then
-    error "kubectl-prof index wasn't added"
+	error "kubectl-prof index wasn't added"
 fi
 
 info "Validating prof Krew plugin installation..."
 if ! kubectl prof --version; then
-    error "prof Krew plugin wasn't installed"
+	error "prof Krew plugin wasn't installed"
 fi

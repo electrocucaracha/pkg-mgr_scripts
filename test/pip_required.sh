@@ -13,12 +13,12 @@ set -o errexit
 set -o pipefail
 
 if command -v docker-compose; then
-    echo "docker-compose package is alredy installed"
+	echo "docker-compose package is alredy installed"
 fi
 
 PKG=docker-compose ./install.sh
 
 if ! command -v docker-compose; then
-    echo "docker-compose package wasn't installed"
-    exit 1
+	echo "docker-compose package wasn't installed"
+	exit 1
 fi

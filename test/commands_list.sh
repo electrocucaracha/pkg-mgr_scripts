@@ -13,34 +13,34 @@ set -o errexit
 set -o pipefail
 
 if command -v kn; then
-    echo "kn is already installed"
-    exit 1
+	echo "kn is already installed"
+	exit 1
 fi
 if command -v git; then
-    echo "git is already installed"
-    exit 1
+	echo "git is already installed"
+	exit 1
 fi
 
 PKG_COMMANDS_LIST="kn,git" ./install.sh
 
 if ! command -v kn; then
-    echo "kn package wasn't installed"
-    exit 1
+	echo "kn package wasn't installed"
+	exit 1
 fi
 
 if ! command -v git; then
-    echo "git package wasn't installed"
-    exit 1
+	echo "git package wasn't installed"
+	exit 1
 fi
 
 if command -v kubectl; then
-    echo "kubectl is already installed"
-    exit 1
+	echo "kubectl is already installed"
+	exit 1
 fi
 
 PKG_KREW_PLUGINS_LIST=" " PKG="kubectl" PKG_COMMANDS_LIST="kn,git" ./install.sh
 
 if ! command -v kubectl; then
-    echo "kubectl package wasn't installed"
-    exit 1
+	echo "kubectl package wasn't installed"
+	exit 1
 fi

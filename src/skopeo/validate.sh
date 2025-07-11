@@ -13,19 +13,19 @@ set -o errexit
 set -o pipefail
 
 function info {
-    _print_msg "INFO" "$1"
+	_print_msg "INFO" "$1"
 }
 
 function error {
-    _print_msg "ERROR" "$1"
-    exit 1
+	_print_msg "ERROR" "$1"
+	exit 1
 }
 
 function _print_msg {
-    echo "$1: $2"
+	echo "$1: $2"
 }
 
 info "Validating skopeo installation..."
 if ! command -v skopeo; then
-    error "skopeo command line wasn't installed"
+	error "skopeo command line wasn't installed"
 fi

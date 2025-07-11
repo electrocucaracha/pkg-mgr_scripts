@@ -12,15 +12,15 @@ set -o nounset
 set -o errexit
 set -o pipefail
 if [[ ${PKG_DEBUG:-false} == "true" ]]; then
-    set -o xtrace
+	set -o xtrace
 fi
 
 function main {
-    if command -v rustup; then
-        return
-    fi
-    echo "INFO: Installing rustc..."
-    curl https://sh.rustup.rs -sSf | sh -s -- -y
+	if command -v rustup; then
+		return
+	fi
+	echo "INFO: Installing rustc..."
+	curl https://sh.rustup.rs -sSf | sh -s -- -y
 }
 
 main

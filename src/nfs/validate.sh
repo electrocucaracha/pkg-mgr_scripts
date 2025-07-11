@@ -13,30 +13,30 @@ set -o errexit
 set -o pipefail
 
 function info {
-    _print_msg "INFO" "$1"
+	_print_msg "INFO" "$1"
 }
 
 function error {
-    _print_msg "ERROR" "$1"
-    exit 1
+	_print_msg "ERROR" "$1"
+	exit 1
 }
 
 function _print_msg {
-    echo "$1: $2"
+	echo "$1: $2"
 }
 
 info "Validating NFS service..."
 if ! systemctl is-enabled --quiet nfs-server; then
-    error "NFS server is not enabled"
+	error "NFS server is not enabled"
 fi
 if ! systemctl is-active --quiet nfs-server; then
-    error "NFS server is not active"
+	error "NFS server is not active"
 fi
 
 info "Validating RPC-stat service..."
 if ! systemctl is-enabled --quiet rpc-statd; then
-    error "RPC-stat is not enabled"
+	error "RPC-stat is not enabled"
 fi
 if ! systemctl is-active --quiet rpc-statd; then
-    error "RPC-stat server is not active"
+	error "RPC-stat server is not active"
 fi
