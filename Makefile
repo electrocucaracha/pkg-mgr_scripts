@@ -27,6 +27,7 @@ lint:
 	-e EDITORCONFIG_FILE_NAME=.editorconfig-checker.json \
 	-e KUBERNETES_KUBEVAL_OPTIONS=--ignore-missing-schemas \
 	-e KUBERNETES_KUBECONFORM_OPTIONS='-ignore-missing-schemas' \
+	-e FILTER_REGEX_EXCLUDE=spec/* \
 	ghcr.io/super-linter/super-linter
 	tox -e lint
 
