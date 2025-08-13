@@ -1,3 +1,4 @@
+---
 # SPDX-license-identifier: Apache-2.0
 ##############################################################################
 # Copyright (c) 2021
@@ -7,20 +8,28 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 documentation:
-  - docs/*
-  - "*.md"
+  - changed-files:
+      - any-glob-to-any-file:
+          - docs/*
+          - "*.md"
 tests:
-  - test/*
-  - src/*/validate.sh
+  - changed-files:
+      - any-glob-to-any-file:
+          - test/*
+          - src/*/validate.sh
 ci:
-  - .github/*
-  - check.sh
-  - pinned_versions.env
-  - tox.ini
-  - update_versions.sh
-  - Vagrantfile
-  - src/*/Vagrantfile
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/*
+          - check.sh
+          - pinned_versions.env
+          - tox.ini
+          - update_versions.sh
+          - Vagrantfile
+          - src/*/Vagrantfile
 scripts:
-  - src/*/install.sh
-  - install.sh
-  - bindep_install.sh
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/*/install.sh
+          - install.sh
+          - bindep_install.sh
