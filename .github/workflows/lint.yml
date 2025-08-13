@@ -1,3 +1,4 @@
+---
 # SPDX-license-identifier: Apache-2.0
 ##############################################################################
 # Copyright (c) 2021
@@ -45,6 +46,7 @@ jobs:
           KUBERNETES_KUBECONFORM_OPTIONS: "-ignore-missing-schemas"
           EDITORCONFIG_FILE_NAME: .editorconfig-checker.json
           FILTER_REGEX_EXCLUDE: spec/*
+          DEFAULT_BRANCH: ${{ github.head_ref || github.ref_name }}
   check-tox:
     name: Run additional linter tools from python tox
     runs-on: ubuntu-latest
