@@ -1,4 +1,3 @@
----
 # SPDX-license-identifier: Apache-2.0
 ##############################################################################
 # Copyright (c) 2025
@@ -7,6 +6,8 @@
 # which accompanies this distribution, and is available at
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
-self-hosted-runner:
-  labels:
-    - vm-self-hosted
+formatter:
+  type: basic
+  include_document_start: true
+  pad_line_comments: 2
+  max_line_length: 160
