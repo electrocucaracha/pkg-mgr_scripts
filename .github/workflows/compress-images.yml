@@ -29,7 +29,7 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # 5.0.0
       - uses: calibreapp/image-actions@737ceeaeed61e17b8d358358a303f1b8d177b779 # 1.1.0
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
