@@ -78,6 +78,7 @@ laobi
 Libvirt
 Linode
 Linter
+localStorage
 lstopo
 ly
 mcr
