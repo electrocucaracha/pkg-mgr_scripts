@@ -154,7 +154,7 @@ function main {
         url="https://bootstrap.pypa.io/get-pip.py"
         if _vercmp "$current_version" '<' "3"; then
             url="https://bootstrap.pypa.io/pip/2.7/get-pip.py"
-        elif _vercmp "$current_version" '<' "3.7"; then
+        elif _vercmp "$current_version" '<' "3.9"; then
             url="https://bootstrap.pypa.io/pip/$(echo "$current_version" | cut -d'.' -f1,2)/get-pip.py"
         fi
         curl -sL "$url" | sudo -H python
