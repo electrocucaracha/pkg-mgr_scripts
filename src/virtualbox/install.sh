@@ -19,8 +19,8 @@ function main {
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
 
-    local version=${PKG_VIRTUALBOX_VERSION:-7.0}
-    [[ ${VERSION_CODENAME-} == "xenial" ]] && version="6.1"
+    local version=${PKG_VIRTUALBOX_VERSION:-7.2}
+    [[ ${VERSION_CODENAME:-} == "xenial" ]] && version="6.1"
 
     if command -v VBoxManage >/dev/null && [[ $(VBoxManage --version) == "$version"* ]]; then
         return
@@ -29,7 +29,7 @@ function main {
     echo "INFO: Installing VirtualBox $version version..."
     pushd "$(mktemp -d)" 2>/dev/null
     pkgs="VirtualBox-$version dkms"
-    curl -o oracle_vbox.asc https://www.virtualbox.org/download/oracle_vbox.asc
+    curl -o oracle_vbox.asc https://www.virtualbox.org/download/oracle_vbox_2016.asc
     case ${ID,,} in
     opensuse*)
         supported_versions="11.4 12.3 13.1 13.2 15.0 42.1 42.2 42.3"
@@ -54,8 +54,10 @@ function main {
         ;;
     ubuntu | debian)
         sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 gnupg
-        echo "deb http://download.virtualbox.org/virtualbox/debian $VERSION_CODENAME contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list 2>/dev/null
-        curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo apt-key add -
+        sudo mkdir -p /usr/share/keyrings
+
+        sudo gpg --dearmor --yes < oracle_vbox.asc | sudo tee /usr/share/keyrings/oracle-virtualbox-2016.gpg > /dev/null
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/oracle-virtualbox-2016.gpg] http://download.virtualbox.org/virtualbox/debian ${VERSION_CODENAME:-jessie} contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list 2>/dev/null
         sudo apt-get update -qq >/dev/null
         eval "sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 $pkgs"
         ;;

@@ -10,9 +10,8 @@ x86 virtualization.
 
 | Name     |  Version   | Supported |
 | :------- | :--------: | :-------: |
-| Ubuntu   |   16.04    |    [x]    |
-| Ubuntu   |   18.04    |    [x]    |
-| Ubuntu   |   20.04    |    [x]    |
+| Ubuntu   |   22.04    |    [x]    |
+| Ubuntu   |   24.04    |    [x]    |
 | OpenSUSE | Tumbleweed |    [x]    |
 | OpenSUSE |    Leap    |    [x]    |
 
@@ -26,7 +25,7 @@ curl -fsSL http://bit.ly/install_pkg | PKG=virtualbox bash
 
 | Name                   | Default | Description                                      |
 | :--------------------- | :------ | :----------------------------------------------- |
-| PKG_VIRTUALBOX_VERSION | 6.1     | Specifies the VirtualBox version to be installed |
+| PKG_VIRTUALBOX_VERSION | 7.2     | Specifies the VirtualBox version to be installed |
 
 ## Used by
 
