@@ -16,7 +16,7 @@ runs:
   using: "composite"
   steps:
     - name: Cache Vagrant boxes
-      uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # 5.0.1
+      uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # 5.0.2
       with:
         path: ~/.vagrant.d/boxes
         key: ${{ runner.os }}-vagrant-${{ inputs.vagrant_name }}-${{ hashFiles('distros_supported.yml') }}
