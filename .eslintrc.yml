@@ -17,4 +17,4 @@ overrides:
     parserOptions:
       jsonSyntax: JSONC
     rules:
-      jsonc/no-comments: off
+      jsonc/no-comments: "off"
