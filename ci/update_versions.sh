@@ -71,10 +71,27 @@ done < <(grep -r "_VERSION.*get_github_latest" src/ | awk -F '=' '{print $2}')
 echo "$blacklist" | tee --append ./ci/pinned_versions.env
 sort -o ./ci/pinned_versions.env ./ci/pinned_versions.env
 
+go_version="$(curl -sL https://golang.org/VERSION?m=text | sed -n 's/go//;s/\..$//;1p')"
+find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) \
+    -exec grep -l 'go-version:' {} + \
+    -exec env go_version="${go_version}" bash -s {} + <<'EOF'
+    for file; do
+        sed -i \
+            "s|^\([[:space:]]*go-version:[[:space:]]*\).*|\
+\1\"^${go_version}\"|" \
+            "${file}"
+    done
+EOF
+
 # Update GitHub Action commit hashes
-gh_actions=$(grep -r "uses: [a-zA-Z\-]*/[\_a-z\-]*@" .github/ | sed 's/@.*//' | awk -F ': ' '{ print $3 }' | sort -u)
+gh_actions=$(grep -r "uses: [A-Za-z0-9_.-]*/[\_a-z\-]*@" .github/ | sed 's/@.*//' | awk -F ': ' '{ print $3 }' | sort -u)
+exceptions=('reviewdog/action-misspell' 'actions/attest-build-provenance' 'GrantBirki/git-diff-action')
 for action in $gh_actions; do
-    commit_hash=$(git ls-remote "https://github.com/$action" | grep 'refs/tags/[v]\?[0-9][0-9\.]*$' | sed 's|refs/tags/[vV]\?[\.]\?||g' | sort -u -k2 -V | tail -1 | awk '{ printf "%s # %s\n",$1,$2 }')
+    if [[ ${exceptions[*]} =~ (^|[^[:alpha:]])$action([^[:alpha:]]|$) ]]; then
+        commit_hash=$(git ls-remote "https://github.com/$action" | grep 'refs/tags/[v]\?[0-9][0-9\.]*\^{}$' | sed 's|refs/tags/[vV]\?[\.]\?||g; s|\^{}$||g' | sort -u -k2 -V | tail -1 | awk '{ printf "%s # %s\n",$1,$2 }')
+    else
+        commit_hash=$(git ls-remote "https://github.com/$action" | grep 'refs/tags/[v]\?[0-9][0-9\.]*$' | sed 's|refs/tags/[vV]\?[\.]\?||g' | sort -u -k2 -V | tail -1 | awk '{ printf "%s # %s\n",$1,$2 }')
+    fi
     # shellcheck disable=SC2267
     grep -ElRZ "uses: $action@" .github/ | xargs -0 -l sed -i -e "s|uses: $action@.*|uses: $action@$commit_hash|g"
 done
