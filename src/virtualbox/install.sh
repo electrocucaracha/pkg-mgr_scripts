@@ -56,7 +56,7 @@ function main {
         sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 gnupg
         sudo mkdir -p /usr/share/keyrings
 
-        sudo gpg --dearmor --yes < oracle_vbox.asc | sudo tee /usr/share/keyrings/oracle-virtualbox-2016.gpg > /dev/null
+        sudo gpg --dearmor --yes <oracle_vbox.asc | sudo tee /usr/share/keyrings/oracle-virtualbox-2016.gpg >/dev/null
         echo "deb [arch=amd64 signed-by=/usr/share/keyrings/oracle-virtualbox-2016.gpg] http://download.virtualbox.org/virtualbox/debian ${VERSION_CODENAME:-jessie} contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list 2>/dev/null
         sudo apt-get update -qq >/dev/null
         eval "sudo apt-get install -y -qq -o=Dpkg::Use-Pty=0 $pkgs"
