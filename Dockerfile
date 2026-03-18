@@ -1,5 +1,4 @@
 #checkov:skip=CKV_DOCKER_2:Ensure that HEALTHCHECK instructions have been added to container images
-# trivy:ignore:DS-0026:HEALTHCHECK instruction not found
 
 FROM electrocucaracha/pkg_mgr:v0.0.1 as bin
 

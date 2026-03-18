@@ -16,8 +16,8 @@ This project pretends to centralize and facilitate the process to
 install and configure some Linux projects on major different Linux
 Distributions.
 
-Why using curl instead of wget? Daniel Stenberg [explains](https://daniel.haxx.se/docs/curl-vs-wget.html)
-that curl works like a traditional Unix `cat` command and can do a
+Why using cURL instead of wget? Daniel Stenberg [explains](https://daniel.haxx.se/docs/curl-vs-wget.html)
+that cURL works like a traditional Unix `cat` command and can do a
 single-shot transfer data
 
 Why not using configuration management tools like [Ansible](https://www.ansible.com/),
@@ -34,7 +34,7 @@ which results in additional undesired packages in the OS.
 
 ## How to use this script?
 
-The [install.sh](install.sh) bash script has been created to abstract
+The [install.sh](install.sh) Bash script has been created to abstract
 the differences between different Linux distributions. For example, in
 order to install and configure Docker service the following
 instruction is needed:
@@ -114,7 +114,7 @@ curl -fsSL http://bit.ly/install_bin | PKG_BINDEP_PROFILE=node bash
 ### Installing multiple commands
 
 It's also possible to install multiple command-line tools with a single
-cURL call. The following example will install docker, kind and kubectl
+cURL call. The following example will install Docker, kind and kubectl
 commands.
 
 ```bash

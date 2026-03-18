@@ -14,18 +14,18 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 permissions:
-  contents: write  # for technote-space/create-pr-action to push code
-  pull-requests: write  # for technote-space/create-pr-action to create a PR
+  contents: write # for technote-space/create-pr-action to push code
+  pull-requests: write # for technote-space/create-pr-action to create a PR
 jobs:
   check-versions:
     name: Check new versions for scripts supported
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # 6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
         with:
           # Fine-grained PAT with contents:write and workflows:write scopes
           token: ${{ secrets.WORKFLOW_TOKEN }}
-      - uses: technote-space/create-pr-action@91114507cf92349bec0a9a501c2edf1635427bc5  # 2.1.4
+      - uses: technote-space/create-pr-action@91114507cf92349bec0a9a501c2edf1635427bc5 # 2.1.4
         with:
           EXECUTE_COMMANDS: |
             ./ci/update_versions.sh
@@ -37,8 +37,8 @@ jobs:
     name: Update word list
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # 6.0.2
-      - uses: technote-space/create-pr-action@91114507cf92349bec0a9a501c2edf1635427bc5  # 2.1.4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+      - uses: technote-space/create-pr-action@91114507cf92349bec0a9a501c2edf1635427bc5 # 2.1.4
         with:
           EXECUTE_COMMANDS: |
             sudo apt-get update
