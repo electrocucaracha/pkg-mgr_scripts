@@ -8,17 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 overrides:
-  # JSON files
+  # JSON files (jsonc preset allows // comments used in devcontainer-feature.json)
   - files:
       - "*.json"
     extends:
-      - plugin:jsonc/recommended-with-json
-    parser: jsonc-eslint-parser
-  # JSONC files (devcontainer-feature.json uses // comments to reference env variable names)
-  - files:
-      - "**/devcontainer-feature.json"
-    extends:
       - plugin:jsonc/recommended-with-jsonc
     parser: jsonc-eslint-parser
-    rules:
-      jsonc/no-comments: "off"
