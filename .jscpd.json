@@ -1,3 +1,4 @@
 {
-  "ignore": ["docs/img/**"]
+  "ignore": ["docs/img/**"],
+  "threshold": 30
 }
