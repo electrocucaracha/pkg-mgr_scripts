@@ -1,4 +1,4 @@
-#checkov:skip=CKV_DOCKER_2
+#checkov:skip=CKV_DOCKER_2:Ensure that HEALTHCHECK instructions have been added to container images
 
 FROM electrocucaracha/pkg_mgr:v0.0.1 as bin
 
@@ -7,6 +7,7 @@ FROM scratch
 ENV PKG_DEBUG "false"
 ENV PKG_SQL_ENGINE "sqlite"
 ENV PKG_DB_USERNAME ""
+# trivy:ignore:DS-0031:Sensitive ENV variables exposed in Dockerfile
 ENV PKG_DB_PASSWORD ""
 ENV PKG_DB_HOSTNAME ""
 ENV PKG_DB_DATABASE "pkg_db"

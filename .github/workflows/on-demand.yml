@@ -16,12 +16,17 @@ on:
   pull_request_review:
     types:
       - submitted
+permissions: {}
 jobs:
   check-format:
     name: Check scripts format
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
       - name: Run the sh-checker
         uses: luizm/action-sh-checker@883217215b11c1fabbf00eb1a9a041f62d74c744 # 0.10.0
         env:
@@ -32,8 +37,12 @@ jobs:
   check-shellspec:
     name: Run BDD shell specs
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
       - name: Install ShellSpec
         run: curl -fsSL https://github.com/shellspec/shellspec/releases/latest/download/shellspec-dist.tar.gz | tar -xz -C ..
       - name: Run Shellspec
@@ -41,13 +50,17 @@ jobs:
         run: ../shellspec/shellspec
   changes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: >-
       ( github.event_name == 'pull_request_review' && github.event.review.state == 'approved' ) || github.event_name != 'pull_request_review'
     outputs:
       scripts: ${{ steps.filter.outputs.changes }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # 3.0.2
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # 4.0.1
         if: ${{ !env.ACT }}
         id: filter
         with:
@@ -56,6 +69,8 @@ jobs:
   generate-matrix:
     name: Generate the Test matrix for vagrant and devcontainers
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs:
       - changes
     outputs:
@@ -65,14 +80,19 @@ jobs:
       enable-devcontainers-check: ${{ steps.set-matrices.outputs.enable-devcontainers-check }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
       - id: set-matrices
         env:
           DEBUG: true
-        run: ./ci/generate_matrix.sh '${{ needs.changes.outputs.scripts }}'
+          SCRIPTS: ${{ needs.changes.outputs.scripts }}
+        run: ./ci/generate_matrix.sh "$SCRIPTS"
   check-vagrant:
     name: Run vagrant validation for all supported Linux distros
     if: needs.generate-matrix.outputs.enable-vagrant-check == 'true'
     runs-on: vm-self-hosted
+    permissions:
+      contents: read
     needs:
       - generate-matrix
     strategy:
@@ -81,6 +101,8 @@ jobs:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix-alias) }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/check-vagrant
         with:
           vagrant_name: ${{ matrix.name }}
@@ -89,6 +111,8 @@ jobs:
     name: Run devcontainer validation for all supported Linux distros
     if: needs.generate-matrix.outputs.enable-devcontainers-check == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs:
       - generate-matrix
     strategy:
@@ -97,6 +121,8 @@ jobs:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix-image) }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
       - name: Install latest devcontainer CLI
         run: npm install -g @devcontainers/cli
       - name: Generating tests for '${{ matrix.script }}'

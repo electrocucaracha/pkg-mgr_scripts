@@ -1,0 +1,11 @@
+{
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "json": {
+    "parser": {
+      "allowComments": true
+    }
+  }
+}

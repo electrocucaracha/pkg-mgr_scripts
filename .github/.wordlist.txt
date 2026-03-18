@@ -24,7 +24,7 @@ datacenter
 datasources
 datree
 datreeio
-demostrates
+demonstrates
 Dev
 devcontainers
 Devstack

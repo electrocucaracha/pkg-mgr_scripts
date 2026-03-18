@@ -22,6 +22,8 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
       - name: Publish Features
         uses: devcontainers/action@1082abd5d2bf3a11abccba70eef98df068277772 # 1.4.3
         with:

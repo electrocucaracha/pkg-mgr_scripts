@@ -10,13 +10,16 @@
 name: Lint Code Base
 # yamllint disable-line rule:truthy
 on: [push, pull_request]
-permissions: read-all
+permissions:
+  contents: read
 jobs:
   get-sloc:
     name: Count Lines of Code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
       - name: Setup Go
         uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # 6.3.0
         with:
@@ -30,8 +33,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
       - name: Check broken links
-        uses: gaurav-nelson/github-action-markdown-link-check@4a1af151f4d7cf4d8f8ac5780597672a3671b88b # 1.0.17
+        uses: gaurav-nelson/github-action-markdown-link-check@3c3b66f1f7d0900e37b71eca45b63ea9eedfce31 # 1.0.17
   check-super-linter:
     name: Run GitHub super-linter tool for verify quality of code
     runs-on: ubuntu-latest
@@ -39,6 +44,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Check super-linter
         uses: super-linter/super-linter@61abc07d755095a68f4987d1c2c3d1d64408f1f9 # 8.5.0
         env:
@@ -54,6 +60,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # 6.0.2
+        with:
+          persist-credentials: false
       - name: Install tox
         run: pip install tox
       - name: Run tox validation
