@@ -7,12 +7,12 @@
     "pkg_kubectl_version": {
       "type": "string",
       "description": "Specifies the Kubectl version to be installed",
-      "default": "v1.32.1"
+      "default": "v1.32.1" // PKG_KUBECTL_VERSION
     },
     "pkg_krew_version": {
       "type": "string",
       "description": "Specifies the Krew version to be installed",
-      "default": "0.5.0"
+      "default": "0.5.0" // PKG_KREW_VERSION
     },
     "pkg_krew_plugins_list": {
       "type": "string",
@@ -32,7 +32,7 @@
     "pkg_finalize_namespace_version": {
       "type": "string",
       "description": "Specifies the finalize_namespace plugin version to be installed",
-      "default": "0.0.2"
+      "default": "0.0.2" // PKG_FINALIZE_NAMESPACE_VERSION
     },
     "pkg_debug": {
       "type": "boolean",

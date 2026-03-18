@@ -14,7 +14,11 @@ overrides:
     extends:
       - plugin:jsonc/recommended-with-json
     parser: jsonc-eslint-parser
-    parserOptions:
-      jsonSyntax: JSONC
+  # JSONC files (devcontainer-feature.json uses // comments to reference env variable names)
+  - files:
+      - "**/devcontainer-feature.json"
+    extends:
+      - plugin:jsonc/recommended-with-jsonc
+    parser: jsonc-eslint-parser
     rules:
       jsonc/no-comments: "off"
