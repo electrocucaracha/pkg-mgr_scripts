@@ -141,7 +141,7 @@ fi
 popd
 
 if ! podman pod list | grep -q single-pod; then
-    error "Podman doens't list the pod created thru yaml file"
+    error "Podman doesn't list the pod created thru yaml file"
 fi
 podman pod stop single-pod
 podman pod rm single-pod

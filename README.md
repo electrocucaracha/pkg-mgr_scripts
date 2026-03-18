@@ -89,7 +89,7 @@ curl -fsSL https://raw.githubusercontent.com/electrocucaracha/pkg-mgr_scripts/ma
 ### Bindep usage
 
 The cURL package installer can be combined with [bindep tool][1] to
-perform multiOS installations. The following example demostrates how
+perform multiOS installations. The following example demonstrates how
 to install the [Portable Hardware Locality tools][2] in the current
 machine.
 

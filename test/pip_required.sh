@@ -13,7 +13,7 @@ set -o errexit
 set -o pipefail
 
 if command -v docker-compose; then
-    echo "docker-compose package is alredy installed"
+    echo "docker-compose package is already installed"
 fi
 
 PKG=docker-compose ./install.sh

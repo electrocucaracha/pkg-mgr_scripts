@@ -88,7 +88,7 @@ function main {
         # shellcheck disable=SC2016
         echo 'export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:/usr/lib/node_modules/corepack/shims/' | sudo tee /etc/profile.d/yarn_path.sh >/dev/null
 
-        # Upgrade to lastest stable NPM version
+        # Upgrade to latest stable NPM version
         sudo npm install npm@latest -g
     fi
 }
