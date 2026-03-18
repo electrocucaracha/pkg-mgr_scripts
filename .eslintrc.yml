@@ -10,7 +10,7 @@
 overrides:
   # JSON files (jsonc preset allows // comments used in devcontainer-feature.json)
   - files:
-      - "*.json"
+      - "**/*.json"
     extends:
       - plugin:jsonc/recommended-with-jsonc
     parser: jsonc-eslint-parser
