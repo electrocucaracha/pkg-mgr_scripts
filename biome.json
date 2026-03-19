@@ -1,4 +1,7 @@
 {
+  "files": {
+    "includes": ["**", "!.tox", "!node_modules"]
+  },
   "formatter": {
     "indentStyle": "space",
     "indentWidth": 2

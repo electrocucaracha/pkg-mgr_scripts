@@ -1,10 +1,1 @@
-{
-  "overrides": [
-    {
-      "files": "**/devcontainer-feature.json",
-      "options": {
-        "parser": "json5"
-      }
-    }
-  ]
-}
+{}

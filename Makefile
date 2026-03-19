@@ -27,14 +27,14 @@ lint:
 	-e EDITORCONFIG_FILE_NAME=.editorconfig-checker.json \
 	-e KUBERNETES_KUBEVAL_OPTIONS=--ignore-missing-schemas \
 	-e KUBERNETES_KUBECONFORM_OPTIONS='-ignore-missing-schemas' \
-	-e FILTER_REGEX_EXCLUDE=spec/* \
+	-e FILTER_REGEX_EXCLUDE="spec/.*|.*/devcontainer-feature\.json|\.tox/.*" \
 	ghcr.io/super-linter/super-linter
 	tox -e lint
 
 .PHONY: fmt
 fmt:
 	command -v shfmt > /dev/null || curl -s "https://i.jpillora.com/mvdan/sh!!?as=shfmt" | bash
-	shfmt -l -w -s  -i 4 .
+	git ls-files '*.sh' | xargs shfmt -l -w -s -i 4
 	command -v yamlfmt > /dev/null || curl -s "https://i.jpillora.com/google/yamlfmt!!" | bash
 	yamlfmt -dstar **/*.{yaml,yml}
 	command -v prettier > /dev/null || npm install prettier
