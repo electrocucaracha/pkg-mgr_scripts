@@ -11,7 +11,7 @@
     },
     "pkg_debug": {
       "type": "boolean",
-      "default": "true",
+      "default": true,
       "description": "Enables verbosity level"
     }
   }
