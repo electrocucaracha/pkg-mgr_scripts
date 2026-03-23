@@ -22,11 +22,11 @@
     "pkg_cni_plugins_install_flannel": {
       "type": "boolean",
       "description": "Installs Flannel CNI into the CNI folder",
-      "default": "false"
+      "default": false
     },
     "pkg_debug": {
       "type": "boolean",
-      "default": "true",
+      "default": true,
       "description": "Enables verbosity level"
     }
   }

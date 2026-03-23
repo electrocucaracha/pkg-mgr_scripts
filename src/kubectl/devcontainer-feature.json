@@ -27,7 +27,7 @@
     "pkg_install_finalize_namespace": {
       "type": "boolean",
       "description": "Determines if finalize_namespace is going to be installed",
-      "default": "false"
+      "default": false
     },
     "pkg_finalize_namespace_version": {
       "type": "string",
@@ -36,7 +36,7 @@
     },
     "pkg_debug": {
       "type": "boolean",
-      "default": "true",
+      "default": true,
       "description": "Enables verbosity level"
     }
   },
