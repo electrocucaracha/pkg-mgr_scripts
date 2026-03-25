@@ -14,12 +14,16 @@ on:
     paths:
       - "**.md"
       - "!.github/*"
+      - ".github/.wordlist.txt"
+      - ".spellcheck.yml"
   pull_request:
     branches:
       - master
     paths:
       - "**.md"
       - "!.github/*"
+      - ".github/.wordlist.txt"
+      - ".spellcheck.yml"
   pull_request_review:
     types:
       - submitted
