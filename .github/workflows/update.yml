@@ -64,5 +64,5 @@ jobs:
             sort --ignore-case --output=.github/.wordlist.txt .github/.wordlist.txt
           COMMIT_MESSAGE: "Update dictionary definitions"
           COMMIT_NAME: "spellchecker bot"
-          PR_BRANCH_NAME: "versions-update-${PR_ID}"
+          PR_BRANCH_NAME: "dictionary-update-${PR_ID}"
           PR_TITLE: "chore: update dictionary"
