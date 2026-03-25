@@ -24,7 +24,6 @@ datacenter
 datasources
 datree
 datreeio
-demonstrates
 Dev
 devcontainers
 Devstack
@@ -114,7 +113,6 @@ renderer
 repos
 RPC
 RUNC
-runtime
 RUNTIMES
 Scc
 sed
