@@ -26,6 +26,6 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Automatic Rebase
-        uses: cirrus-actions/rebase@b87d48154a87a85666003575337e27b8cd65f691 # 1.8 # zizmor: ignore[archived-uses]
+        uses: cirrus-actions/rebase@b87d48154a87a85666003575337e27b8cd65f691 # 1.8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
