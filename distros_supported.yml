@@ -28,10 +28,6 @@ linux:
     name: opensuse/Leap-15.2.x86_64
     version: "15.2.31.632"
     image: opensuse/leap
-  - alias: debian_buster
-    name: debian/buster64
-    version: "10.20231211.1"
-    image: debian:buster
   - alias: debian_bullseye
     name: debian/bullseye64
     version: "11.20240905.1"

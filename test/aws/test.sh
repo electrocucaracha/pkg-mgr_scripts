@@ -16,6 +16,10 @@ function info {
     _print_msg "INFO" "$1"
 }
 
+function warn {
+    _print_msg "WARN" "$1"
+}
+
 function error {
     _print_msg "ERROR" "$1"
     exit 1
@@ -53,5 +57,5 @@ fi
 
 info "Checking awscli version"
 if [ "$(aws --version | awk '{ print $1}' | sed 's|.*/||g')" != "$(get_version)" ]; then
-    error "AWS CLI version installed is different that expected"
+    warn "AWS CLI version installed is different than expected"
 fi
