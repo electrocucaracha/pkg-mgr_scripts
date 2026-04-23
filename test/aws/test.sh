@@ -57,5 +57,5 @@ fi
 
 info "Checking awscli version"
 if [ "$(aws --version | awk '{ print $1}' | sed 's|.*/||g')" != "$(get_version)" ]; then
-    warn "AWS CLI version installed is different that expected"
+    warn "AWS CLI version installed is different than expected"
 fi
