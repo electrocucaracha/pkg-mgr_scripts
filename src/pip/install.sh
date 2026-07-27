@@ -137,27 +137,55 @@ function main {
     esac
 
     echo "INFO: Setting python $major_python_version as default option"
-    sudo rm -f /usr/bin/python
-    sudo ln -s "/usr/bin/python${major_python_version}" /usr/bin/python
 
-    if ! command -v pip || _vercmp "$(pip -V | awk '{print $2}')" '<' "$min_pip_version"; then
-        if _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>=' "3" && [[ ${ID,,} == "debian" ]]; then
-            # shellcheck disable=SC2086
-            $INSTALLER_CMD python3-pip || :
-            python3 -m pip config set global.break-system-packages true
-        elif _vercmp "$(python -V 2>&1 | awk '{print $2}')" '>=' "3" && [[ ${ID,,} == "ubuntu" ]]; then
-            # shellcheck disable=SC2086
-            $INSTALLER_CMD python3-distutils python3-distlib || :
+    # Preserve backwards compatibility for tools expecting /usr/bin/python.
+    if [ -x "/usr/bin/python${major_python_version}" ]; then
+        sudo rm -f /usr/bin/python
+        sudo ln -sf "/usr/bin/python${major_python_version}" /usr/bin/python
+    fi
+
+    # Determine which interpreter to use.
+    PYTHON_CMD=$(command -v python${major_python_version} || command -v python3 || command -v python)
+
+    echo "INFO: Using Python interpreter: $PYTHON_CMD"
+
+    if ! command -v pip >/dev/null 2>&1 ||
+        _vercmp "$(pip -V 2>/dev/null | awk '{print $2}')" '<' "$min_pip_version"; then
+        if _vercmp "$($PYTHON_CMD -V 2>&1 | awk '{print $2}')" '>=' "3"; then
+            case ${ID,,} in
+            ubuntu | debian)
+                if $INSTALLER_CMD python3-pip python3-venv; then
+                    echo "INFO: Installed pip from distribution packages."
+                    python3 -m pip config set global.break-system-packages true || :
+                else
+                    echo "INFO: Falling back to get-pip.py"
+
+                    current_version="$($PYTHON_CMD -V | awk '{print $2}')"
+                    url="https://bootstrap.pypa.io/get-pip.py"
+
+                    if _vercmp "$current_version" '<' "3.9"; then
+                        url="https://bootstrap.pypa.io/pip/$(echo "$current_version" | cut -d'.' -f1,2)/get-pip.py"
+                    fi
+
+                    curl -sL "$url" | sudo -H "$PYTHON_CMD"
+                fi
+                ;;
+            rhel | centos | fedora | rocky)
+                current_version="$($PYTHON_CMD -V | awk '{print $2}')"
+                url="https://bootstrap.pypa.io/get-pip.py"
+
+                if _vercmp "$current_version" '<' "3.9"; then
+                    url="https://bootstrap.pypa.io/pip/$(echo "$current_version" | cut -d'.' -f1,2)/get-pip.py"
+                fi
+
+                curl -sL "$url" | sudo -H "$PYTHON_CMD"
+                ;;
+            esac
+        else
+            curl -sL https://bootstrap.pypa.io/pip/2.7/get-pip.py |
+                sudo -H "$PYTHON_CMD"
+
         fi
-        echo "INFO: Installing PIP $min_pip_version version"
-        current_version="$(python -V | awk '{print $2}')"
-        url="https://bootstrap.pypa.io/get-pip.py"
-        if _vercmp "$current_version" '<' "3"; then
-            url="https://bootstrap.pypa.io/pip/2.7/get-pip.py"
-        elif _vercmp "$current_version" '<' "3.9"; then
-            url="https://bootstrap.pypa.io/pip/$(echo "$current_version" | cut -d'.' -f1,2)/get-pip.py"
-        fi
-        curl -sL "$url" | sudo -H python
     fi
 }
 
