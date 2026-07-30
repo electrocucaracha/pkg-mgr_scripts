@@ -124,6 +124,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install latest devcontainer CLI
+        # zizmor: ignore[adhoc-packages]
         run: npm install -g @devcontainers/cli
       - name: Generating tests for '${{ matrix.script }}'
         run: |

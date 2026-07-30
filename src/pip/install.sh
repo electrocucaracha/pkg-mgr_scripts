@@ -145,7 +145,7 @@ function main {
     fi
 
     # Determine which interpreter to use.
-    PYTHON_CMD=$(command -v python${major_python_version} || command -v python3 || command -v python)
+    PYTHON_CMD=$(command -v python"${major_python_version}" || command -v python3 || command -v python)
 
     echo "INFO: Using Python interpreter: $PYTHON_CMD"
 
