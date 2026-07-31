@@ -56,6 +56,8 @@ if [ "$(kustomize version)" != "v$(get_version)" ]; then
 fi
 
 info "Validating autocomplete functions"
-if declare -F | grep -q "_kustomize"; then
+# shellcheck disable=SC1091
+[ -f /etc/bash_completion.d/kustomize ] && source /etc/bash_completion.d/kustomize
+if ! declare -F | grep -q "_kustomize"; then
     error "Kustomize autocomplete install failed"
 fi
