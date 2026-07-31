@@ -1,0 +1,18 @@
+{
+  "name": "Gomplate",
+  "id": "gomplate",
+  "version": "0.0.1",
+  "description": "Gomplate is a template renderer which supports a number of data sources, and includes many built-in functions.",
+  "options": {
+    "pkg_gomplate_version": {
+      "type": "string",
+      "description": "Specifies the Gomplate version to be installed",
+      "default": "v3" // PKG_GOMPLATE_VERSION
+    },
+    "pkg_debug": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enables verbosity level"
+    }
+  }
+}

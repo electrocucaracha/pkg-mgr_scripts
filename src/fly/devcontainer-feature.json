@@ -1,0 +1,18 @@
+{
+  "name": "Fly CLI",
+  "id": "fly",
+  "version": "0.0.1",
+  "description": "Fly is a command line tool for managing applications on Fly.io.",
+  "options": {
+    "pkg_fly_version": {
+      "type": "string",
+      "description": "Specifies the Fly version to be installed",
+      "default": "latest" // PKG_FLY_VERSION
+    },
+    "pkg_debug": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enables verbosity level"
+    }
+  }
+}

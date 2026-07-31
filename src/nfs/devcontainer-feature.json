@@ -1,0 +1,18 @@
+{
+  "name": "NFS Utilities",
+  "id": "nfs",
+  "version": "0.0.1",
+  "description": "NFS Utilities provide the necessary tools for mounting and managing Network File System (NFS) shares.",
+  "options": {
+    "pkg_nfs_version": {
+      "type": "string",
+      "description": "Specifies the NFS utilities version to be installed",
+      "default": "latest" // PKG_NFS_VERSION
+    },
+    "pkg_debug": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enables verbosity level"
+    }
+  }
+}

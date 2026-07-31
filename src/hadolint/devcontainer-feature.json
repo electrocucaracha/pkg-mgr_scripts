@@ -1,0 +1,18 @@
+{
+  "name": "Hadolint",
+  "id": "hadolint",
+  "version": "0.0.1",
+  "description": "Hadolint is a Dockerfile linter that helps you build best practice Docker images.",
+  "options": {
+    "pkg_hadolint_version": {
+      "type": "string",
+      "description": "Specifies the Hadolint version to be installed",
+      "default": "latest" // PKG_HADOLINT_VERSION
+    },
+    "pkg_debug": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enables verbosity level"
+    }
+  }
+}

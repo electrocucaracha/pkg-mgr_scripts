@@ -1,0 +1,18 @@
+{
+  "name": "Node.js",
+  "id": "nodejs",
+  "version": "0.0.1",
+  "description": "Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine for building fast and scalable network applications.",
+  "options": {
+    "pkg_nodejs_version": {
+      "type": "string",
+      "description": "Specifies the Node.js version to be installed",
+      "default": "22" // PKG_NODEJS_VERSION
+    },
+    "pkg_debug": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enables verbosity level"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Kustomize",
+  "id": "kustomize",
+  "version": "0.0.1",
+  "description": "Kustomize is a template-free way to customize application configuration that simplifies the use of off-the-shelf applications with site-specific customization.",
+  "options": {
+    "pkg_kustomize_version": {
+      "type": "string",
+      "description": "Specifies the Kustomize version to be installed",
+      "default": "5" // PKG_KUSTOMIZE_VERSION
+    },
+    "pkg_debug": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enables verbosity level"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Knative CLI",
+  "id": "kn",
+  "version": "0.0.1",
+  "description": "The Knative CLI provides a fast and easy interface for interacting with Knative on the command line.",
+  "options": {
+    "pkg_kn_version": {
+      "type": "string",
+      "description": "Specifies the Knative CLI version to be installed",
+      "default": "latest" // PKG_KN_VERSION
+    },
+    "pkg_debug": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enables verbosity level"
+    }
+  }
+}
