@@ -144,6 +144,14 @@ function main {
         sudo ln -sf "/usr/bin/python${major_python_version}" /usr/bin/python
     fi
 
+    # Preserve backwards compatibility for tools expecting a plain pip command.
+    if ! command -v pip >/dev/null 2>&1; then
+        PIP_CMD=$(command -v pip3 || :)
+        if [ -n "$PIP_CMD" ]; then
+            sudo ln -sf "$PIP_CMD" /usr/bin/pip
+        fi
+    fi
+
     # Determine which interpreter to use.
     PYTHON_CMD=$(command -v python"${major_python_version}" || command -v python3 || command -v python)
 

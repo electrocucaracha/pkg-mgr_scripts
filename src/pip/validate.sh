@@ -26,11 +26,12 @@ function _print_msg {
 }
 
 info "Validating pip installation..."
-if ! command -v pip; then
-    error "pip command line wasn't installed"
+PYTHON_CMD=$(command -v python || command -v python3 || :)
+if [ -z "$PYTHON_CMD" ]; then
+    error "python command line wasn't installed"
 fi
 info "Showing pip version"
-eval "sudo -E $(command -v pip) -V"
+sudo -E "$PYTHON_CMD" -m pip -V
 
 if [ ! -f "$HOME/.local/bin/tox" ]; then
     info "Validating pip execution"
