@@ -43,7 +43,7 @@ function main {
 
         OS="$(uname | tr '[:upper:]' '[:lower:]')"
         ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
-        binary="gomplate_$OS-$ARCH-slim"
+        binary="gomplate_$OS-$ARCH"
         url="https://github.com/hairyhenderson/gomplate/releases/download/v${version}/$binary"
         if [[ ${PKG_DEBUG:-false} == "true" ]]; then
             curl -Lo ./gomplate "$url"
