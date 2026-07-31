@@ -38,7 +38,7 @@ function get_github_latest_release {
 function main {
     local version=${PKG_KUSTOMIZE_VERSION:-$(get_github_latest_release kubernetes-sigs/kustomize)}
 
-    if ! command -v kustomize || [ "$(kustomize version | grep -o -P '(?<={Version:kustomize/v).*(?= GitCommit:)')" != "${version#*v}" ]; then
+    if ! command -v kustomize || [[ "$(kustomize version 2>/dev/null)" != *"${version#*v}"* ]]; then
         echo "INFO: Installing kustomize ${version#*v} version..."
 
         OS="$(uname | tr '[:upper:]' '[:lower:]')"
