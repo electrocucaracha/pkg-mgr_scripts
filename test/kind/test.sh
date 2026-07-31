@@ -51,7 +51,9 @@ if ! command -v kind; then
 fi
 
 info "Validating autocomplete functions"
-if declare -F | grep -q "_kind"; then
+# shellcheck disable=SC1091
+[ -f /etc/bash_completion.d/kind ] && source /etc/bash_completion.d/kind
+if ! declare -F | grep -q "_kind"; then
     error "Kind autocomplete install failed"
 fi
 
