@@ -79,7 +79,7 @@ function main {
 
     local version=${PKG_KIND_VERSION:-$(get_github_latest_release kubernetes-sigs/kind)}
 
-    if ! command -v kind || [[ "v$(kind --version | awk '{print $3}')" != "$version" ]]; then
+    if ! command -v kind || [[ "$(kind --version | awk '{print $3}')" != "$version" ]]; then
         OS="$(uname | tr '[:upper:]' '[:lower:]')"
         ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
         binary="kind-$OS-$ARCH"
