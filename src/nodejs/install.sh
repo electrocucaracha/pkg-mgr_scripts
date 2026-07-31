@@ -36,11 +36,7 @@ function main {
             INSTALLER_CMD+="-q "
         fi
         INSTALLER_CMD+="install -y --no-recommends "
-        if [[ ${ID,,} == *leap* ]]; then
-            INSTALLER_CMD+="nodejs14"
-        elif [[ ${ID,,} == *tumbleweed* ]]; then
-            INSTALLER_CMD+="nodejs19"
-        fi
+        INSTALLER_CMD+="nodejs${version}"
         ;;
     ubuntu | debian)
         url="https://deb"
