@@ -7,7 +7,7 @@
     "pkg_kustomize_version": {
       "type": "string",
       "description": "Specifies the Kustomize version to be installed",
-      "default": "5" // PKG_KUSTOMIZE_VERSION
+      "default": "5.8.1" // PKG_KUSTOMIZE_VERSION
     },
     "pkg_debug": {
       "type": "boolean",

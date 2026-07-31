@@ -7,7 +7,7 @@
     "pkg_kn_version": {
       "type": "string",
       "description": "Specifies the Knative CLI version to be installed",
-      "default": "latest" // PKG_KN_VERSION
+      "default": "knative-v1.23.0" // PKG_KN_VERSION
     },
     "pkg_debug": {
       "type": "boolean",

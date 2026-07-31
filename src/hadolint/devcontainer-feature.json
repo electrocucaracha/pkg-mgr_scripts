@@ -7,7 +7,7 @@
     "pkg_hadolint_version": {
       "type": "string",
       "description": "Specifies the Hadolint version to be installed",
-      "default": "latest" // PKG_HADOLINT_VERSION
+      "default": "2.15.0" // PKG_HADOLINT_VERSION
     },
     "pkg_debug": {
       "type": "boolean",
