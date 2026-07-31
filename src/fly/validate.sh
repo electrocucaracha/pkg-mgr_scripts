@@ -56,6 +56,8 @@ if [ "$(fly --version)" != "$(get_version)" ]; then
 fi
 
 info "Validating autocomplete functions"
-if declare -F | grep -q "_fly"; then
+# shellcheck disable=SC1091
+[ -f /etc/bash_completion.d/fly ] && source /etc/bash_completion.d/fly
+if ! declare -F | grep -q "_fly"; then
     error "Fly autocomplete install failed"
 fi
