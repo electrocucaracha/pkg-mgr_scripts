@@ -80,7 +80,7 @@ function main {
             INSTALLER_CMD+="-q "
         fi
         if [[ ${ID,,} == *leap* ]]; then
-            $INSTALLER_CMD ar -f https://download.opensuse.org/repositories/devel:/languages:/crystal/openSUSE_Leap_15.2/devel:languages:crystal.repo
+            $INSTALLER_CMD ar -f "https://download.opensuse.org/repositories/devel:/languages:/crystal/openSUSE_Leap_${VERSION_ID}/devel:languages:crystal.repo"
         elif [[ ${ID,,} == *tumbleweed* ]]; then
             $INSTALLER_CMD ar -f https://download.opensuse.org/repositories/devel:/languages:/crystal/openSUSE_Tumbleweed/devel:languages:crystal.repo
         fi
