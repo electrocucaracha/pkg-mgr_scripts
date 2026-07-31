@@ -55,7 +55,9 @@ if ! command -v kn; then
 fi
 
 info "Validating autocomplete functions"
-if declare -F | grep -q "_kn"; then
+# shellcheck disable=SC1091
+[ -f /etc/bash_completion.d/kn ] && source /etc/bash_completion.d/kn
+if ! declare -F | grep -q "_kn"; then
     error "kn autocomplete install failed"
 fi
 
