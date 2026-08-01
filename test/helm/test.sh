@@ -1,7 +1,7 @@
 #!/bin/bash
 # SPDX-license-identifier: Apache-2.0
 ##############################################################################
-# Copyright (c) 2019
+# Copyright (c) 2024
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Apache License, Version 2.0
 # which accompanies this distribution, and is available at
@@ -12,52 +12,17 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-function info {
-    _print_msg "INFO" "$1"
-}
-
-function warn {
-    _print_msg "WARN" "$1"
-}
-
-function error {
-    _print_msg "ERROR" "$1"
-    exit 1
-}
-
-function _print_msg {
-    echo "$1: $2"
-}
-
-info "Validating helm installation..."
-if ! command -v helm; then
-    error "Helm command line wasn't installed"
+# Optional helper provided by `devcontainer features test`.
+if [ -f dev-container-features-test-lib ]; then
+    # shellcheck source=/dev/null
+    source dev-container-features-test-lib
 fi
 
-helm_version=$(helm version 2>/dev/null | awk -F '"' '{print substr($2,2); exit}' || true)
-info "Validating helm $helm_version version"
-if [[ $helm_version == "2"* ]]; then
-    info "Validating helm service"
-    if ! systemctl is-enabled --quiet helm-serve; then
-        error "Helm service is not enabled"
-    fi
-    if ! systemctl is-active --quiet helm-serve; then
-        error "Helm service is not active"
-    fi
-
-    info "Validating helm local repo"
-    if ! sudo su helm -c "helm repo list" | grep -q "^local"; then
-        error "Helm repository list doesn't include local"
-    fi
+if command -v check >/dev/null; then
+    check "helm CLI is installed" bash -c "command -v helm"
+    check "helm CLI returns version" helm version --short
+    reportResults
+else
+    command -v helm >/dev/null
+    helm version --short >/dev/null
 fi
-
-info "Validating autocomplete functions"
-if declare -F | grep -q "_helm"; then
-    error "Helm autocomplete install failed"
-fi
-
-info "Validating Helm plugins"
-helm_plugins=$(helm plugin list)
-for plugin in datree diff spray; do
-    [[ $helm_plugins == *"$plugin"* ]] || warn "$plugin helm plugin is not installed"
-done

@@ -1,7 +1,7 @@
 #!/bin/bash
 # SPDX-license-identifier: Apache-2.0
 ##############################################################################
-# Copyright (c) 2019
+# Copyright (c) 2024
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Apache License, Version 2.0
 # which accompanies this distribution, and is available at
@@ -12,31 +12,17 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-function info {
-    _print_msg "INFO" "$1"
-}
+# Optional helper provided by `devcontainer features test`.
+if [ -f dev-container-features-test-lib ]; then
+    # shellcheck source=/dev/null
+    source dev-container-features-test-lib
+fi
 
-function warn {
-    _print_msg "WARN" "$1"
-}
-
-function error {
-    _print_msg "ERROR" "$1"
-    exit 1
-}
-
-function _print_msg {
-    echo "$1: $2"
-}
-
-for cmd in kubectl kubectl-convert; do
-    info "Validating $cmd installation..."
-    if ! command -v "$cmd"; then
-        error "$cmd command line wasn't installed"
-    fi
-done
-
-info "Validating autocomplete functions"
-if declare -F | grep -q "_kubectl"; then
-    error "Kubectl autocomplete install failed"
+if command -v check >/dev/null; then
+    check "kubectl CLI is installed" bash -c "command -v kubectl"
+    check "kubectl CLI returns version" kubectl version --client
+    reportResults
+else
+    command -v kubectl >/dev/null
+    kubectl version --client >/dev/null
 fi

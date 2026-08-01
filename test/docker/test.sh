@@ -12,20 +12,20 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-function info {
-    _print_msg "INFO" "$1"
-}
+# Optional helper provided by `devcontainer features test`.
+if [ -f dev-container-features-test-lib ]; then
+    # shellcheck source=/dev/null
+    source dev-container-features-test-lib
+fi
 
-function error {
-    _print_msg "ERROR" "$1"
-    exit 1
-}
-
-function _print_msg {
-    echo "$1: $2"
-}
-
-info "Validating docker installation..."
-if \! command -v docker; then
-    error "docker command line wasn't installed"
+if command -v check >/dev/null; then
+    check "docker CLI is installed" bash -c "command -v docker"
+    check "docker CLI returns version" docker --version
+    reportResults
+else
+    echo "INFO: Validating docker installation..."
+    if ! command -v docker >/dev/null; then
+        echo "ERROR: docker command line wasn't installed"
+        exit 1
+    fi
 fi

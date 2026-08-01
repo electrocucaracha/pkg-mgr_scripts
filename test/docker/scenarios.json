@@ -1,8 +1,8 @@
 {
-  "install_kubectl_with_debug_disabled": {
+  "install_docker_with_debug_disabled": {
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
     "features": {
-      "kubectl": {
+      "docker": {
         "pkg_debug": false
       }
     }

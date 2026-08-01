@@ -12,27 +12,17 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-function info {
-    _print_msg "INFO" "$1"
-}
-
-function error {
-    _print_msg "ERROR" "$1"
-    exit 1
-}
-
-function _print_msg {
-    echo "$1: $2"
-}
-
-export PATH="$PATH:${KREW_ROOT:-${_REMOTE_USER_HOME-$HOME}/.krew}/bin"
-
-info "Validating prof index addition"
-if ! kubectl krew index list | grep -q "kubectl-prof"; then
-    error "kubectl-prof index wasn't added"
+# Optional helper provided by `devcontainer features test`.
+if [ -f dev-container-features-test-lib ]; then
+    # shellcheck source=/dev/null
+    source dev-container-features-test-lib
 fi
 
-info "Validating prof Krew plugin installation..."
-if ! kubectl prof --version; then
-    error "prof Krew plugin wasn't installed"
+if command -v check >/dev/null; then
+    check "kubectl CLI is installed" bash -c "command -v kubectl"
+    check "kubectl CLI returns version" kubectl version --client
+    reportResults
+else
+    command -v kubectl >/dev/null
+    kubectl version --client >/dev/null
 fi

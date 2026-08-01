@@ -1,7 +1,7 @@
 #!/bin/bash
 # SPDX-license-identifier: Apache-2.0
 ##############################################################################
-# Copyright (c) 2024
+# Copyright (c) 2026
 # All rights reserved. This program and the accompanying materials
 # are made available under the terms of the Apache License, Version 2.0
 # which accompanies this distribution, and is available at
@@ -19,10 +19,12 @@ if [ -f dev-container-features-test-lib ]; then
 fi
 
 if command -v check >/dev/null; then
-    check "kind CLI is installed" bash -c "command -v kind"
-    check "kind CLI returns version" kind --version
+    check "docker CLI is installed after duplicate install" bash -c "command -v docker"
+    check "default option env variable provided" bash -c "test -n \"${PKG_DOCKER_VERSION__DEFAULT:-}\""
+    check "randomized option env variable provided" bash -c "test -n \"${PKG_DOCKER_VERSION:-}\""
     reportResults
 else
-    command -v kind >/dev/null
-    kind --version >/dev/null
+    command -v docker >/dev/null
+    test -n "${PKG_DOCKER_VERSION__DEFAULT:-}"
+    test -n "${PKG_DOCKER_VERSION:-}"
 fi

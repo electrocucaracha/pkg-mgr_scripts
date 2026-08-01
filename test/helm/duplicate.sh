@@ -19,10 +19,12 @@ if [ -f dev-container-features-test-lib ]; then
 fi
 
 if command -v check >/dev/null; then
-    check "kind CLI is installed" bash -c "command -v kind"
-    check "kind CLI returns version" kind --version
+    check "helm CLI is installed after duplicate install" bash -c "command -v helm"
+    check "default option env variable provided" bash -c "test -n \"${PKG_HELM_VERSION__DEFAULT:-}\""
+    check "randomized option env variable provided" bash -c "test -n \"${PKG_HELM_VERSION:-}\""
     reportResults
 else
-    command -v kind >/dev/null
-    kind --version >/dev/null
+    command -v helm >/dev/null
+    test -n "${PKG_HELM_VERSION__DEFAULT:-}"
+    test -n "${PKG_HELM_VERSION:-}"
 fi

@@ -19,10 +19,12 @@ if [ -f dev-container-features-test-lib ]; then
 fi
 
 if command -v check >/dev/null; then
-    check "kind CLI is installed" bash -c "command -v kind"
-    check "kind CLI returns version" kind --version
+    check "kubectl CLI is installed after duplicate install" bash -c "command -v kubectl"
+    check "default option env variable provided" bash -c "test -n \"${PKG_KUBECTL_VERSION__DEFAULT:-}\""
+    check "randomized option env variable provided" bash -c "test -n \"${PKG_KUBECTL_VERSION:-}\""
     reportResults
 else
-    command -v kind >/dev/null
-    kind --version >/dev/null
+    command -v kubectl >/dev/null
+    test -n "${PKG_KUBECTL_VERSION__DEFAULT:-}"
+    test -n "${PKG_KUBECTL_VERSION:-}"
 fi

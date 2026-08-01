@@ -1,8 +1,8 @@
 {
-  "install_kubectl_with_debug_disabled": {
+  "install_kind_with_debug_disabled": {
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
     "features": {
-      "kubectl": {
+      "kind": {
         "pkg_debug": false
       }
     }
