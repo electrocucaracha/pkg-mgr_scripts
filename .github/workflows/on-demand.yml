@@ -24,11 +24,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
       - name: Run the sh-checker
-        uses: luizm/action-sh-checker@883217215b11c1fabbf00eb1a9a041f62d74c744 # v0.10.0
+        uses: luizm/action-sh-checker@883217215b11c1fabbf00eb1a9a041f62d74c744  # v0.10.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHFMT_OPTS: -i 4 -s
@@ -40,7 +40,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
       - name: Install ShellSpec
@@ -57,10 +57,10 @@ jobs:
     outputs:
       scripts: ${{ steps.filter.outputs.changes }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-      - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
+      - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706  # v4.0.2
         if: ${{ !env.ACT }}
         id: filter
         with:
@@ -79,7 +79,7 @@ jobs:
       enable-vagrant-check: ${{ steps.set-matrices.outputs.enable-vagrant-check }}
       enable-devcontainers-check: ${{ steps.set-matrices.outputs.enable-devcontainers-check }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
       - id: set-matrices
@@ -100,7 +100,7 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix-alias) }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
       - uses: ./.github/actions/check-vagrant
@@ -120,12 +120,9 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix-image) }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-      - name: Install latest devcontainer CLI
-        # zizmor: ignore[adhoc-packages]
-        run: npm install -g @devcontainers/cli
       - name: Generating tests for '${{ matrix.script }}'
         run: |
-          devcontainer features test --features ${{ matrix.script }} --base-image ${{ matrix.image }} --project-folder .
+          npx --yes @devcontainers/cli@0.88.0 features test --features ${{ matrix.script }} --base-image ${{ matrix.image }} --project-folder .
