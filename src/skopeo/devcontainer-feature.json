@@ -1,8 +1,8 @@
 {
-  "name": "Buildah",
-  "id": "buildah",
+  "name": "skopeo",
+  "id": "skopeo",
   "version": "0.0.1",
-  "description": "Buildah is a tool that facilitates building OCI container images.",
+  "description": "skopeo is a command-line utility for operations on container images and image repositories.",
   "options": {
     "pkg_debug": {
       "type": "boolean",

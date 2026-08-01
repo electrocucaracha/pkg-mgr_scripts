@@ -1,8 +1,8 @@
 {
-  "name": "Buildah",
-  "id": "buildah",
+  "name": "Terraform",
+  "id": "terraform",
   "version": "0.0.1",
-  "description": "Buildah is a tool that facilitates building OCI container images.",
+  "description": "Terraform is an infrastructure-as-code tool for provisioning datacenter resources.",
   "options": {
     "pkg_debug": {
       "type": "boolean",

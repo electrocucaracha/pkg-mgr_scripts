@@ -1,8 +1,8 @@
 {
-  "name": "Buildah",
-  "id": "buildah",
+  "name": "pip",
+  "id": "pip",
   "version": "0.0.1",
-  "description": "Buildah is a tool that facilitates building OCI container images.",
+  "description": "pip is the standard package-management system used to install and manage Python packages from PyPI.",
   "options": {
     "pkg_debug": {
       "type": "boolean",

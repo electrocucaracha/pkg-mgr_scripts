@@ -1,8 +1,8 @@
 {
-  "name": "Buildah",
-  "id": "buildah",
+  "name": "Podman",
+  "id": "podman",
   "version": "0.0.1",
-  "description": "Buildah is a tool that facilitates building OCI container images.",
+  "description": "Podman is a daemonless container engine for developing, managing, and running OCI containers.",
   "options": {
     "pkg_debug": {
       "type": "boolean",

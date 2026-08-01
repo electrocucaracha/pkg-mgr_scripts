@@ -1,8 +1,8 @@
 {
-  "name": "Buildah",
-  "id": "buildah",
+  "name": "Rust",
+  "id": "rust-lang",
   "version": "0.0.1",
-  "description": "Buildah is a tool that facilitates building OCI container images.",
+  "description": "Rust is a language focused on performance, safety, and concurrency.",
   "options": {
     "pkg_debug": {
       "type": "boolean",

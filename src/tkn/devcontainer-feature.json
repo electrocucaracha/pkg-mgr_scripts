@@ -1,8 +1,8 @@
 {
-  "name": "Buildah",
-  "id": "buildah",
+  "name": "Tekton Pipeline CLI",
+  "id": "tkn",
   "version": "0.0.1",
-  "description": "Buildah is a tool that facilitates building OCI container images.",
+  "description": "tkn is the Tekton Pipelines CLI for interacting with Tekton CI/CD systems.",
   "options": {
     "pkg_debug": {
       "type": "boolean",

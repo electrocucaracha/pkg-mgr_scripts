@@ -1,8 +1,8 @@
 {
-  "name": "Buildah",
-  "id": "buildah",
+  "name": "QEMU",
+  "id": "qemu",
   "version": "0.0.1",
-  "description": "Buildah is a tool that facilitates building OCI container images.",
+  "description": "QEMU is a hosted virtual machine monitor and machine emulator.",
   "options": {
     "pkg_debug": {
       "type": "boolean",

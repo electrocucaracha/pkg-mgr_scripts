@@ -1,8 +1,8 @@
 {
-  "name": "Buildah",
-  "id": "buildah",
+  "name": "VirtualBox",
+  "id": "virtualbox",
   "version": "0.0.1",
-  "description": "Buildah is a tool that facilitates building OCI container images.",
+  "description": "VirtualBox is a free and open-source hosted hypervisor for x86 virtualization.",
   "options": {
     "pkg_debug": {
       "type": "boolean",

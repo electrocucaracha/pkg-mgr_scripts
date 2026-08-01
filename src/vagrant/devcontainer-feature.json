@@ -1,8 +1,8 @@
 {
-  "name": "Buildah",
-  "id": "buildah",
+  "name": "Vagrant",
+  "id": "vagrant",
   "version": "0.0.1",
-  "description": "Buildah is a tool that facilitates building OCI container images.",
+  "description": "Vagrant helps build and manage portable virtual development environments.",
   "options": {
     "pkg_debug": {
       "type": "boolean",

@@ -1,8 +1,8 @@
 {
-  "name": "Buildah",
-  "id": "buildah",
+  "name": "yq",
+  "id": "yq",
   "version": "0.0.1",
-  "description": "Buildah is a tool that facilitates building OCI container images.",
+  "description": "yq is a lightweight and portable command-line YAML processor.",
   "options": {
     "pkg_debug": {
       "type": "boolean",
