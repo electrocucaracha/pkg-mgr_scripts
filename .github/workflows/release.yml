@@ -21,11 +21,11 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Publish Features
-        uses: devcontainers/action@1082abd5d2bf3a11abccba70eef98df068277772 # 1.4.3
+        uses: devcontainers/action@1082abd5d2bf3a11abccba70eef98df068277772 # v1.4.3
         with:
           publish-features: "true"
           base-path-to-features: "./src"

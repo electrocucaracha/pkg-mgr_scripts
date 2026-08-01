@@ -68,7 +68,7 @@ while IFS= read -r line; do
         find . -name devcontainer-feature.json -exec sed -i "s/default\": \".* \/\/ $var/default\": \"$($func)\" \/\/ $var/g" {} \;
     fi
 done < <(grep -r "_VERSION.*get_github_latest" src/ | awk -F '=' '{print $2}')
-echo "$blacklist" | tee --append ./ci/pinned_versions.env
+[[ -n $blacklist ]] && echo "$blacklist" | tee --append ./ci/pinned_versions.env
 sort -o ./ci/pinned_versions.env ./ci/pinned_versions.env
 
 go_version="$(curl -sL https://golang.org/VERSION?m=text | sed -n 's/go//;s/\..$//;1p')"
@@ -83,15 +83,64 @@ find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) \
     done
 EOF
 
-# Update GitHub Action commit hashes
-gh_actions=$(grep -r "uses: [A-Za-z0-9_.-]*/[\_a-z\-]*@" .github/ | sed 's/@.*//' | awk -F ': ' '{ print $3 }' | sort -u)
-exceptions=('reviewdog/action-misspell' 'actions/attest-build-provenance' 'GrantBirki/git-diff-action' 'gaurav-nelson/github-action-markdown-link-check')
-for action in $gh_actions; do
-    if [[ ${exceptions[*]} =~ (^|[^[:alpha:]])$action([^[:alpha:]]|$) ]]; then
-        commit_hash=$(git ls-remote "https://github.com/$action" | grep 'refs/tags/[v]\?[0-9][0-9\.]*\^{}$' | sed 's|refs/tags/[vV]\?[\.]\?||g; s|\^{}$||g' | sort -u -k2 -V | tail -1 | awk '{ printf "%s # %s\n",$1,$2 }')
-    else
-        commit_hash=$(git ls-remote "https://github.com/$action" | grep 'refs/tags/[v]\?[0-9][0-9\.]*$' | sed 's|refs/tags/[vV]\?[\.]\?||g' | sort -u -k2 -V | tail -1 | awk '{ printf "%s # %s\n",$1,$2 }')
-    fi
-    # shellcheck disable=SC2267
-    grep -ElRZ "uses: $action@" .github/ | xargs -0 -l sed -i -e "s|uses: $action@.*|uses: $action@$commit_hash|g"
-done
+update_github_action_hashes() {
+    local gh_actions action is_exception ex commit_hash file
+    gh_actions=$(grep -rhoE 'uses: [^@]+@' .github/ |
+        sed -E 's/uses: ([^@]+)@/\1/' |
+        sort -u)
+
+    readonly exceptions=()
+
+    for action in $gh_actions; do
+        is_exception=false
+        for ex in "${exceptions[@]}"; do
+            if [[ $action == "$ex" ]]; then
+                is_exception=true
+                break
+            fi
+        done
+        [[ $is_exception == true ]] && continue
+
+        commit_hash=$(
+            git ls-remote --tags "https://github.com/$action" |
+                awk '
+            {
+                sha=$1
+                ref=$2
+                if (ref ~ /\^\{\}$/) {
+                    tag=ref
+                    sub(/\^\{\}$/, "", tag)
+                    commits[tag]=sha
+                } else {
+                    tags[ref]=sha
+                }
+            }
+            END {
+                for (ref in tags) {
+                    sha = (ref in commits ? commits[ref] : tags[ref])
+                    tag = ref
+                    sub(/^refs\/tags\//, "", tag)
+                    if (tag ~ /^v?[0-9]+(\.[0-9]+)*$/) {
+                        sortkey = tag
+                        sub(/^v/, "", sortkey)
+                        print sortkey "\t" sha "\t" tag
+                    }
+                }
+            }' |
+                sort -V |
+                tail -1 |
+                awk -F'\t' '{ printf "%s # %s\n", $2, $3 }'
+        )
+
+        if [[ -z $commit_hash ]]; then
+            echo "WARNING: unable to resolve tag for $action; skipping" >&2
+            continue
+        fi
+
+        while IFS= read -r -d '' file; do
+            sed -i -e "s|uses: $action@.*|uses: $action@$commit_hash|g" "$file"
+        done < <(grep -ElRZ "uses: $action@" .github/)
+    done
+}
+
+update_github_action_hashes
