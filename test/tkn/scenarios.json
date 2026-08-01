@@ -1,0 +1,10 @@
+{
+  "install_tkn_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "tkn": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

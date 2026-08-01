@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating fly installation..."
-if \! command -v fly; then
+if ! command -v fly; then
     error "fly command line wasn't installed"
 fi

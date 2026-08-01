@@ -1,0 +1,10 @@
+{
+  "install_podman_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "podman": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

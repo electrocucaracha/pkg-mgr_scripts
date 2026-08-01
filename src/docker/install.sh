@@ -174,8 +174,10 @@ EOF
     if sudo systemctl list-unit-files | grep "docker.service.*masked"; then
         sudo systemctl unmask docker
     fi
-    sudo systemctl enable docker
-    sudo systemctl start docker
+    if [ -d /run/systemd/system ]; then
+        sudo systemctl enable docker
+        sudo systemctl start docker
+    fi
 
     sudo mkdir -p /etc/systemd/system/docker.service.d
     mkdir -p "$HOME/.docker/"
@@ -244,8 +246,10 @@ EOF
 }
 EOF
     # editorconfig-checker-enable
-    sudo systemctl daemon-reload
-    sudo systemctl restart docker
+    if [ -d /run/systemd/system ]; then
+        sudo systemctl daemon-reload
+        sudo systemctl restart docker
+    fi
 
     # Enable autocompletion
     sudo mkdir -p /etc/bash_completion.d

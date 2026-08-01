@@ -1,0 +1,10 @@
+{
+  "install_go_lang_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "go-lang": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

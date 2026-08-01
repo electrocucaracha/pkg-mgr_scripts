@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating rust-lang installation..."
-if \! command -v rustc; then
+if ! command -v rustc; then
     error "rustc command line wasn't installed"
 fi

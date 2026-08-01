@@ -1,0 +1,10 @@
+{
+  "install_skopeo_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "skopeo": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

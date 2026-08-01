@@ -1,0 +1,10 @@
+{
+  "install_kustomize_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "kustomize": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

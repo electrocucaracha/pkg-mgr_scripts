@@ -106,8 +106,10 @@ EOF
     popd
 
     echo "INFO: Starting QAT service"
-    sudo systemctl --now enable qat_service
-    sudo systemctl start qat_service
+    if [ -d /run/systemd/system ]; then
+        sudo systemctl --now enable qat_service
+        sudo systemctl start qat_service
+    fi
 }
 
 main

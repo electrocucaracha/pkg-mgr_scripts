@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating kn installation..."
-if \! command -v kn; then
+if ! command -v kn; then
     error "kn command line wasn't installed"
 fi

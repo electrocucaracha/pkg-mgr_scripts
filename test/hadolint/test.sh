@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating hadolint installation..."
-if \! command -v hadolint; then
+if ! command -v hadolint; then
     error "hadolint command line wasn't installed"
 fi

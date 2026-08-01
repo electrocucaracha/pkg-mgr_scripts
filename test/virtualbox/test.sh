@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating virtualbox installation..."
-if \! command -v VBoxManage; then
+if ! command -v VBoxManage; then
     error "VBoxManage command line wasn't installed"
 fi

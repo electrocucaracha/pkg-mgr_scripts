@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating terraform installation..."
-if \! command -v terraform; then
+if ! command -v terraform; then
     error "terraform command line wasn't installed"
 fi

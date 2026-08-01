@@ -1,0 +1,10 @@
+{
+  "install_cni_plugins_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "cni-plugins": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

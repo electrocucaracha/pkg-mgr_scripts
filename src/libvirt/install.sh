@@ -135,10 +135,12 @@ function main {
 
     # Start libvirt service
     echo "INFO: Starting libvirt service..."
-    if ! systemctl is-enabled --quiet libvirtd; then
-        sudo systemctl enable libvirtd
+    if [ -d /run/systemd/system ]; then
+        if ! systemctl is-enabled --quiet libvirtd; then
+            sudo systemctl enable libvirtd
+        fi
+        sudo systemctl start libvirtd
     fi
-    sudo systemctl start libvirtd
 }
 
 main

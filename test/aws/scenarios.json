@@ -1,0 +1,10 @@
+{
+  "install_aws_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "aws": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

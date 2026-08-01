@@ -1,0 +1,10 @@
+{
+  "install_qat_driver_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "qat-driver": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

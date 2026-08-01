@@ -1,0 +1,10 @@
+{
+  "install_libvirt_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "libvirt": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

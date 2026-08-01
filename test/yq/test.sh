@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating yq installation..."
-if \! command -v yq; then
+if ! command -v yq; then
     error "yq command line wasn't installed"
 fi

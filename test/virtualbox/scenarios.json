@@ -1,0 +1,10 @@
+{
+  "install_virtualbox_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "virtualbox": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

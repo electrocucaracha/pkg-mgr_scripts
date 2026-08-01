@@ -264,7 +264,7 @@ EOF
 
     if [ "${ID,,}" == "centos" ] && [ "${VERSION_ID}" == "7" ]; then
         echo "WARN: Podman service is not supported in CentOS 7"
-    else
+    elif [ -d /run/systemd/system ]; then
         echo "INFO: Starting podman service..."
         sudo systemctl enable podman.socket
         sudo systemctl start podman.socket --now

@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating go-lang installation..."
-if \! command -v go; then
+if ! command -v go; then
     error "go command line wasn't installed"
 fi

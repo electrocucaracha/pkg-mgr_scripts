@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating pip installation..."
-if \! command -v pip3; then
+if ! command -v pip3; then
     error "pip3 command line wasn't installed"
 fi
