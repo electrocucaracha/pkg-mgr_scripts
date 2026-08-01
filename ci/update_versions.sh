@@ -58,18 +58,52 @@ function get_github_latest_tag {
     echo "${version#*v}"
 }
 
+function bump_devcontainer_feature_version {
+    local file current_version major minor patch new_version
+
+    current_version="$(sed -nE 's/^[[:space:]]*"version":[[:space:]]*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/p' "${file}" | head -n1)"
+    if [[ -z ${current_version} ]]; then
+        echo "WARNING: unable to parse version in ${file}; skipping bump" >&2
+        return
+    fi
+
+    IFS='.' read -r major minor patch <<<"${current_version}"
+    patch=$((patch + 1))
+    new_version="${major}.${minor}.${patch}"
+
+    sed -i -E "0,/\"version\":[[:space:]]*\"[0-9]+\.[0-9]+\.[0-9]+\"/s//\"version\": \"${new_version}\"/" "${file}"
+}
+
 rm -f ./ci/pinned_versions.env
+devcontainer_checksums_file="$(mktemp)"
+find ./src -name devcontainer-feature.json -type f -exec sh -c '
+    for file; do
+        checksum="$(shasum "$file" | awk "{print \\$1}")"
+        printf "%s\t%s\n" "$checksum" "$file"
+    done
+' sh {} + >"${devcontainer_checksums_file}"
+
 blacklist="$(cat ./ci/blacklist_versions)"
 while IFS= read -r line; do
     var=$(echo "${line#*\$\{}" | awk -F ':' '{ print $1}')
     if [[ ${blacklist} != *"${var}"* ]]; then
         func=$(echo "${line#*\$(}" | awk -F ')' '{ print $1}')
-        echo "export ${var}=$($func)" >>./ci/pinned_versions.env
-        find . -name devcontainer-feature.json -exec sed -i "s/default\": \".* \/\/ $var/default\": \"$($func)\" \/\/ $var/g" {} \;
+        value="$($func)"
+        echo "export ${var}=${value}" >>./ci/pinned_versions.env
+        find . -name devcontainer-feature.json -exec sed -i "s/default\": \".* \/\/ $var/default\": \"${value}\" \/\/ $var/g" {} \;
     fi
 done < <(grep -r "_VERSION.*get_github_latest" src/ | awk -F '=' '{print $2}')
 [[ -n $blacklist ]] && echo "$blacklist" | tee --append ./ci/pinned_versions.env
 sort -o ./ci/pinned_versions.env ./ci/pinned_versions.env
+
+while IFS=$'\t' read -r previous_checksum file; do
+    [[ -z ${file} ]] && continue
+    current_checksum="$(shasum "${file}" | awk '{print $1}')"
+    if [[ ${previous_checksum} != "${current_checksum}" ]]; then
+        bump_devcontainer_feature_version "${file}"
+    fi
+done <"${devcontainer_checksums_file}"
+rm -f "${devcontainer_checksums_file}"
 
 go_version="$(curl -sL https://golang.org/VERSION?m=text | sed -n 's/go//;s/\..$//;1p')"
 find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) \
@@ -144,3 +178,8 @@ update_github_action_hashes() {
 }
 
 update_github_action_hashes
+
+if ! command -v uvx >/dev/null; then
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+uvx pre-commit autoupdate
