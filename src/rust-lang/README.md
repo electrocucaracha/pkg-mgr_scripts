@@ -23,10 +23,3 @@ collection, and reference counting is optional.
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=rust-lang bash
 ```
-
-### Environment variables
-
-| Name | Default | Description |
-| :--- | :------ | :---------- |
-
-## Used by

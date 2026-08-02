@@ -26,6 +26,20 @@ virtual machines.
 curl -fsSL http://bit.ly/install_pkg | PKG=docker bash
 ```
 
+### [Dev Container](https://containers.dev/overview)
+
+This script can be consumed as Development container "Feature" through the
+following configuration:
+
+```json
+{
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/electrocucaracha/pkg-mgr_scripts/docker:latest": {}
+  }
+}
+```
+
 ### Environment variables
 
 | Name                             | Default                                                               | Description                                                                     |

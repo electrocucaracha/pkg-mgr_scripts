@@ -1,6 +1,6 @@
 # yq
 
-a lightweight and portable command-line YAML processor. yq uses jq
+A lightweight and portable command-line YAML processor. yq uses jq
 like syntax but works with YAML files as well as JSON. It doesn't yet
 support everything jq does - but it does support the most common
 operations and functions, and more is being added continuously.
@@ -26,5 +26,3 @@ curl -fsSL http://bit.ly/install_pkg | PKG=yq bash
 | Name           | Default | Description                              |
 | :------------- | :------ | :--------------------------------------- |
 | PKG_YQ_VERSION |         | Specifies the yq version to be installed |
-
-## Used by

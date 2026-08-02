@@ -33,5 +33,3 @@ curl -fsSL http://bit.ly/install_pkg | PKG=nodejs bash
 | Name               | Default | Description                                         |
 | :----------------- | :------ | :-------------------------------------------------- |
 | PKG_NODEJS_VERSION |         | Specifies the Node.js major version to be installed |
-
-## Used by

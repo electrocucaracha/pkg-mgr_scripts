@@ -24,11 +24,6 @@ development of a cloud-based solution.
 curl -fsSL http://bit.ly/install_pkg | PKG=libvirt bash
 ```
 
-### Environment variables
-
-| Name | Default | Description |
-| :--- | :------ | :---------- |
-
 ## Used by
 
 - [Bootstrap Vagrant](https://github.com/electrocucaracha/bootstrap-vagrant)
