@@ -11,7 +11,8 @@ name: Release dev container features
 # yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
-permissions: read-all
+permissions:
+  contents: read
 jobs:
   discover:
     if: ${{ github.ref == 'refs/heads/master' }}
@@ -46,7 +47,9 @@ jobs:
         with:
           node-version: "20"
       - name: Test Feature
-        run: npx --yes @devcontainers/cli@0.88.0 features test -p . --features "${{ matrix.feature }}" -i mcr.microsoft.com/devcontainers/base:ubuntu
+        env:
+          FEATURE: ${{ matrix.feature }}
+        run: npx --yes @devcontainers/cli@0.88.0 features test -p . --features "$FEATURE" -i mcr.microsoft.com/devcontainers/base:ubuntu
   deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -63,6 +66,9 @@ jobs:
         with:
           node-version: "20"
       - name: Login to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+        run: echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
       - name: Publish Features
         run: npx --yes @devcontainers/cli@0.88.0 features publish -r ghcr.io -n "${{ github.repository }}" ./src
