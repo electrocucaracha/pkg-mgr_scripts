@@ -12,9 +12,8 @@
 [![Scc Code Badge](https://sloc.xyz/github/electrocucaracha/pkg-mgr_scripts?category=code)](https://github.com/boyter/scc/)
 [![Scc COCOMO Badge](https://sloc.xyz/github/electrocucaracha/pkg-mgr_scripts?category=cocomo)](https://github.com/boyter/scc/)
 
-This project pretends to centralize and facilitate the process to
-install and configure some Linux projects on major different Linux
-Distributions.
+This project centralizes and simplifies installing and configuring
+Linux tools across the major Linux distributions.
 
 Why using cURL instead of wget? Daniel Stenberg [explains](https://daniel.haxx.se/docs/curl-vs-wget.html)
 that cURL works like a traditional Unix `cat` command and can do a
