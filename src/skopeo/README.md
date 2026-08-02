@@ -24,8 +24,6 @@ with OCI images as well as the original Docker v2 images.
 curl -fsSL http://bit.ly/install_pkg | PKG=skopeo bash
 ```
 
-### Environment variables
-
 ## Used by
 
 - [Release Engineering](https://github.com/electrocucaracha/releng)

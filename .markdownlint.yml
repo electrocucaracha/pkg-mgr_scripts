@@ -1,0 +1,5 @@
+---
+# Disable line-length rule: README contains auto-generated content with long URLs
+MD013: false
+# Disable no-inline-html rule: README uses HTML for badges and profile widgets
+MD033: false

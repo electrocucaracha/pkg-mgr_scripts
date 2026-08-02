@@ -39,5 +39,3 @@ following configuration:
   }
 }
 ```
-
-## Used by

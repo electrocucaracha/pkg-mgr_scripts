@@ -1,6 +1,6 @@
 # Fly
 
-A command-line interface that runs a build in a container with ATC.
+A command-line interface for [Concourse CI](https://concourse-ci.org) that runs builds in containers via the ATC (Air Traffic Controller) server.
 
 ## Operating System Support Matrix
 
@@ -16,6 +16,20 @@ A command-line interface that runs a build in a container with ATC.
 
 ```bash
 curl -fsSL http://bit.ly/install_pkg | PKG=fly bash
+```
+
+### [Dev Container](https://containers.dev/overview)
+
+This script can be consumed as Development container "Feature" through the
+following configuration:
+
+```json
+{
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/electrocucaracha/pkg-mgr_scripts/fly:latest": {}
+  }
+}
 ```
 
 ### Environment variables
