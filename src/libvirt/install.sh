@@ -128,7 +128,7 @@ function main {
     if [ -f /etc/apparmor.d/usr.sbin.libvirtd ] && ! grep -q "/usr/local/bin/* PUx," /etc/apparmor.d/usr.sbin.libvirtd; then
         echo "INFO: Enable discrete profile execution of local binaries"
         sudo sed -i '/\/usr\/bin\/\* PUx,/a\/usr\/local\/bin\/\* PUx,' /etc/apparmor.d/usr.sbin.libvirtd
-        if systemctl is-active --quiet apparmor; then
+        if [ -d /run/systemd/system ] && systemctl is-active --quiet apparmor; then
             sudo systemctl reload apparmor
         fi
     fi

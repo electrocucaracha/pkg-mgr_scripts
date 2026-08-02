@@ -19,7 +19,7 @@ function main {
     local version=${PKG_QAT_DRIVER_VERSION:-"1.7.l.4.12.0-00011"} # Dec 17, 2020 https://01.org/intel-quick-assist-technology/downloads
     local qat_driver_tarball="qat${version}.tar.gz"
 
-    if systemctl is-active --quiet qat_service; then
+    if [ -d /run/systemd/system ] && systemctl is-active --quiet qat_service; then
         return
     fi
 

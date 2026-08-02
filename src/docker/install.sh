@@ -135,8 +135,10 @@ function main {
             fi
             $INSTALLER_CMD https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
             curl -fsSL https://get.docker.com/ | sh
-            sudo sed -i "s/FirewallBackend=.*/FirewallBackend=iptables/g" /etc/firewalld/firewalld.conf
-            sudo systemctl restart firewalld
+            if [ -d /run/systemd/system ]; then
+                sudo sed -i "s/FirewallBackend=.*/FirewallBackend=iptables/g" /etc/firewalld/firewalld.conf
+                sudo systemctl restart firewalld
+            fi
             ;;
         rocky)
             export PKG_DOCKER_INSTALL_ROOTLESS=false
@@ -152,7 +154,7 @@ function main {
             [ $VERSION_ID != "20.04" ] && export PKG_DOCKER_INSTALL_DIVE=false
             sudo apt-get update
             $INSTALLER_CMD ca-certificates curl gnupg lsb-release software-properties-common apt-transport-https uidmap
-            if [ $VERSION_ID == "16.04" ] || [ "${ID,,}" == "debian" ]; then
+            if [ "$VERSION_ID" == "16.04" ] || ( [ "${ID,,}" == "debian" ] && [ "$VERSION_ID" -lt 12 ] ); then
                 if [ "${ID,,}" == "debian" ]; then
                     cat <<EOF | sudo sh -x
 cat <<EOT > /etc/sysctl.d/50-rootless.conf
@@ -171,7 +173,7 @@ EOF
             ;;
         esac
     fi
-    if sudo systemctl list-unit-files | grep "docker.service.*masked"; then
+    if [ -d /run/systemd/system ] && sudo systemctl list-unit-files | grep "docker.service.*masked"; then
         sudo systemctl unmask docker
     fi
     if [ -d /run/systemd/system ]; then
@@ -179,27 +181,29 @@ EOF
         sudo systemctl start docker
     fi
 
-    sudo mkdir -p /etc/systemd/system/docker.service.d
     mkdir -p "$HOME/.docker/"
     sudo mkdir -p /root/.docker/
     if ! getent group docker | grep -q "$USER"; then
         sudo usermod -aG docker "$USER"
     fi
-    if [ -n "${SOCKS_PROXY-}" ]; then
-        socks_tmp="${SOCKS_PROXY#*//}"
-        curl -sSL https://raw.githubusercontent.com/crops/chameleonsocks/master/chameleonsocks.sh | sudo PROXY="${socks_tmp%:*}" PORT="${socks_tmp#*:}" bash -s -- --install
-    else
-        if [ -n "${HTTP_PROXY-}" ]; then
-            echo "[Service]" | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
-            echo "Environment=\"HTTP_PROXY=$HTTP_PROXY\"" | sudo tee --append /etc/systemd/system/docker.service.d/http-proxy.conf
-        fi
-        if [ -n "${HTTPS_PROXY-}" ]; then
-            echo "[Service]" | sudo tee /etc/systemd/system/docker.service.d/https-proxy.conf
-            echo "Environment=\"HTTPS_PROXY=$HTTPS_PROXY\"" | sudo tee --append /etc/systemd/system/docker.service.d/https-proxy.conf
-        fi
-        if [ -n "${NO_PROXY-}" ]; then
-            echo "[Service]" | sudo tee /etc/systemd/system/docker.service.d/no-proxy.conf
-            echo "Environment=\"NO_PROXY=$NO_PROXY\"" | sudo tee --append /etc/systemd/system/docker.service.d/no-proxy.conf
+    if [ -d /run/systemd/system ]; then
+        sudo mkdir -p /etc/systemd/system/docker.service.d
+        if [ -n "${SOCKS_PROXY-}" ]; then
+            socks_tmp="${SOCKS_PROXY#*//}"
+            curl -sSL https://raw.githubusercontent.com/crops/chameleonsocks/master/chameleonsocks.sh | sudo PROXY="${socks_tmp%:*}" PORT="${socks_tmp#*:}" bash -s -- --install
+        else
+            if [ -n "${HTTP_PROXY-}" ]; then
+                echo "[Service]" | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
+                echo "Environment=\"HTTP_PROXY=$HTTP_PROXY\"" | sudo tee --append /etc/systemd/system/docker.service.d/http-proxy.conf
+            fi
+            if [ -n "${HTTPS_PROXY-}" ]; then
+                echo "[Service]" | sudo tee /etc/systemd/system/docker.service.d/https-proxy.conf
+                echo "Environment=\"HTTPS_PROXY=$HTTPS_PROXY\"" | sudo tee --append /etc/systemd/system/docker.service.d/https-proxy.conf
+            fi
+            if [ -n "${NO_PROXY-}" ]; then
+                echo "[Service]" | sudo tee /etc/systemd/system/docker.service.d/no-proxy.conf
+                echo "Environment=\"NO_PROXY=$NO_PROXY\"" | sudo tee --append /etc/systemd/system/docker.service.d/no-proxy.conf
+            fi
         fi
     fi
     config='{ "experimental": "enabled",'
@@ -284,11 +288,13 @@ EOF
         _install_dive
     fi
 
-    printf "Waiting for docker service..."
-    until sudo docker info >/dev/null; do
-        printf "."
-        sleep 2
-    done
+    if [ -d /run/systemd/system ]; then
+        printf "Waiting for docker service..."
+        until sudo docker info >/dev/null; do
+            printf "."
+            sleep 2
+        done
+    fi
     if [[ ${PKG_DEBUG:-false} == "true" ]]; then
         sudo docker info
         if command -v ctr; then
