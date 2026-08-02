@@ -237,11 +237,16 @@ EOF
             INSTALLER_CMD+="-q=3 "
         fi
         INSTALLER_CMD+=" install"
-        echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-        curl -sL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
-        sudo apt-get update || :
-        $INSTALLER_CMD --reinstall ca-certificates
-        sudo apt-get update
+        # Ubuntu 20.04+ includes podman in the standard universe repo
+        if _vercmp "${VERSION_ID}" '>=' "20.04"; then
+            sudo apt-get update -qq
+        else
+            echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+            curl -sL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
+            sudo apt-get update || :
+            $INSTALLER_CMD --reinstall ca-certificates
+            sudo apt-get update
+        fi
         ;;
     rhel | centos | fedora | rocky)
         PKG_MANAGER=$(command -v dnf || command -v yum)

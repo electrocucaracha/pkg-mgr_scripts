@@ -19,7 +19,7 @@ function main {
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
 
-    local version=${PKG_VIRTUALBOX_VERSION:-7.2}
+    local version=${PKG_VIRTUALBOX_VERSION:-7.1}
     [[ ${VERSION_CODENAME:-} == "xenial" ]] && version="6.1"
 
     if command -v VBoxManage >/dev/null && [[ $(VBoxManage --version) == "$version"* ]]; then

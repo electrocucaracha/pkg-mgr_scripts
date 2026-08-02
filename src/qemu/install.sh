@@ -122,10 +122,22 @@ function main {
         return
     fi
 
-    echo "INFO: Installing building packages"
-    configure_flags="--target-list="$(uname -m)-softmmu" --enable-libpmem --enable-kvm"
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
+
+    # Use package manager for container environments (no KVM/source build needed)
+    if [[ ${PKG_QEMU_BUILD_FROM_SOURCE:-false} != "true" ]]; then
+        case ${ID,,} in
+        ubuntu | debian)
+            sudo -H -E apt-get -y update -qq
+            sudo -H -E apt-get -y install --no-install-recommends qemu-utils qemu-system-x86
+            return
+            ;;
+        esac
+    fi
+
+    echo "INFO: Installing building packages"
+    configure_flags="--target-list="$(uname -m)-softmmu" --enable-libpmem --enable-kvm"
     case ${ID,,} in
     opensuse*)
         sudo -H -E zypper install -y --no-recommends git gcc make bzip2 \
