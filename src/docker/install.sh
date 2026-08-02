@@ -154,7 +154,7 @@ function main {
             [ $VERSION_ID != "20.04" ] && export PKG_DOCKER_INSTALL_DIVE=false
             sudo apt-get update
             $INSTALLER_CMD ca-certificates curl gnupg lsb-release software-properties-common apt-transport-https uidmap
-            if [ "$VERSION_ID" == "16.04" ] || ([ "${ID,,}" == "debian" ] && [ "$VERSION_ID" -lt 12 ]); then
+            if [ "$VERSION_ID" == "16.04" ] || { [ "${ID,,}" == "debian" ] && [ "$VERSION_ID" -lt 12 ]; }; then
                 if [ "${ID,,}" == "debian" ]; then
                     cat <<EOF | sudo sh -x
 cat <<EOT > /etc/sysctl.d/50-rootless.conf
