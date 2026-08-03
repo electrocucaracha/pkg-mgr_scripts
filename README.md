@@ -44,31 +44,35 @@ curl -fsSL http://bit.ly/install_pkg | PKG="docker docker-compose" bash
 
 ```mermaid
 flowchart TB
-    A((start)) -- HTTP request --> B[bit.ly server redirects to raw.githubusercontent.com];
-    B --> C[responds with the install script];
-    C --> D[runs bash script];
-    D --> E --> P;
-    subgraph E [pkg-mgr_scripts/install.sh]
+    A((start)) -- HTTP request --> B[bit.ly server redirects to raw.githubusercontent.com]
+    B --> C[responds with the install script]
+    C --> D[runs bash script]
+    D --> F
+
+    subgraph E[pkg-mgr_scripts/install.sh]
         direction TB
-        F{is PKG_UPDATE set to `true`?};
-        F -- yes --> G[runs `update_repos` function] --> H;
-        F -- no --> H{does PKG_COMMANDS_LIST have values?};
-        H -- yes --> I[collect PKG values];
-        H -- no --> J;
-        I --> J;
-        subgraph J [`main` function]
+        F{is PKG_UPDATE set to true?}
+        F -- yes --> G[runs update_repos function]
+        G --> H
+        F -- no --> H{does PKG_COMMANDS_LIST have values?}
+        H -- yes --> I[collect PKG values]
+        H -- no --> J
+        I --> J
+
+        subgraph J[main function]
             direction TB
-            subgraph K [`_check_requirements` function]
-                L[validates passwordless sudo];
+            subgraph K[_check_requirements function]
+                L[validates passwordless sudo]
             end
-            L --> M[defines INSTALLER_CMD and PKG_OS_FAMILY vars];
-            M --> N{is PKG defined?};
-            N -- yes --> O[filters unsupported PKG values];
-            N -- no --> Q;
-            O --> P[executes INSTALLER_CMD + filtered PKG] --> Q;
+            L --> M[defines INSTALLER_CMD and PKG_OS_FAMILY vars]
+            M --> N{is PKG defined?}
+            N -- yes --> O[filters unsupported PKG values]
+            N -- no --> Q
+            O --> P[executes INSTALLER_CMD + filtered PKG]
+            P --> Q
         end
     end
-    Q((end));
+    Q((end))
 ```
 
 `bit.ly/install_pkg` redirects to the install script in this repository and the invocation above is equivalent to:
