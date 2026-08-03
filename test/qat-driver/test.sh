@@ -26,7 +26,7 @@ function _print_msg {
 }
 
 info "Validating qat-driver installation..."
-if command -v lspci >/dev/null && ! lspci 2>/dev/null | grep -qi "quick assist"; then
+if ! command -v lspci >/dev/null || ! lspci 2>/dev/null | grep -qi "quick assist"; then
     info "No QAT hardware detected, skipping qat_service check"
 elif ! command -v qat_service; then
     error "qat_service command line wasn't installed"
