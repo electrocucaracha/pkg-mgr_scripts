@@ -142,6 +142,7 @@ function main {
             ;;
         rocky)
             export PKG_DOCKER_INSTALL_ROOTLESS=false
+            sudo dnf install -y dnf-plugins-core
             sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
             $INSTALLER_CMD docker-ce docker-ce-cli containerd.io
             ;;
@@ -276,7 +277,7 @@ EOF
 
     # Install gVisor sandbox
     if [[ ${PKG_DOCKER_INSTALL_GVISOR:-false} == "true" ]]; then
-        if ! command -v runcsc; then
+        if ! command -v runsc; then
             _install_gvisor
         fi
         sudo /usr/local/bin/runsc install

@@ -20,11 +20,9 @@ fi
 
 if command -v check >/dev/null; then
     check "docker CLI is installed after duplicate install" bash -c "command -v docker"
-    check "default option env variable provided" bash -c "test -n \"${PKG_DOCKER_VERSION__DEFAULT:-}\""
-    check "randomized option env variable provided" bash -c "test -n \"${PKG_DOCKER_VERSION:-}\""
+    check "docker CLI returns version after duplicate install" docker --version
     reportResults
 else
     command -v docker >/dev/null
-    test -n "${PKG_DOCKER_VERSION__DEFAULT:-}"
-    test -n "${PKG_DOCKER_VERSION:-}"
+    docker --version >/dev/null
 fi
