@@ -72,11 +72,11 @@ function main {
         INSTALLER_CMD+="install -y --no-recommends"
         ;;
     ubuntu | debian)
-        if _vercmp "${VERSION_ID}" '<=' "16.04"; then
+        if [ "${ID,,}" == "ubuntu" ] && _vercmp "${VERSION_ID}" '<=' "16.04"; then
             echo "WARN: skopeo is not supported in Ubuntu $VERSION_ID"
             return
         fi
-        if _vercmp "${VERSION_ID}" '<' "20.04" && [ "$(uname -m)" != "x86_64" ]; then
+        if [ "${ID,,}" == "ubuntu" ] && _vercmp "${VERSION_ID}" '<' "20.04" && [ "$(uname -m)" != "x86_64" ]; then
             echo "WARN: skopeo doesn't support  non x86_64 architectures in Ubuntu $VERSION_ID"
             return
         fi
@@ -85,15 +85,15 @@ function main {
             INSTALLER_CMD+="-q=3 "
         fi
         INSTALLER_CMD+=" --no-install-recommends install"
-        # Ubuntu 20.04+ includes skopeo in the standard universe repo
-        if _vercmp "${VERSION_ID}" '>=' "20.04"; then
-            sudo apt-get update -qq
-        else
+        # Ubuntu < 20.04: use kubic repo; Debian and Ubuntu >= 20.04: use standard apt repo
+        if [ "${ID,,}" == "ubuntu" ] && _vercmp "${VERSION_ID}" '<' "20.04"; then
             echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
             curl -sL "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
             sudo apt-get update || :
             $INSTALLER_CMD --reinstall ca-certificates
             sudo apt-get update
+        else
+            sudo apt-get update -qq
         fi
         ;;
     rhel | centos | fedora | rocky)
