@@ -124,5 +124,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Generating tests for '${{ matrix.script }}'
+        env:
+          SCRIPT: ${{ matrix.script }}
         run: |
-          npx --yes @devcontainers/cli@0.88.0 features test --features ${{ matrix.script }} --base-image ${{ matrix.image }} --project-folder .
+          npx --yes @devcontainers/cli@0.88.0 features test --features "$SCRIPT" --base-image mcr.microsoft.com/devcontainers/base:ubuntu --project-folder .
