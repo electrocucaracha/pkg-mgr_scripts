@@ -19,8 +19,8 @@ if [ -f dev-container-features-test-lib ]; then
 fi
 
 if command -v check >/dev/null; then
-    check "CNI bridge plugin is installed" bash -c "test -f /opt/cni/bin/bridge"
+    check "CNI bridge plugin is installed" bash -c "test -f /opt/containernetworking/plugins/bridge || test -f /opt/cni/bin/bridge"
     reportResults
 else
-    test -f /opt/cni/bin/bridge
+    test -f /opt/containernetworking/plugins/bridge || test -f /opt/cni/bin/bridge
 fi
