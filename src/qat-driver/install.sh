@@ -23,8 +23,8 @@ function main {
         return
     fi
 
-    # Skip gracefully when no QAT hardware is detected
-    if command -v lspci >/dev/null && ! lspci 2>/dev/null | grep -qi "quick assist"; then
+    # Skip gracefully when no QAT hardware is detected or lspci is unavailable
+    if ! command -v lspci >/dev/null || ! lspci 2>/dev/null | grep -qi "quick assist"; then
         echo "WARN: No Intel QAT hardware detected, skipping QAT driver installation"
         return
     fi
