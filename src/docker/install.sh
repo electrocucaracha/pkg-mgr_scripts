@@ -15,16 +15,26 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
+# Some devcontainer test images execute feature installers as root without sudo.
+# Provide a local fallback so the same script works in both contexts.
+if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    sudo() {
+        "$@"
+    }
+fi
+
 OS="$(uname | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
 
 function get_github_latest_release {
-    version=""
-    attempt_counter=0
-    max_attempts=5
+    local repository="$1"
+    local version=""
+    local url_effective=""
+    local attempt_counter=0
+    local max_attempts=5
 
     until [ "$version" ]; do
-        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest")
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$repository/releases/latest")
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
@@ -184,8 +194,9 @@ EOF
 
     mkdir -p "$HOME/.docker/"
     sudo mkdir -p /root/.docker/
-    if ! getent group docker | grep -q "$USER"; then
-        sudo usermod -aG docker "$USER"
+    target_user="${_REMOTE_USER-${USER-$(id -un)}}"
+    if ! getent group docker | grep -q "$target_user"; then
+        sudo usermod -aG docker "$target_user"
     fi
     if [ -d /run/systemd/system ]; then
         sudo mkdir -p /etc/systemd/system/docker.service.d

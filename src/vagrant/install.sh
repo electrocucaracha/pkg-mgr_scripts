@@ -11,6 +11,14 @@
 set -o nounset
 set -o errexit
 set -o pipefail
+
+# Some devcontainer test images execute feature installers as root without sudo.
+# Provide a local fallback so the same script works in both contexts.
+if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    sudo() {
+        "$@"
+    }
+fi
 if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
@@ -128,7 +136,9 @@ function main {
                 fi
                 sudo unzip -o "$vagrant_pkg" -d /usr/bin
                 sudo apt-get update
-                $INSTALL_CMD libarchive-tools fuse
+                if ! $INSTALL_CMD libarchive-tools fuse; then
+                    $INSTALL_CMD libarchive-tools fuse3
+                fi
             else
                 if [[ ${PKG_DEBUG:-false} == "true" ]]; then
                     sudo dpkg -i "$vagrant_pkg"

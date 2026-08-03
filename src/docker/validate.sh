@@ -12,6 +12,14 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
+# Some devcontainer test images execute feature installers as root without sudo.
+# Provide a local fallback so the same script works in both contexts.
+if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    sudo() {
+        "$@"
+    }
+fi
+
 mgmt_ip=$(ip route get 8.8.8.8 | grep "^8." | awk '{ print $7 }')
 
 function info {

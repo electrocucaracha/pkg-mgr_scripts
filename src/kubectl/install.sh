@@ -11,6 +11,14 @@
 set -o nounset
 set -o errexit
 set -o pipefail
+
+# Some devcontainer test images execute feature installers as root without sudo.
+# Provide a local fallback so the same script works in both contexts.
+if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    sudo() {
+        "$@"
+    }
+fi
 if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
@@ -95,12 +103,14 @@ function _vercmp {
 }
 
 function get_github_latest_release {
-    version=""
-    attempt_counter=0
-    max_attempts=5
+    local repository="$1"
+    local version=""
+    local url_effective=""
+    local attempt_counter=0
+    local max_attempts=5
 
     until [ "$version" ]; do
-        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest")
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$repository/releases/latest")
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
@@ -195,8 +205,9 @@ function main {
             curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/v${krew_version}/$krew_assets" 2>/dev/null
             tar -xzf "$tarball"
         fi
-        $sudo_cmd chown -R "${_REMOTE_USER-$USER}:" .
-        $sudo_cmd runuser "${_REMOTE_USER-$USER}" -c "./krew-${OS}_$ARCH install --manifest=krew.yaml --archive=$tarball"
+        target_user="${_REMOTE_USER-${USER-$(id -un)}}"
+        $sudo_cmd chown -R "${target_user}:" .
+        $sudo_cmd runuser "$target_user" -c "./krew-${OS}_$ARCH install --manifest=krew.yaml --archive=$tarball"
         # shellcheck disable=SC2016
         ([ -f "$HOME/.bashrc" ] && ! grep -q KREW_ROOT "$HOME/.bashrc") && echo '[ -d ${KREW_ROOT:-$HOME/.krew}/bin ] && export PATH=$PATH:${KREW_ROOT:-$HOME/.krew}/bin' | tee --append "$HOME/.bashrc" >/dev/null
         # shellcheck disable=SC2016

@@ -57,6 +57,6 @@ info "Checking go version"
 installed_version="$(go version | awk '{print $3}')"
 expected_version="$(get_version)"
 # Allow prefix match to handle minor version pinning (e.g. "go1.18" matches "go1.18.10")
-if [[ "$installed_version" != "$expected_version"* ]]; then
+if [[ $installed_version != "$expected_version"* ]]; then
     error "Go version installed ($installed_version) is different from expected ($expected_version)"
 fi

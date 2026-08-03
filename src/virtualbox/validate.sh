@@ -12,6 +12,14 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
+# Some devcontainer test images execute feature installers as root without sudo.
+# Provide a local fallback so the same script works in both contexts.
+if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    sudo() {
+        "$@"
+    }
+fi
+
 function info {
     _print_msg "INFO" "$1"
 }
@@ -30,6 +38,8 @@ if ! command -v VBoxManage; then
     error "VirtualBox command line wasn't installed"
 fi
 
-sudo systemctl restart vboxdrv
+if command -v systemctl >/dev/null && systemctl list-unit-files | grep -q '^vboxdrv\.service'; then
+    sudo systemctl restart vboxdrv
+fi
 info "Validating VirtualBox execution"
 VBoxManage -v

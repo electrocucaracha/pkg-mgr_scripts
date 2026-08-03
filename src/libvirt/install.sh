@@ -11,6 +11,14 @@
 set -o nounset
 set -o errexit
 set -o pipefail
+
+# Some devcontainer test images execute feature installers as root without sudo.
+# Provide a local fallback so the same script works in both contexts.
+if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    sudo() {
+        "$@"
+    }
+fi
 if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
@@ -124,7 +132,8 @@ function main {
     echo "INFO: Installing libvirt packages ($pkgs)..."
     # shellcheck disable=SC2086
     sudo -H -E $INSTALLER_CMD $pkgs
-    sudo usermod -a -G $libvirt_group "$USER"
+    target_user="${_REMOTE_USER-${USER-$(id -un)}}"
+    sudo usermod -a -G $libvirt_group "$target_user"
     if [ -f /etc/apparmor.d/usr.sbin.libvirtd ] && ! grep -q "/usr/local/bin/* PUx," /etc/apparmor.d/usr.sbin.libvirtd; then
         echo "INFO: Enable discrete profile execution of local binaries"
         sudo sed -i '/\/usr\/bin\/\* PUx,/a\/usr\/local\/bin\/\* PUx,' /etc/apparmor.d/usr.sbin.libvirtd

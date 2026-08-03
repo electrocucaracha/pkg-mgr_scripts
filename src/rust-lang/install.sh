@@ -15,16 +15,33 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
+# Some devcontainer test images execute feature installers as root without sudo.
+# Provide a local fallback so the same script works in both contexts.
+if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    sudo() {
+        "$@"
+    }
+fi
+
 function main {
-    if command -v rustup; then
-        return
+    if ! command -v rustup >/dev/null; then
+        echo "INFO: Installing rustc..."
+        curl https://sh.rustup.rs -sSf | sh -s -- -y
     fi
-    echo "INFO: Installing rustc..."
-    curl https://sh.rustup.rs -sSf | sh -s -- -y
-    sudo ln -sf "$HOME/.cargo/bin/rustup" /usr/local/bin/rustup
-    sudo ln -sf "$HOME/.cargo/bin/rustc" /usr/local/bin/rustc
-    sudo ln -sf "$HOME/.cargo/bin/cargo" /usr/local/bin/cargo
-    sudo ln -sf "$HOME/.cargo/bin/rustfmt" /usr/local/bin/rustfmt
+
+    # Ensure default toolchain binaries exist even when rustup is preinstalled.
+    rustup_cmd="$(command -v rustup || true)"
+    [ -z "$rustup_cmd" ] && rustup_cmd="$HOME/.cargo/bin/rustup"
+    if [ -x "$rustup_cmd" ] && { ! command -v rustc >/dev/null || ! command -v cargo >/dev/null; }; then
+        "$rustup_cmd" toolchain install stable --profile minimal
+        "$rustup_cmd" default stable
+    fi
+
+    for cmd in rustup rustc cargo rustfmt; do
+        if [ -x "$HOME/.cargo/bin/$cmd" ]; then
+            sudo ln -sf "$HOME/.cargo/bin/$cmd" "/usr/local/bin/$cmd"
+        fi
+    done
 }
 
 main

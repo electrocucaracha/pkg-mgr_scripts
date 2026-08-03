@@ -52,12 +52,14 @@ function install_pkgs {
 }
 
 function get_github_latest_release {
-    version=""
-    attempt_counter=0
-    max_attempts=5
+    local repository="$1"
+    local version=""
+    local url_effective=""
+    local attempt_counter=0
+    local max_attempts=5
 
     until [ "$version" ]; do
-        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest")
+        url_effective=$(curl -sL -o /dev/null -w '%{url_effective}' "https://github.com/$repository/releases/latest")
         if [ "$url_effective" ]; then
             version="${url_effective##*/}"
             break
