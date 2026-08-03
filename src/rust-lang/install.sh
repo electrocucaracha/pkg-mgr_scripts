@@ -24,6 +24,7 @@ function main {
     sudo ln -sf "$HOME/.cargo/bin/rustup" /usr/local/bin/rustup
     sudo ln -sf "$HOME/.cargo/bin/rustc" /usr/local/bin/rustc
     sudo ln -sf "$HOME/.cargo/bin/cargo" /usr/local/bin/cargo
+    sudo ln -sf "$HOME/.cargo/bin/rustfmt" /usr/local/bin/rustfmt
 }
 
 main
