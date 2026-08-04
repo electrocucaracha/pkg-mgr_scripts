@@ -102,6 +102,7 @@ passwordless
 PMDK
 png
 PODMAN
+pre
 PyPI
 QAT
 QEMU
