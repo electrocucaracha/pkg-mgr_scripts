@@ -8,6 +8,7 @@
 ##############################################################################
 
 DOCKER_CMD ?= $(shell which docker 2> /dev/null || which podman 2> /dev/null || echo docker)
+SUPER_LINTER_VALIDATE_PRE_COMMIT ?= false
 
 build:
 	@docker-compose build --compress --force-rm
@@ -23,6 +24,7 @@ undeploy:
 lint:
 	$(DOCKER_CMD) run --rm -v $$(pwd):/tmp/lint \
 	-e RUN_LOCAL=true \
+	-e VALIDATE_PRE_COMMIT=$(SUPER_LINTER_VALIDATE_PRE_COMMIT) \
 	-e LINTER_RULES_PATH=/ \
 	-e EDITORCONFIG_FILE_NAME=.editorconfig-checker.json \
 	-e KUBERNETES_KUBEVAL_OPTIONS=--ignore-missing-schemas \

@@ -19,6 +19,9 @@ fi
 # Provide a local fallback so the same script works in both contexts.
 if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
     sudo() {
+        while [[ "$1" == -* ]]; do
+            shift
+        done
         "$@"
     }
 fi
@@ -32,7 +35,7 @@ function main {
     # Ensure default toolchain binaries exist even when rustup is preinstalled.
     rustup_cmd="$(command -v rustup || true)"
     [ -z "$rustup_cmd" ] && rustup_cmd="$HOME/.cargo/bin/rustup"
-    if [ -x "$rustup_cmd" ] && { ! command -v rustc >/dev/null || ! command -v cargo >/dev/null; }; then
+    if [ -x "$rustup_cmd" ] && { ! [ -x "$HOME/.cargo/bin/rustc" ] || ! [ -x "$HOME/.cargo/bin/cargo" ]; }; then
         "$rustup_cmd" toolchain install stable --profile minimal
         "$rustup_cmd" default stable
     fi

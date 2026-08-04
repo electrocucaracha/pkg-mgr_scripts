@@ -16,6 +16,9 @@ set -o pipefail
 # Provide a local fallback so the same script works in both contexts.
 if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
     sudo() {
+        while [[ "$1" == -* ]]; do
+            shift
+        done
         "$@"
     }
 fi
