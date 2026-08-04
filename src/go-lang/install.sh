@@ -84,6 +84,8 @@ function main {
     sudo mkdir -p /etc/profile.d/
     # shellcheck disable=SC2016
     echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee /etc/profile.d/path.sh >/dev/null
+    sudo ln -sf /usr/local/go/bin/go /usr/local/bin/go
+    sudo ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 }
 
 main

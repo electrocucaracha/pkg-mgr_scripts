@@ -19,8 +19,16 @@ if [ -f dev-container-features-test-lib ]; then
 fi
 
 if command -v check >/dev/null; then
-    check "qat_service is installed" bash -c "command -v qat_service"
+    if command -v lspci >/dev/null && ! lspci 2>/dev/null | grep -qi "quick assist"; then
+        check "qat_service skipped (no QAT hardware)" bash -c "true"
+    else
+        check "qat_service is installed" bash -c "command -v qat_service"
+    fi
     reportResults
 else
-    command -v qat_service >/dev/null
+    if command -v lspci >/dev/null && ! lspci 2>/dev/null | grep -qi "quick assist"; then
+        echo "INFO: No QAT hardware detected, skipping check"
+    else
+        command -v qat_service >/dev/null
+    fi
 fi

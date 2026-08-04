@@ -21,7 +21,7 @@ undeploy:
 
 .PHONY: lint
 lint:
-	sudo -E $(DOCKER_CMD) run --rm -v $$(pwd):/tmp/lint \
+	$(DOCKER_CMD) run --rm -v $$(pwd):/tmp/lint \
 	-e RUN_LOCAL=true \
 	-e LINTER_RULES_PATH=/ \
 	-e EDITORCONFIG_FILE_NAME=.editorconfig-checker.json \

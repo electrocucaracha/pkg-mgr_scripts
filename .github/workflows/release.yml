@@ -46,7 +46,7 @@ jobs:
         with:
           node-version: "20"
       - name: Test Feature
-        run: npx --yes @devcontainers/cli@0.88.0 features test -p . --features "${{ matrix.feature }}"
+        run: npx --yes @devcontainers/cli@0.88.0 features test -p . --features "${{ matrix.feature }}" -i mcr.microsoft.com/devcontainers/base:ubuntu
   deploy:
     needs: test
     runs-on: ubuntu-latest

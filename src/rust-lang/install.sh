@@ -21,6 +21,9 @@ function main {
     fi
     echo "INFO: Installing rustc..."
     curl https://sh.rustup.rs -sSf | sh -s -- -y
+    sudo ln -sf "$HOME/.cargo/bin/rustup" /usr/local/bin/rustup
+    sudo ln -sf "$HOME/.cargo/bin/rustc" /usr/local/bin/rustc
+    sudo ln -sf "$HOME/.cargo/bin/cargo" /usr/local/bin/cargo
 }
 
 main

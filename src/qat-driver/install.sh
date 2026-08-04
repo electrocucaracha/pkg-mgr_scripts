@@ -23,6 +23,12 @@ function main {
         return
     fi
 
+    # Skip gracefully when no QAT hardware is detected
+    if command -v lspci >/dev/null && ! lspci 2>/dev/null | grep -qi "quick assist"; then
+        echo "WARN: No Intel QAT hardware detected, skipping QAT driver installation"
+        return
+    fi
+
     pkgs=""
     # shellcheck disable=SC1091
     source /etc/os-release || source /usr/lib/os-release
