@@ -1,0 +1,10 @@
+{
+  "install_crystal_lang_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "crystal-lang": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

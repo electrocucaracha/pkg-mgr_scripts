@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating podman installation..."
-if \! command -v podman; then
+if ! command -v podman; then
     error "podman command line wasn't installed"
 fi

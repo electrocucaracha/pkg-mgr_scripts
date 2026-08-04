@@ -1,0 +1,10 @@
+{
+  "install_rust_lang_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "rust-lang": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

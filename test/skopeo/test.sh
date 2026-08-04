@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating skopeo installation..."
-if \! command -v skopeo; then
+if ! command -v skopeo; then
     error "skopeo command line wasn't installed"
 fi

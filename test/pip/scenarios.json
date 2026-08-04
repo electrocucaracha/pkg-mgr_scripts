@@ -1,0 +1,10 @@
+{
+  "install_pip_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "pip": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

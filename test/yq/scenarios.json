@@ -1,0 +1,10 @@
+{
+  "install_yq_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "yq": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

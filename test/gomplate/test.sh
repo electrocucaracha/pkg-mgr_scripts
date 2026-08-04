@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating gomplate installation..."
-if \! command -v gomplate; then
+if ! command -v gomplate; then
     error "gomplate command line wasn't installed"
 fi

@@ -1,0 +1,10 @@
+{
+  "install_hadolint_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "hadolint": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

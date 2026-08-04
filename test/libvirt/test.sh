@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating libvirt installation..."
-if \! command -v virsh; then
+if ! command -v virsh; then
     error "virsh command line wasn't installed"
 fi

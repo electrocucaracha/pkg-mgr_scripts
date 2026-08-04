@@ -1,0 +1,10 @@
+{
+  "install_vagrant_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "vagrant": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

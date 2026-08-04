@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating kustomize installation..."
-if \! command -v kustomize; then
+if ! command -v kustomize; then
     error "kustomize command line wasn't installed"
 fi

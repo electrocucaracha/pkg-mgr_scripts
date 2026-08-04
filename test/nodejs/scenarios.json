@@ -1,0 +1,10 @@
+{
+  "install_nodejs_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "nodejs": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

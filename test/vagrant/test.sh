@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating vagrant installation..."
-if \! command -v vagrant; then
+if ! command -v vagrant; then
     error "vagrant command line wasn't installed"
 fi

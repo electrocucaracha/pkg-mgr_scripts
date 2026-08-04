@@ -77,10 +77,12 @@ function main {
 
     for service in rpc-statd nfs-server; do
         echo "INFO: Starting $service service..."
-        if ! systemctl is-enabled --quiet "$service"; then
-            sudo systemctl enable "$service"
+        if [ -d /run/systemd/system ]; then
+            if ! systemctl is-enabled --quiet "$service"; then
+                sudo systemctl enable "$service"
+            fi
+            sudo systemctl start "$service"
         fi
-        sudo systemctl start "$service"
     done
 
     if command -v firewall-cmd && systemctl is-active --quiet firewalld; then

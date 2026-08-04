@@ -1,0 +1,10 @@
+{
+  "install_act_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "act": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

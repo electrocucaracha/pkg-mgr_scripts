@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating nfs installation..."
-if \! command -v exportfs; then
+if ! command -v exportfs; then
     error "exportfs command line wasn't installed"
 fi

@@ -1,0 +1,10 @@
+{
+  "install_terraform_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "terraform": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

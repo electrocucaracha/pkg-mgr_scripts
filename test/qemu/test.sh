@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating qemu installation..."
-if \! command -v qemu-img; then
+if ! command -v qemu-img; then
     error "qemu-img command line wasn't installed"
 fi

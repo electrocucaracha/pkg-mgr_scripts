@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating tkn installation..."
-if \! command -v tkn; then
+if ! command -v tkn; then
     error "tkn command line wasn't installed"
 fi

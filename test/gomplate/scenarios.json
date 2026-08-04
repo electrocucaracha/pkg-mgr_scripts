@@ -1,0 +1,10 @@
+{
+  "install_gomplate_with_debug_disabled": {
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+      "gomplate": {
+        "pkg_debug": false
+      }
+    }
+  }
+}

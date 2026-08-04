@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating qat-driver installation..."
-if \! command -v qat_service; then
+if ! command -v qat_service; then
     error "qat_service command line wasn't installed"
 fi

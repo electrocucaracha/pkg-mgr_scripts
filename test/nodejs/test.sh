@@ -26,6 +26,6 @@ function _print_msg {
 }
 
 info "Validating nodejs installation..."
-if \! command -v node; then
+if ! command -v node; then
     error "node command line wasn't installed"
 fi
