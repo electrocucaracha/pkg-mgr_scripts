@@ -85,7 +85,7 @@ function main {
         fi
     done
 
-    if command -v firewall-cmd && systemctl is-active --quiet firewalld; then
+    if command -v firewall-cmd && [ -d /run/systemd/system ] && systemctl is-active --quiet firewalld; then
         for svc in nfs rpc-bind mountd; do
             echo "INFO: Enabiling $svc service in FirewallD service..."
             sudo firewall-cmd --permanent --add-service="${svc}" --zone=trusted
