@@ -26,15 +26,22 @@ fi
 function get_query {
     local script="$1"
     local output="$2"
+    local has_supported="false"
 
     if [ -f "src/$script/os-blacklist.conf" ]; then
         query=".linux[] | select("
         for os_alias in $(yq '.linux[].alias' distros_supported.yml); do
             if ! grep -q "$os_alias" "src/$script/os-blacklist.conf"; then
                 query+=".alias == \"$os_alias\" or "
+                has_supported="true"
             fi
         done
-        query="${query::-4}).$output"
+        if [ "$has_supported" == "true" ]; then
+            query="${query::-4}).$output"
+        else
+            # Return no rows when every distro alias is blacklisted.
+            query=".linux[] | select(false).$output"
+        fi
     else
         query=".linux[].$output"
     fi
