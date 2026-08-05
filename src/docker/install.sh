@@ -205,7 +205,7 @@ EOF
         sudo mkdir -p /etc/systemd/system/docker.service.d
         if [ -n "${SOCKS_PROXY-}" ]; then
             socks_tmp="${SOCKS_PROXY#*//}"
-            curl -sSL https://raw.githubusercontent.com/crops/chameleonsocks/master/chameleonsocks.sh | sudo PROXY="${socks_tmp%:*}" PORT="${socks_tmp#*:}" bash -s -- --install
+            curl -sSL https://raw.githubusercontent.com/crops/chameleonsocks/master/chameleonsocks.sh | sudo env PROXY="${socks_tmp%:*}" PORT="${socks_tmp#*:}" bash -s -- --install
         else
             if [ -n "${HTTP_PROXY-}" ]; then
                 echo "[Service]" | sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf
