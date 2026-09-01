@@ -7,7 +7,7 @@
     "pkg_fly_version": {
       "type": "string",
       "description": "Specifies the Fly version to be installed",
-      "default": "8.3.0" // PKG_FLY_VERSION
+      "default": "" // PKG_FLY_VERSION
     },
     "pkg_debug": {
       "type": "boolean",
