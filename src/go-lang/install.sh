@@ -8,6 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file Go installer
+# @brief Installs the Go programming language.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -15,6 +18,7 @@ set -o pipefail
 # Some devcontainer test images execute feature installers as root without sudo.
 # Provide a local fallback so the same script works in both contexts.
 if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    # @internal
     sudo() {
         while [[ ${1:-} == -* ]]; do
             shift
@@ -26,6 +30,9 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
+# @description Resolves the latest Go release version from the official Go distribution endpoint.
+# @stdout Latest Go version without the go prefix.
+# @exitcode 1 When the version cannot be resolved after retries.
 function get_go_latest_version {
     version=""
     attempt_counter=0
@@ -45,6 +52,10 @@ function get_go_latest_version {
     done
 }
 
+# @description Runs this script's installation or validation workflow.
+# @noargs
+# @exitcode 0 When the workflow completes successfully.
+# @exitcode 1 When a required command fails.
 function main {
     local version=${PKG_GOLANG_VERSION:-$(get_go_latest_version)}
 

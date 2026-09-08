@@ -8,6 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file Docker installer
+# @brief Installs Docker and optional Docker utilities.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -18,6 +21,7 @@ fi
 # Some devcontainer test images execute feature installers as root without sudo.
 # Provide a local fallback so the same script works in both contexts.
 if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    # @internal
     sudo() {
         while [[ ${1:-} == -* ]]; do
             shift
@@ -29,6 +33,10 @@ fi
 OS="$(uname | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
 
+# @description Resolves the latest GitHub release version for a repository.
+# @arg $1 string GitHub repository in owner/repository form.
+# @stdout Latest release version without the v prefix.
+# @exitcode 1 When the latest release cannot be resolved after retries.
 function get_github_latest_release {
     local repository="$1"
     local version=""
@@ -51,12 +59,16 @@ function get_github_latest_release {
     echo "${version#v}"
 }
 
+# @description Installs the gVisor runtime binaries.
+# @noargs
 function _install_gvisor {
     wget -q "https://storage.googleapis.com/gvisor/releases/release/latest/$(uname -m)"/{runsc,containerd-shim-runsc-v1}
     chmod a+rx runsc containerd-shim-runsc-v1
     sudo mv runsc containerd-shim-runsc-v1 /usr/local/bin
 }
 
+# @description Installs the regctl container registry client and Docker plugin.
+# @noargs
 function _install_regctl {
     local version=${PKG_REGCLIENT_VERSION:-$(get_github_latest_release regclient/regclient)}
     echo "INFO: Installing regctl $version version..."
@@ -92,6 +104,8 @@ function _install_docker-slim {
     curl -sL "$url" | sudo tar xz --strip-components=1 -C /usr/bin/
 }
 
+# @description Installs the Dive container image analysis tool.
+# @noargs
 function _install_dive {
     local version=${PKG_DOCKER_DIVE_VERSION:-$(get_github_latest_release wagoodman/dive)}
     echo "INFO: Installing dive $version version..."
@@ -99,6 +113,10 @@ function _install_dive {
     curl -s "https://i.jpillora.com/wagoodman/dive@v$version!!" | bash
 }
 
+# @description Runs this script's installation or validation workflow.
+# @noargs
+# @exitcode 0 When the workflow completes successfully.
+# @exitcode 1 When a required command fails.
 function main {
     echo insecure >>~/.curlrc
     trap 'sed -i "/^insecure\$/d" ~/.curlrc' EXIT

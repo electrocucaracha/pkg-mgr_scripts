@@ -8,6 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file Fly installer
+# @brief Installs the Fly command-line client.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -15,6 +18,7 @@ set -o pipefail
 # Some devcontainer test images execute feature installers as root without sudo.
 # Provide a local fallback so the same script works in both contexts.
 if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    # @internal
     sudo() {
         while [[ ${1:-} == -* ]]; do
             shift
@@ -26,6 +30,10 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
     set -o xtrace
 fi
 
+# @description Resolves the latest GitHub tag for a repository.
+# @arg $1 string GitHub repository in owner/repository form.
+# @stdout Latest tag version without the v prefix.
+# @exitcode 1 When the latest tag cannot be resolved after retries.
 function get_github_latest_tag {
     version=""
     attempt_counter=0
@@ -47,6 +55,10 @@ function get_github_latest_tag {
     echo "${version#*v}"
 }
 
+# @description Runs this script's installation or validation workflow.
+# @noargs
+# @exitcode 0 When the workflow completes successfully.
+# @exitcode 1 When a required command fails.
 function main {
     local version=${PKG_FLY_VERSION:-$(get_github_latest_tag concourse/concourse)}
 

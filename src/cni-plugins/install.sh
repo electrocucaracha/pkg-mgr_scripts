@@ -8,6 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file CNI plugins installer
+# @brief Installs Container Network Interface plugins.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -15,6 +18,7 @@ set -o pipefail
 # Some devcontainer test images execute feature installers as root without sudo.
 # Provide a local fallback so the same script works in both contexts.
 if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    # @internal
     sudo() {
         while [[ ${1:-} == -* ]]; do
             shift
@@ -31,6 +35,9 @@ ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's
 cni_folder=${PKG_CNI_PLUGINS_FOLDER:-/opt/containernetworking/plugins}
 sudo_cmd=$(whoami | grep -q "root" || echo "sudo -H -E")
 
+# @description Installs supplied packages with the detected operating system package manager.
+# @arg $@ string Package names to install.
+# @set INSTALLER_CMD string Command used to install packages.
 function install_pkgs {
     INSTALLER_CMD="$sudo_cmd "
     # shellcheck disable=SC1091
@@ -65,6 +72,10 @@ function install_pkgs {
     export INSTALLER_CMD
 }
 
+# @description Resolves the latest GitHub release version for a repository.
+# @arg $1 string GitHub repository in owner/repository form.
+# @stdout Latest release version without the v prefix.
+# @exitcode 1 When the latest release cannot be resolved after retries.
 function get_github_latest_release {
     local repository="$1"
     local version=""
@@ -87,6 +98,8 @@ function get_github_latest_release {
     echo "${version#v}"
 }
 
+# @description Installs the Flannel Container Network Interface plugin.
+# @noargs
 function _install_flannel {
     local flannel_version=${PKG_FLANNEL_VERSION:-$(get_github_latest_release flannel-io/cni-plugin)}
     local url="https://github.com/flannel-io/cni-plugin/releases/download/v${flannel_version}/flannel-${ARCH}"
@@ -99,6 +112,10 @@ function _install_flannel {
     $sudo_cmd chmod +x "${cni_folder}/flannel"
 }
 
+# @description Runs this script's installation or validation workflow.
+# @noargs
+# @exitcode 0 When the workflow completes successfully.
+# @exitcode 1 When a required command fails.
 function main {
     cmds=()
     for cmd in tar gzip; do

@@ -8,6 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file Act installer
+# @brief Installs the GitHub Actions local runner.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -19,6 +22,9 @@ sudo_cmd=$(whoami | grep -q "root" || echo "sudo -H -E")
 # shellcheck disable=SC1091
 source /etc/os-release || source /usr/lib/os-release
 
+# @description Installs supplied packages with the detected operating system package manager.
+# @arg $@ string Package names to install.
+# @set INSTALLER_CMD string Command used to install packages.
 function install_pkgs {
     INSTALLER_CMD="$sudo_cmd "
     case ${ID,,} in
@@ -51,6 +57,11 @@ function install_pkgs {
     export INSTALLER_CMD
 }
 
+# @brief Installs the GitHub Actions local runner.
+# @description Resolves the latest GitHub release version for a repository.
+# @arg $1 string GitHub repository in owner/repository form.
+# @stdout Latest release version without the v prefix.
+# @exitcode 1 When the latest release cannot be resolved after retries.
 function get_github_latest_release {
     local repository="$1"
     local version=""
@@ -73,6 +84,10 @@ function get_github_latest_release {
     echo "${version#v}"
 }
 
+# @description Runs this script's installation or validation workflow.
+# @noargs
+# @exitcode 0 When the workflow completes successfully.
+# @exitcode 1 When a required command fails.
 function main {
     cmds=()
     for cmd in which tar gzip; do

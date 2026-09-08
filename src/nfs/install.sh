@@ -8,6 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file NFS installer
+# @brief Installs Network File System utilities.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -15,6 +18,7 @@ set -o pipefail
 # Some devcontainer test images execute feature installers as root without sudo.
 # Provide a local fallback so the same script works in both contexts.
 if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    # @internal
     sudo() {
         while [[ ${1:-} == -* ]]; do
             shift
@@ -27,6 +31,12 @@ if [[ ${PKG_DEBUG:-false} == "true" ]]; then
 fi
 
 # _vercmp() - Function that compares two versions
+# @description Compares two version strings using the supplied comparison operator.
+# @arg $1 string First version.
+# @arg $2 string Comparison operator: equal, greater than, less than, greater than or equal, or less than or equal.
+# @arg $3 string Second version.
+# @exitcode 0 When the comparison is true.
+# @exitcode 1 When the comparison is false or the operator is invalid.
 function _vercmp {
     local v1=$1
     local op=$2
@@ -65,6 +75,10 @@ function _vercmp {
     esac
 }
 
+# @description Runs this script's installation or validation workflow.
+# @noargs
+# @exitcode 0 When the workflow completes successfully.
+# @exitcode 1 When a required command fails.
 function main {
     echo "INFO: Installing NFS packages..."
     # shellcheck disable=SC1091

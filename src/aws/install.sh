@@ -8,6 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file AWS installer
+# @brief Installs AWS command-line tools.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -17,6 +20,9 @@ fi
 
 sudo_cmd=$(whoami | grep -q "root" || echo "sudo -H -E")
 
+# @description Installs supplied packages with the detected operating system package manager.
+# @arg $@ string Package names to install.
+# @set INSTALLER_CMD string Command used to install packages.
 function install_pkgs {
     INSTALLER_CMD="$sudo_cmd "
     # shellcheck disable=SC1091
@@ -51,6 +57,10 @@ function install_pkgs {
     export INSTALLER_CMD
 }
 
+# @description Resolves the latest GitHub tag for a repository.
+# @arg $1 string GitHub repository in owner/repository form.
+# @stdout Latest tag version without the v prefix.
+# @exitcode 1 When the latest tag cannot be resolved after retries.
 function get_github_latest_tag {
     version=""
     attempt_counter=0
@@ -72,6 +82,10 @@ function get_github_latest_tag {
     echo "${version#*v}"
 }
 
+# @description Runs this script's installation or validation workflow.
+# @noargs
+# @exitcode 0 When the workflow completes successfully.
+# @exitcode 1 When a required command fails.
 function main {
     cmds=()
     if ! command -v unzip >/dev/null; then

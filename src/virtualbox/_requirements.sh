@@ -8,6 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file VirtualBox requirements
+# @brief Prepares operating-system prerequisites for VirtualBox.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o errexit
 set -o nounset
 set -o pipefail

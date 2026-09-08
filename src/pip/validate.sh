@@ -8,6 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file Pip validator
+# @brief Validates Python package management tools.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -15,6 +18,7 @@ set -o pipefail
 # Some devcontainer test images execute feature installers as root without sudo.
 # Provide a local fallback so the same script works in both contexts.
 if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    # @internal
     sudo() {
         while [[ ${1:-} == -* ]]; do
             shift
@@ -23,15 +27,26 @@ if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
     }
 fi
 
+# @description Writes an informational message.
+# @arg $1 string Message to write.
+# @stdout Message prefixed with INFO.
 function info {
     _print_msg "INFO" "$1"
 }
 
+# @description Writes an error message and stops execution.
+# @arg $1 string Message to write.
+# @stdout Message prefixed with ERROR.
+# @exitcode 1 Always.
 function error {
     _print_msg "ERROR" "$1"
     exit 1
 }
 
+# @description Formats and writes a message with its severity level.
+# @arg $1 string Message severity.
+# @arg $2 string Message content.
+# @stdout Formatted severity and message.
 function _print_msg {
     echo "$1: $2"
 }

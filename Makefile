@@ -9,6 +9,7 @@
 
 DOCKER_CMD ?= $(shell which docker 2> /dev/null || which podman 2> /dev/null || echo docker)
 SUPER_LINTER_VALIDATE_PRE_COMMIT ?= false
+SHDOC ?= shdoc
 
 build:
 	@docker-compose build --compress --force-rm
@@ -43,3 +44,12 @@ fmt:
 	textlint . --fix
 	command -v prettier > /dev/null || npm install prettier
 	npx prettier . --write
+
+.PHONY: docs
+docs:
+	@command -v $(SHDOC) > /dev/null || { echo "shdoc is required; see https://github.com/reconquest/shdoc"; exit 1; }
+	@find src -type f -name '*.sh' -print0 | while IFS= read -r -d '' script; do \
+		output="docs/reference/$${script%.sh}.md"; \
+		mkdir -p "$$(dirname "$$output")"; \
+		$(SHDOC) "$$script" > "$$output"; \
+	done

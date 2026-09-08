@@ -8,19 +8,33 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file Skopeo validator
+# @brief Validates a Skopeo installation.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o nounset
 set -o errexit
 set -o pipefail
 
+# @description Writes an informational message.
+# @arg $1 string Message to write.
+# @stdout Message prefixed with INFO.
 function info {
     _print_msg "INFO" "$1"
 }
 
+# @description Writes an error message and stops execution.
+# @arg $1 string Message to write.
+# @stdout Message prefixed with ERROR.
+# @exitcode 1 Always.
 function error {
     _print_msg "ERROR" "$1"
     exit 1
 }
 
+# @description Formats and writes a message with its severity level.
+# @arg $1 string Message severity.
+# @arg $2 string Message content.
+# @stdout Formatted severity and message.
 function _print_msg {
     echo "$1: $2"
 }

@@ -8,6 +8,9 @@
 # http://www.apache.org/licenses/LICENSE-2.0
 ##############################################################################
 
+# @file Helm installer
+# @brief Installs the Helm package manager for Kubernetes.
+# @description This reference describes the script entry point and its implementation helpers. Configure optional behavior with PKG_ environment variables documented in the component README.
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -15,6 +18,7 @@ set -o pipefail
 # Some devcontainer test images execute feature installers as root without sudo.
 # Provide a local fallback so the same script works in both contexts.
 if ! command -v sudo >/dev/null && [ "$(id -u)" -eq 0 ]; then
+    # @internal
     sudo() {
         while [[ ${1:-} == -* ]]; do
             shift
@@ -28,6 +32,9 @@ fi
 
 sudo_cmd=$(whoami | grep -q "root" || echo "sudo -H -E")
 
+# @description Installs supplied packages with the detected operating system package manager.
+# @arg $@ string Package names to install.
+# @set INSTALLER_CMD string Command used to install packages.
 function install_pkgs {
     INSTALLER_CMD="$sudo_cmd "
     # shellcheck disable=SC1091
@@ -62,6 +69,8 @@ function install_pkgs {
     export INSTALLER_CMD
 }
 
+# @description Installs a Helm plugin from its GitHub repository when it is not already installed.
+# @arg $1 string GitHub repository in owner/repository form.
 function _install_helm_plugin {
     local url="https://github.com/$1"
     local repo="${url##*/}"
@@ -82,6 +91,10 @@ function _install_helm_plugin {
     fi
 }
 
+# @description Runs this script's installation or validation workflow.
+# @noargs
+# @exitcode 0 When the workflow completes successfully.
+# @exitcode 1 When a required command fails.
 function main {
     local version=${PKG_HELM_VERSION:-3}
     helm_plugins_list=${PKG_HELM_PLUGINS_LIST:-ThalesGroup/helm-spray,databus23/helm-diff,datreeio/helm-datree}
