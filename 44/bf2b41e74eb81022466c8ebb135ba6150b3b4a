@@ -1,0 +1,1 @@
+{"category": "Changed", "changelog_entry": "Upgraded the hadolint version used in CI environments to a new version.", "summary": "Pinned versions file updated to reflect new version of hadolint. The change affects the hadolint version used in CI environments.", "version": 1}
