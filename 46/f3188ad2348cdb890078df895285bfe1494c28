@@ -1,0 +1,1 @@
+{"category": "Removed", "changelog_entry": "The build process is now reliant on alternative tasks and pipelines following the removal of Tekton support.", "summary": "Support for Tekton has been dropped. This change affects the build process, removing the use of Tekton tasks and pipelines. The build process now relies on alternative tasks and pipelines.", "version": 1}
