@@ -11,6 +11,11 @@ DOCKER_CMD ?= $(shell which docker 2> /dev/null || which podman 2> /dev/null || 
 SUPER_LINTER_VALIDATE_PRE_COMMIT ?= false
 SHDOC ?= shdoc
 
+.PHONY: cleanup
+cleanup:
+	rm -rf node_modules
+	rm -rf .tox/ .venv/
+
 build:
 	@docker-compose build --compress --force-rm
 	sudo -E $(DOCKER_CMD) image prune --force
@@ -35,13 +40,13 @@ lint:
 	tox -e lint
 
 .PHONY: fmt
-fmt:
+fmt: cleanup
+	command -v textlint > /dev/null && npm list --global --depth=0 textlint-rule-terminology > /dev/null 2>&1 || sudo npm install --global textlint textlint-rule-terminology
+	textlint . --fix
 	command -v shfmt > /dev/null || curl -s "https://i.jpillora.com/mvdan/sh!!?as=shfmt" | bash
 	git ls-files '*.sh' | grep -v 'spec/' | xargs shfmt -l -w -s -i 4
 	command -v yamlfmt > /dev/null || curl -s "https://i.jpillora.com/google/yamlfmt!!" | bash
 	yamlfmt -dstar **/*.{yaml,yml}
-	command -v textlint > /dev/null && npm list --global --depth=0 textlint-rule-terminology > /dev/null 2>&1 || npm install --global textlint textlint-rule-terminology
-	textlint . --fix
 	command -v prettier > /dev/null || npm install prettier
 	npx prettier . --write
 
