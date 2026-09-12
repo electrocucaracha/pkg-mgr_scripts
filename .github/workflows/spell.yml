@@ -30,16 +30,6 @@ on:
 permissions:
   contents: read
 jobs:
-  check-reviewdog:
-    name: Check misspelling words with reviewdog tools
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: reviewdog/action-misspell@d6429416b12b09b4e2768307d53bef58d172e962 # v1.27.0
-        with:
-          github_token: ${{ secrets.github_token }}
   check-spellcheck:
     name: Check misspelling words with pySpelling tool
     runs-on: ubuntu-latest
