@@ -1,0 +1,1 @@
+{"category": "Changed", "changelog_entry": "Upgraded the super-linter version in various GitHub workflows, requiring migration steps to ensure compatibility.", "summary": "The super-linter version was upgraded from v3 to v4 in various GitHub workflows, which may require migration steps to ensure compatibility.", "version": 1}
