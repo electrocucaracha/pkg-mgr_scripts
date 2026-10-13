@@ -19,7 +19,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: ./.github/actions/vagrant-setup
+    - uses: $/.github/actions/vagrant-setup
       with:
         vagrant_name: ${{ inputs.vagrant_name }}
     - name: Run integration tests

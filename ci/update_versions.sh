@@ -117,69 +117,9 @@ find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) \
     done
 EOF
 
-update_github_action_hashes() {
-    local gh_actions action is_exception ex commit_hash file
-    gh_actions=$(grep -rhoE 'uses: [^@]+@' .github/ |
-        sed -E 's/uses: ([^@]+)@/\1/' |
-        sort -u)
-
-    readonly exceptions=()
-
-    for action in $gh_actions; do
-        is_exception=false
-        for ex in "${exceptions[@]}"; do
-            if [[ $action == "$ex" ]]; then
-                is_exception=true
-                break
-            fi
-        done
-        [[ $is_exception == true ]] && continue
-
-        commit_hash=$(
-            git ls-remote --tags "https://github.com/$action" |
-                awk '
-            {
-                sha=$1
-                ref=$2
-                if (ref ~ /\^\{\}$/) {
-                    tag=ref
-                    sub(/\^\{\}$/, "", tag)
-                    commits[tag]=sha
-                } else {
-                    tags[ref]=sha
-                }
-            }
-            END {
-                for (ref in tags) {
-                    sha = (ref in commits ? commits[ref] : tags[ref])
-                    tag = ref
-                    sub(/^refs\/tags\//, "", tag)
-                    if (tag ~ /^v?[0-9]+(\.[0-9]+)*$/) {
-                        sortkey = tag
-                        sub(/^v/, "", sortkey)
-                        print sortkey "\t" sha "\t" tag
-                    }
-                }
-            }' |
-                sort -V |
-                tail -1 |
-                awk -F'\t' '{ printf "%s # %s\n", $2, $3 }'
-        )
-
-        if [[ -z $commit_hash ]]; then
-            echo "WARNING: unable to resolve tag for $action; skipping" >&2
-            continue
-        fi
-
-        while IFS= read -r -d '' file; do
-            sed -i -e "s|uses: $action@.*|uses: $action@$commit_hash|g" "$file"
-        done < <(grep -ElRZ "uses: $action@" .github/)
-    done
-}
-
-update_github_action_hashes
-
 if ! command -v uvx >/dev/null; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
 uvx pre-commit autoupdate
+uv run --no-project --with git+https://github.com/electrocucaracha/gh-updater.git gh-updater .
+uvx --refresh zizmor --offline --min-severity low .github/ --fix=all
