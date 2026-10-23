@@ -7,7 +7,7 @@
     "pkg_gomplate_version": {
       "type": "string",
       "description": "Specifies the Gomplate version to be installed",
-      "default": "5.3.0" // PKG_GOMPLATE_VERSION
+      "default": "5.3.1" // PKG_GOMPLATE_VERSION
     },
     "pkg_debug": {
       "type": "boolean",
