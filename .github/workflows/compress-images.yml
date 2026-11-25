@@ -32,6 +32,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: calibreapp/image-actions@9d037c06280028c110ff61c433ad4dc7d33c3c43 # 1.5.0
+      - uses: calibreapp/image-actions@761ca74da1e23f79c4892b4311e153f2d93780eb # 1.6.0
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
